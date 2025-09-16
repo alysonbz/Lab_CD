@@ -5,3 +5,4 @@ y_coordinates = [87, 96, 95, 92, 92, 57, 49, 47, 59, 55, 25, 2, 10, 24, 19]
 
 plt.scatter(x_coordinates, y_coordinates)
 plt.show()
+print('oi')
