@@ -1,5 +1,5 @@
-# data_minning_ufc
-Repositório da disciplina de mineração de dados da Universidade Federa Do Ceará
+# LAB_CD
+Repositório da disciplina de laboratório de ciencia de dados da Universidade Federa Do Ceará
 
 
 
