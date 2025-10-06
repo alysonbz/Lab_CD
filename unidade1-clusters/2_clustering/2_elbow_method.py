@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 #Import kmeans from scipy
----
+from scipy.cluster.vq import kmeans
 
 from src.utils import load_comic_con_dataset
 
@@ -11,7 +11,7 @@ distortions = []
 num_clusters = range(1, 7)
 
 # Create a list of distortions from the kmeans function
-for i in ____:
+for i in num_clusters:
     cluster_centers, distortion = ____
 # append distortion on list distortions
     ___
