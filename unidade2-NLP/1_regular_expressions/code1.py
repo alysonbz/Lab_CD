@@ -10,7 +10,7 @@ sentence_endings = r"[.?!]"
 print(re.split(sentence_endings, my_string))
 
 # Find all capitalized words in my_string and print the result
-capitalized_words = r"[a-z]\w+"
+capitalized_words = r"[A-Z]\w+"
 print(re.findall(capitalized_words, my_string))
 
 # Split my_string on spaces and print the result

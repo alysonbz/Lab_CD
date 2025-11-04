@@ -12,7 +12,7 @@ print(__, __)
 print (match)
 
 # Write a regular expression to search for anything in square brackets: pattern1
-pattern1 = r"___"
+pattern1 = r"\w+"
 
 # Use re.search to find the first text in square brackets
 print(____)
