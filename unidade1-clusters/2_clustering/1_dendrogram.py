@@ -7,7 +7,7 @@ from scipy.cluster.hierarchy import linkage
 
 df = load_comic_con_dataset()
 
-distance_matrix = ___
+distance_matrix = linkage('x_scaled', 'y_scaled')
 
 # Create a dendrogram
 dn = __

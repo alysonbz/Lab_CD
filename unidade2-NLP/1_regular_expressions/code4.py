@@ -1,6 +1,6 @@
 # Import the necessary modules
 
-___
+from nltk.tokenize import word_tokenize, sent_tokenize
 from src.utils import get_tweets_sample
 
 tweets = get_tweets_sample()
