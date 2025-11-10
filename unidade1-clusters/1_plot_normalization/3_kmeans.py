@@ -14,5 +14,5 @@ centroids,data = kmeans(df,3)
 df['cluster_labels'], _ = vq(df, centroids)
 
 # Plot the points with seaborn
-sns.scatterplot(x = 'x_cor', y = 'y_cor', hue='cluster labels', data=df)
+sns.scatterplot(x = 'x', y = 'y', hue='cluster_labels', data=df)
 plt.show()

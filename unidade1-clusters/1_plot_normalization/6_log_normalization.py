@@ -11,6 +11,7 @@ print(wine.describe())
 
 ## Aplique a função de nomarlização logarítmica na coluna Proline
 wine['Proline'] = np.log(wine['proline_log'])
+# wine['proline_log'] = np.log(wine['Proline'])
 #
 # Print a variância da coluna proline
 print(wine['Proline'].var)

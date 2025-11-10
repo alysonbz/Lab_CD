@@ -14,5 +14,5 @@ Z = linkage(df, 'ward')
 df['cluster_labels'] = fcluster(Z, 3, criterion='maxclust')
 
 # Plot the points with seaborn
-sns.scatterplot(x = 'x_cor', y = 'y_cor', hue='cluster labels', data=df)
+sns.scatterplot(x = 'x', y = 'y', hue='cluster_labels', data=df)
 plt.show()
