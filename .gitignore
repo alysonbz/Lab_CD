@@ -1,0 +1,46 @@
+Lab_CD.iml
+
+# ==============================
+# 🐍 Python
+# ==============================
+
+# Ambientes virtuais
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# Arquivos de cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+
+# Arquivos de configuração locais
+*.env
+*.local
+*.ini
+*.cfg
+*.json
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints
+
+# Diretórios de build/distribuição
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+
+# IDEs e editores
+.vscode/
+.idea/
+*.code-workspace
