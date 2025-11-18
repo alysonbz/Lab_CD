@@ -1,7 +1,11 @@
 # Import necessary modules
+# import nltk
+# nltk.download('punkt')
+# nltk.download('punkt_tab')
 from nltk.tokenize import word_tokenize
 from src.utils import get_sample_Santo_Graal
 from nltk.tokenize import sent_tokenize
+
 
 # Split scene_one into sentences: sentences
 scene_one = get_sample_Santo_Graal()
