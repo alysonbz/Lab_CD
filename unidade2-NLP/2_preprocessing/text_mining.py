@@ -22,7 +22,7 @@ def preprocessar_sentenca(sent):
     tokens_alpha = [t for t in tokens if t.isalpha()]
     tokens_sem_stop = [t for t in tokens_alpha if t not in english_stop]
     tokens_lematizados = [lemmatizer.lemmatize(t) for t in tokens_sem_stop]
-
+    print(tokens_lematizados)
     return tokens_lematizados
 
 
@@ -86,5 +86,5 @@ df_final.insert(0, "sentenca_original", sentencas)
 
 print(df_final)
 
-df_final.to_csv("tfidf_sentencas.csv", index=False)
-print("Arquivo salvo: tfidf_sentencas.csv")
+# df_final.to_csv("tfidf_sentencas.csv", index=False)
+# print("Arquivo salvo: tfidf_sentencas.csv")
