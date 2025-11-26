@@ -90,16 +90,6 @@ Com base em todas as etapas anteriores, responder na apresentação e reatório:
 
 ---
 
-Daniel e Kauê: https://www.kaggle.com/datasets/kewagbln/absenteeism-at-work-uci-ml-repositiory
-Silas e Rick: https://archive.ics.uci.edu/dataset/483/behavior+of+the+urban+traffic+of+the+city+of+sao+paulo+in+brazil
-Ana JÚlia e Luiza: https://archive.ics.uci.edu/dataset/409/daily+demand+forecasting+orders
-Kelvin e NIvaldo: Car Evaluation - UCI Machine Learning Repository
-Madson: Estimation of Obesity Levels Based On Eating Habits and Physical Condition - UCI Machine Learning R…
-Jefter e Kurt: AI4I 2020 Predictive Maintenance Dataset - UCI Machine Learning Repository
-Rian e Linconl:  Parkinsons - UCI Machine Learning Repository
-Gyovanna: Arrhythmia - UCI Machine Learning Repository
-Joaquim: Maternal Health Risk - UCI Machine Learning Repository
-
 ##  Aluno/dupla - Dataset
 
 Daniel e Kauê: Dataset fornecido peloa alunos (steam)
