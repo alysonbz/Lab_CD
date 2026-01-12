@@ -19,7 +19,7 @@ def executar_classificacao():
     X_test = df_test.drop('label', axis=1)
     y_test = df_test['label']
 
-    print(f"Treinando o modelo com {len(X_train)} amostras...")
+    print(f"Treinando o modelo com {len(X_train)} amostras")
 
     # 3. Classificação (Tópico 5)
     # Usamos Random Forest por ser robusto a outliers e capturar relações não lineares

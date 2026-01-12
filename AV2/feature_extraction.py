@@ -63,7 +63,7 @@ def gerar_csvs():
             pd.DataFrame(lista_final).to_csv(output_file, index=False)
             print(f"Sucesso! {output_file} gerado com {len(lista_final)} linhas.")
         else:
-            print(f"ERRO: Nenhuma imagem encontrada em: {os.path.join(base_path, folder_name)}")
+            print(f"Nenhuma imagem encontrada em: {os.path.join(base_path, folder_name)}")
 
 
 if __name__ == "__main__":

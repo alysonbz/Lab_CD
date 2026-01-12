@@ -18,7 +18,7 @@ def carregar_dados():
     X_test = teste_df['X_ray_image_name'].values
     y_test = teste_df['Label'].values
 
-    print(f"{len(X_train)} treino, {len(X_test)} teste.")
+    print(f"{len(X_train)} treino, {len(X_test)} teste")
     return X_train, y_train, X_test, y_test
 
 
