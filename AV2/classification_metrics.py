@@ -4,7 +4,6 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-
 def executar_classificacao():
     print("Carregando atributos dos CSVs...")
 
@@ -19,7 +18,7 @@ def executar_classificacao():
     X_test = df_test.drop('label', axis=1)
     y_test = df_test['label']
 
-    print(f"Treinando o modelo com {len(X_train)} amostras")
+    print(f"Treinando o modelo com {len(X_train)} amostras...")
 
     # 3. Classificação (Tópico 5)
     # Usamos Random Forest por ser robusto a outliers e capturar relações não lineares
@@ -52,7 +51,6 @@ def executar_classificacao():
     plt.savefig('matriz_confusao.png')  # Salva a imagem para usar no relatório
     print("\nGráfico 'matriz_confusao.png' salvo com sucesso.")
     plt.show()
-
 
 if __name__ == "__main__":
     executar_classificacao()

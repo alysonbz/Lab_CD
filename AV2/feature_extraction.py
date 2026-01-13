@@ -35,11 +35,11 @@ def extrair_atributos(caminho_img, label):
 
 def gerar_csvs():
     # Caminho do metadados (ajuste se necessário)
-    df_metadata = pd.read_csv('archive/Chest_xray_Corona_Metadata.csv')
+    df_metadata = pd.read_csv('Chest_xray_Corona_Metadata.csv')
 
     # Montando o caminho base conforme sua descrição (pasta repetida)
     # O ".." volta um nível para sair da pasta AV2
-    base_path = os.path.join('archive','Coronahack-Chest-XRay-Dataset', 'Coronahack-Chest-XRay-Dataset')
+    base_path = os.path.join('Coronahack-Chest-XRay-Dataset')
 
     for tipo in ['TRAIN', 'TEST']:
         print(f"\n--- Iniciando {tipo} ---")
@@ -63,7 +63,7 @@ def gerar_csvs():
             pd.DataFrame(lista_final).to_csv(output_file, index=False)
             print(f"Sucesso! {output_file} gerado com {len(lista_final)} linhas.")
         else:
-            print(f"Nenhuma imagem encontrada em: {os.path.join(base_path, folder_name)}")
+            print(f"ERRO: Nenhuma imagem encontrada em: {os.path.join(base_path, folder_name)}")
 
 
 if __name__ == "__main__":
