@@ -1,12 +1,16 @@
+import sys
+from pathlib import Path
+
+root_path = Path(__file__).resolve().parents[2]
+if str(root_path) not in sys.path:
+    sys.path.append(str(root_path))
+
 from src.utils import load_pokemon_dataset
 
 x,y = load_pokemon_dataset()
 
-# Import plotting class from matplotlib library
-from matplotlib import ____ as plt
+from matplotlib import pyplot as plt
 
-# Create a scatter plot
-plt.____(x, y)
+plt.scatter(x, y)
 
-# Display the scatter plot
-plt.____()
+plt.show()
