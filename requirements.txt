@@ -1,0 +1,13 @@
+pillow==12.3.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+regex==2026.7.19
+scikit-learn==1.9.0
+scipy==1.18.1
+seaborn==0.13.2
+six==1.17.0
+smart_open==8.0.1
+threadpoolctl==3.6.0
+tqdm==4.70.0
+tzdata==2026.3
+wrapt==2.3.0
