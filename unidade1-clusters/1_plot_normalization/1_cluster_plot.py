@@ -1,12 +1,13 @@
 from src.utils import load_pokemon_dataset
+from matplotlib import pyplot as plt
 
-x,y = load_pokemon_dataset()
+x, y = load_pokemon_dataset()
 
 # Import plotting class from matplotlib library
-from matplotlib import ____ as plt
+# from matplotlib import pyplot as plt
 
 # Create a scatter plot
-plt.____(x, y)
+plt.scatter(x, y)
 
 # Display the scatter plot
-plt.____()
+plt.show()
