@@ -6,10 +6,12 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from gensim.corpora.dictionary import Dictionary
 from nltk.stem import WordNetLemmatizer
+import os
 
+root_path = os.path.dirname(os.path.abspath(__file__)).replace('/src', '').replace('\\src', '')
 
 def load_wine_dataset():
-    wine = pd.read_csv('../datasets/wine.csv')
+    wine = pd.read_csv(os.path.join(root_path, os.path.join('unidade1-clusters','datasets', 'wine.csv')))
     return wine
 
 def load_pokemon_dataset():
@@ -17,15 +19,15 @@ def load_pokemon_dataset():
         [8, 4, 10, 6, 0, 4, 10, 10, 6, 1, 29, 25, 30, 29, 29, 30, 25, 27, 26, 30]
 
 def loadpokemon_dataset_df():
-    return pd.read_csv('./datasets/pokemon.csv')
+    return pd.read_csv(os.path.join(root_path, os.path.join('unidade1-clusters','datasets', 'pokemon.csv')))
 
 def load_fifa_dataset():
-    df = pd.read_csv('../datasets/fifa_18_dataset.csv')
+    df = pd.read_csv(os.path.join(root_path, os.path.join('unidade1-clusters','datasets', 'fifa_18_dataset.csv')))
     df = df[['sliding_tackle','aggression']].astype(float)
     return df
 
 def load_comic_con_dataset():
-    return pd.read_csv('../datasets/comic_con.csv')
+    return pd.read_csv(os.path.join(root_path, os.path.join('unidade1-clusters','datasets', 'comic_con.csv')))
 
 def get_sample_Santo_Graal():
 

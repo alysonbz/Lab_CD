@@ -1,4 +1,12 @@
 import numpy as np
+
+import sys
+from pathlib import Path
+
+root_path = Path(__file__).resolve().parents[2]
+if str(root_path) not in sys.path:
+    sys.path.append(str(root_path))
+
 from src.utils import load_wine_dataset
 import pandas as pd
 
@@ -7,13 +15,13 @@ wine = load_wine_dataset()
 pd.set_option('display.max_columns', None)
 
 #print as caractéristicas estatísticas do dataset wine
-print(wine.__)
+print(wine.describe())
 
 ## Aplique a função de nomarlização logarítmica na coluna Proline
-wine[__] = np.__(___)
+wine['Proline'] = np.log1p(wine['Proline'])
 #
 # Print a variância da coluna proline
-print(___)
+print(wine['Proline'].var())
 
 # print a variância da coluna proline normalizada
-print(___)
+print(wine['Proline'].var())
