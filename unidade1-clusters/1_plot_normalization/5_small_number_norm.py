@@ -1,16 +1,16 @@
-import ____
-from ____
+import matplotlib.pyplot as plt
+from scipy.cluster.vq import whiten
 # Prepare data
 rate_cuts = [0.0025, 0.001, -0.0005, -0.001, -0.0005, 0.0025, -0.001, -0.0015, -0.001, 0.0005]
 
 # Use the whiten() function to standardize the data
-scaled_data = ____(____)
+scaled_data = whiten(rate_cuts)
 
 # Plot original data
-plt.____(____, label='original')
+plt.plot(rate_cuts, label='original')
 
 # Plot scaled data
-plt.____(____, label='scaled')
+plt.plot(scaled_data, label='scaled')
 
 plt.legend()
 plt.show()
