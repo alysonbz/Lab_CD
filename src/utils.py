@@ -17,7 +17,7 @@ def load_pokemon_dataset():
         [8, 4, 10, 6, 0, 4, 10, 10, 6, 1, 29, 25, 30, 29, 29, 30, 25, 27, 26, 30]
 
 def loadpokemon_dataset_df():
-    return pd.read_csv('../datasets/pokemon.csv')
+    return pd.read_csv('./datasets/pokemon.csv')
 
 def load_fifa_dataset():
     df = pd.read_csv('../datasets/fifa_18_dataset.csv')
