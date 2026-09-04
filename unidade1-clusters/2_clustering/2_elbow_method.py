@@ -19,7 +19,7 @@ num_clusters = range(1, 7)
 
 # Create a list of distortions from the kmeans function
 for i in num_clusters:
-    cluster_centers, distortion = kmeans(comic_con, i)
+    cluster_centers, distortion = kmeans(comic_con[['x_scaled', 'y_scaled']], i)
     distortions.append(distortion)
 
 # Create a DataFrame with two lists - num_clusters, distortions
