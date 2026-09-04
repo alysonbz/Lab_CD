@@ -1,9 +1,15 @@
 from src.utils import load_pokemon_dataset
 import numpy as np
 
-
 def compute_single_linkage(cluster1,cluster2):
-     return None
+    lista_distancia = []
+            for ponto1 in cluster1
+            for ponto2 in cluster2
+                distancia = np.linalg.norm(np.array(ponto1)) - np.array(ponto2)
+                lista_distancia.append(distancia)
+        return min(distances)
+
+
 
 def compute_complete_linkage(cluster1, cluster2):
      return None

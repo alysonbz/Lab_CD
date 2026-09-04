@@ -1,16 +1,20 @@
+
+
+
 import matplotlib.pyplot as plt
 from src.utils import load_comic_con_dataset
-
-# Import the dendrogram function
-from scipy.cluster.hierarchy import dendrogram
-from scipy.cluster.hierarchy import linkage
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 df = load_comic_con_dataset()
 
-distance_matrix = ___
+# Cria a matriz de distâncias usando as colunas 'x_scaled' e 'y_scaled'
+data = df[['x_scaled', 'y_scaled']]
 
-# Create a dendrogram
-dn = __
+# Cria a matriz de linkage com método 'ward' e distância euclidiana
+distance_matrix = linkage(data, method='ward', metric='euclidean')
 
-# Display the dendogram
-__
+# Plota o dendrograma
+dn = dendrogram(distance_matrix)
+
+# Exibe o dendrograma
+plt.show()
