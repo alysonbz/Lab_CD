@@ -7,7 +7,7 @@ from src.utils import load_fifa_dataset
 
 fifa = load_fifa_dataset()
 # Fit the data into a k-means algorithm
-cluster_centers,_ =___
+cluster_centers,_ =
 
 # Assign cluster labels
 fifa['cluster_labels'], _ =___

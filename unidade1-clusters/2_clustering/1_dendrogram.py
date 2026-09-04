@@ -7,10 +7,12 @@ from scipy.cluster.hierarchy import linkage
 
 df = load_comic_con_dataset()
 
-distance_matrix = ___
+distance_matrix = linkage(df[['x_scaled', 'y_scaled']],
+                          method='ward',
+                          metric='euclidean')
 
 # Create a dendrogram
-dn = __
+dn = dendrogram(distance_matrix)
 
 # Display the dendogram
-__
+plt.show()
