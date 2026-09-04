@@ -17,7 +17,7 @@ def set_random_cluster_coordinate(num_of_cluster):
 def create_points(df):
     coords = []
     for index, row in df.iterrows():
-        coords.append([row['sliding_tackle'], row['aggression']])
+        coords.append([row['x'], row['y']])
     return coords
 
 

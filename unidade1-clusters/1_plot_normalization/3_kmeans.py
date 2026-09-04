@@ -14,6 +14,6 @@ centroids, data = kmeans(df, 2)
 df['cluster_labels'], _ = vq(df, centroids)
 
 # Plot the points with seaborn
-sns.scatterplot(x='sliding_tackle', y='aggression',
+sns.scatterplot(x='x', y='y',
                 hue='cluster_labels', data=df)
 plt.show()
