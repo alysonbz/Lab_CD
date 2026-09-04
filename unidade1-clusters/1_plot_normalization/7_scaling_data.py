@@ -13,4 +13,3 @@ print(X_norm.shape)
 print('variancia',X.var())
 
 print('variancia do dataset normalizado',X_norm.var())
-print('sla')
