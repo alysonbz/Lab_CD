@@ -1,14 +1,14 @@
 
 from src.utils import load_wine_dataset
-from ___ import ___
+from sklearn.preprocessing import StandardScaler
 wine = load_wine_dataset()
 X = wine.drop(['Quality'],axis=1)
 
 # Create the scaler
-scaler = ____
+scaler = StandardScaler()
 
-X_norm = _____
+X_norm = scaler.fit_transform(X)
 
-print('variancia',__)
+print('variancia',X.var())
 
-print('variancia do dataset normalizado',__)
+print('variancia do dataset normalizado',X_norm.var())
