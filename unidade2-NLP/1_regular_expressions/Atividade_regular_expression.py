@@ -15,3 +15,4 @@ text = "A liguagem de programação em Python é a mais utilizada do mundo," \
 print("resultado primeira questão: ",cont_word(text))
 
 
+
