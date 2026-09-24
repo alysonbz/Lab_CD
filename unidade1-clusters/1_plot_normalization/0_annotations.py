@@ -11,5 +11,5 @@ parttern1 = '(\w+|\?| !)'
 parttern2 = '(\w+|#\d+|\?|!)'
 parttern3 = '(#\d\W+\?!)'
 parttern4 = '\s+'
-partter = ?
+partter = '?'
 print(re.findall(parttern4, "SOLIDER #1: Found them? In Mercea? The coconut's tropical!"))
