@@ -1,7 +1,9 @@
+import re
+
 from nltk.tokenize import sent_tokenize
 from src.utils import get_sample_Santo_Graal
 
-scene_one =  get_sample_Santo_Graal()
+scene_one =  get_sample_Santo_Graal(re.search())
 sentences =  sent_tokenize(scene_one)
 
 # Search for the first occurrence of "coconuts" in scene_one: match
