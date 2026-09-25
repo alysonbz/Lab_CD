@@ -1,19 +1,20 @@
 # Import Counter and word_tokenize
-__
-__
+from collections import Counter
 
+from gensim.parsing.preprocessing import lower_to_unicode
+from nltk.tokenize import word_tokenize
 from src.utils import get_sample_article
 
 article = get_sample_article()
 
 # Tokenize the article: tokens
-tokens = ___(__)
+tokens = word_tokenize(article)
 
 # Convert the tokens into lowercase: lower_tokens
-lower_tokens = [__ for t in ___]
+lower_tokens = [token.lower() for token in tokens]
 
 # Create a Counter with the lowercase tokens: bow_simple
-bow_simple = __(__)
+bow_simple = Counter(lower_tokens)
 
 # Print the 10 most common tokens
-print(___)
+print(bow_simple)
