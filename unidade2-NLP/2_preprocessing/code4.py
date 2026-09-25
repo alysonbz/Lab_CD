@@ -2,6 +2,7 @@ import itertools
 from collections import defaultdict
 from gensim.corpora.dictionary import Dictionary
 from src.utils import get_pre_process_wiki_articles
+from random import randint
 
 # Create a Dictionary from the articles: dictionary
 articles = get_pre_process_wiki_articles()
@@ -26,7 +27,7 @@ for word_id, word_count in itertools.chain.from_iterable(corpus):
     total_word_count[word_id] += word_count
 
 # Choose a key between 0 and 10 and show the count with a print function.
-key = 5
+key = randint(0, 10)
 print("the key", key,"in defaultdict has count: ", total_word_count[key],'\n')
 
 # Create a sorted list from the defaultdict: sorted_word_count
