@@ -12,17 +12,18 @@ corpus = [dictionary.doc2bow(article) for article in articles]
 # Get the fifth document in corpus: doc
 doc = corpus[4]
 
-# Create a new TfidfModel using the corpus: tfidf
-tfidf = __(__)
-# Calculate the tfidf weights of doc: tfidf_weights
-tfidf_weights = __[__]
+# 1. Inicialize um TfidfModel chamado tfidf usando corpus como argumento
+tfidf = TfidfModel(corpus)
 
-# Print the first five weights
-print(___)
+# 2. Utilize doc para calcular os pesos: tfidf_weights
+tfidf_weights = tfidf[doc]
 
-# Sort the weights from highest to lowest: sorted_tfidf_weights
-sorted_tfidf_weights = ___
+# 3. Print os 5 primeiros elementos de tfidf_weights
+print(tfidf_weights[:5])
 
-# Print the top 5 weighted words
+# 4. Ordene tfidf_weights em ordem decrescente: sorted_tfidf_weights
+sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
+
+# 5. Utilizando dictionary, exiba os 5 maiores pesos junto com seus tokens
 for term_id, weight in sorted_tfidf_weights[:5]:
-    print(__,__)
+    print(dictionary.get(term_id), weight)
