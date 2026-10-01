@@ -1,4 +1,3 @@
-
 from src.utils import load_fake_news_dataset
 # Import the necessary modules
 from sklearn.model_selection import train_test_split
@@ -25,4 +24,4 @@ count_train = count_vectorizer.fit_transform(X_train.values)
 count_test = count_vectorizer.transform(X_test.values)
 
 # Print the selected features of the count_vectorizer
-print(count_vectorizer[5000:5100])
+print(count_vectorizer.get_feature_names_out()[5000:5100])
