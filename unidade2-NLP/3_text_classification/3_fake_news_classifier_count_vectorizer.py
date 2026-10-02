@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from nltk import NaiveBayesClassifier
+
 from src.utils import get_count_vectorizer_fake_news_dataset,get_tfidf_fake_newes_dataset
 
 # Import the necessary modules
@@ -11,19 +13,19 @@ count_train,count_test , count_vectorizer ,count_y_train, count_y_test = get_cou
 
 
 # Instantiate a Multinomial Naive Bayes classifier: nb_classifier
-nb_classifier = ___
+nb_classifier = MultinomialNB()
 
 # Fit the classifier to the training data
-___
+nb_classifier.fit(count_train, count_y_train)
 # Create the predicted tags: pred
-pred = ____
+pred = nb_classifier.predict(count_test)
 
 # Calculate the accuracy score: score
-score = ____
+score = metrics.accuracy_score(count_y_test, pred)
 print(score)
 
 # Calculate the confusion matrix: cm
-cm = confusion_matrix(__, ___)
+cm = confusion_matrix(count_y_test, pred)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm,  display_labels=['FAKE', 'REAL'])
 disp.plot()
 plt.show()
