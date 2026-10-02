@@ -100,8 +100,6 @@ Calina e Jefter: https://www.kaggle.com/datasets/fredericods/ptbr-sentiment-anal
 
 Kelvin e Nivaldo: https://www.kaggle.com/datasets/moesiof/portuguese-narrative-essays
 
-Madson : https://github.com/kamplus/FakeNewsSetGen/tree/master/Dataset
-
 Dayanne , Hellen, Suiany: https://www.kaggle.com/datasets/brunoluvizotto/brazilian-headlines-sentiments
 
 Elyson e Ramon: https://huggingface.co/datasets/nilc-nlp/assin
