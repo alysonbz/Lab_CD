@@ -1,10 +1,6 @@
 from pathlib import Path
 import sys
 
-root_path = Path(__file__).resolve().parents[1]
-if str(root_path) not in sys.path:
-    sys.path.append(str(root_path))
-
 from pre_process_and_analisis.analise_and_pre_process import run_pipeline
 
 def main():
