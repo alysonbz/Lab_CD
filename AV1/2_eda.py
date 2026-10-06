@@ -1,31 +1,36 @@
 """Análise exploratória do corpus (formato fastText, saída do pré-processamento).
 
-Dependências: pip install numpy pandas matplotlib scikit-learn wordcloud tqdm
+Ao final gera o dataset numérico usado por 2.1_eda_with_models.py e
+3_model_selection.py, em assets/:
+  {train,test}.bow.npz    contagens (Bag-of-Words), adequado ao Naive Bayes
+  {train,test}.tfidf.npz  TF-IDF normalizado, adequado ao SVM
+  {train,test}.labels.npy rótulos: 0 = negativo, 1 = positivo
+  vocab.txt               termo de cada coluna, um por linha
+
+Dependências: pip install numpy pandas matplotlib scipy scikit-learn wordcloud tqdm
 """
-import random
 from collections import Counter, defaultdict
+from itertools import islice
 from math import log
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.decomposition import NMF, TruncatedSVD
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.manifold import TSNE
-from sklearn.metrics import adjusted_rand_score, silhouette_score
-from sklearn.preprocessing import Normalizer
+import scipy.sparse as sp
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from tqdm import tqdm
 from wordcloud import WordCloud
 
+ASSETS = Path("./assets")
 PROCESSED = {
-    "train": "./assets/train.processed.txt",
-    "test": "./assets/test.processed.txt",
+    "train": ASSETS / "train.processed.txt",
+    "test": ASSETS / "test.processed.txt",
 }
 LABEL_NAMES = {"__label__1": "negativo", "__label__2": "positivo"}
-SAMPLE_SIZE = 100_000
-SEED = 42
+LABEL_IDS = {label: i for i, label in enumerate(LABEL_NAMES)}
+VOCAB_SIZE = 50_000  # palavras mais frequentes do treino que viram colunas
+CHUNK_SIZE = 100_000  # documentos vetorizados por vez
 OUT = Path("./outputs")
 OUT.mkdir(exist_ok=True)
 
@@ -46,23 +51,15 @@ def save(fig, filename):
 
 
 def scan(path):
-    n_docs = count_lines(path)
-    p = min(1.0, SAMPLE_SIZE / n_docs)
-    rng = random.Random(SEED)
     class_words = defaultdict(Counter)
     class_lengths = defaultdict(list)
-    sample_labels, sample_texts = [], []
-
     with open(path, encoding="utf-8") as f:
-        for line in tqdm(f, total=n_docs, desc=Path(path).name, unit="docs"):
+        for line in tqdm(f, total=count_lines(path), desc=path.name, unit="docs"):
             label, _, text = line.rstrip("\n").partition(" ")
             tokens = text.split()
             class_words[label].update(tokens)
             class_lengths[label].append(len(tokens))
-            if tokens and rng.random() < p:
-                sample_labels.append(label)
-                sample_texts.append(text)
-    return class_words, class_lengths, sample_labels, sample_texts
+    return class_words, class_lengths
 
 
 def summarize(class_words, class_lengths):
@@ -166,88 +163,76 @@ def plot_distinctive_words(class_words, total, filename, top_n=15, vocab_size=50
     save(fig, filename)
 
 
-def unsupervised(texts, labels):
-    labels = np.array([name_of(l) for l in labels])
-    rng = np.random.default_rng(SEED)
-
-    tfidf = TfidfVectorizer(max_features=20_000, min_df=5, max_df=0.5, sublinear_tf=True)
-    X = tfidf.fit_transform(texts)
-    terms = np.array(tfidf.get_feature_names_out())
-    print(f"\nMatriz TF-IDF: {X.shape[0]:,} docs x {X.shape[1]:,} termos "
-          f"(densidade {100 * X.nnz / (X.shape[0] * X.shape[1]):.3f}%)")
-
-    # Redução de dimensionalidade (LSA) usada por clusterização e visualização
-    svd = TruncatedSVD(n_components=100, random_state=SEED)
-    Z = Normalizer(copy=False).fit_transform(svd.fit_transform(X))
-    print(f"Variância explicada pelo SVD (100 comp.): {svd.explained_variance_ratio_.sum():.1%}")
-
-    # --- Aplicação 1: redução de dimensionalidade + visualização (LSA + t-SNE) ---
-    idx = rng.choice(len(Z), size=min(5000, len(Z)), replace=False)
-    emb = TSNE(n_components=2, perplexity=30, init="pca", random_state=SEED).fit_transform(Z[idx])
-    fig, ax = plt.subplots(figsize=(7, 6))
-    for lab in np.unique(labels):
-        m = labels[idx] == lab
-        ax.scatter(emb[m, 0], emb[m, 1], s=4, alpha=0.5, label=lab)
-    ax.legend(markerscale=4)
-    ax.set_title("t-SNE sobre TF-IDF + SVD (5 mil docs)")
-    save(fig, "app1_tsne.png")
-
-    # --- Aplicação 2: clusterização (MiniBatchKMeans) ---
-    ks = list(range(2, 11))
-    inertias, sils = [], []
-    for k in ks:
-        km = MiniBatchKMeans(k, random_state=SEED, n_init=3, batch_size=4096).fit(Z)
-        inertias.append(km.inertia_)
-        sils.append(silhouette_score(Z, km.labels_, sample_size=10_000, random_state=SEED))
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    axes[0].plot(ks, inertias, marker="o")
-    axes[0].set(title="Método do cotovelo", xlabel="k", ylabel="Inércia")
-    axes[1].plot(ks, sils, marker="o")
-    axes[1].set(title="Silhouette", xlabel="k", ylabel="Score")
-    save(fig, "app2_kmeans_k.png")
-
-    best_k = ks[int(np.argmax(sils))]
-    km = MiniBatchKMeans(best_k, random_state=SEED, n_init=10, batch_size=4096).fit(Z)
-    print(f"\n[K-Means] k escolhido por silhouette = {best_k}")
-    print(f"ARI vs. rótulos reais: {adjusted_rand_score(labels, km.labels_):.3f}")
-    print(pd.crosstab(km.labels_, labels, rownames=["cluster"]))
-    for c in range(best_k):
-        centroid = np.asarray(X[km.labels_ == c].mean(axis=0)).ravel()
-        print(f"  cluster {c}: " + ", ".join(terms[centroid.argsort()[::-1][:10]]))
-
-    # --- Aplicação 3: modelagem de tópicos (NMF sobre TF-IDF) ---
-    n_topics = 10
-    nmf = NMF(n_components=n_topics, init="nndsvd", random_state=SEED, max_iter=300)
-    W = nmf.fit_transform(X)
-    print(f"\n[NMF] {n_topics} tópicos")
-    for t, comp in enumerate(nmf.components_):
-        print(f"  tópico {t}: " + ", ".join(terms[comp.argsort()[::-1][:10]]))
-    dist = pd.crosstab(labels, W.argmax(axis=1), normalize="index")
-    ax = dist.T.plot(kind="bar", figsize=(8, 4))
-    ax.set(title="Tópico dominante por classe", xlabel="Tópico", ylabel="Proporção dos docs da classe")
-    save(ax.get_figure(), "app3_nmf_topicos.png")
-
-
-def main():
+def explore():
+    """Estatísticas e gráficos; devolve a frequência das palavras do treino."""
     results = {name: scan(path) for name, path in PROCESSED.items()}
 
-    for name, (cw, cl, _, _) in results.items():
+    for name, (cw, cl) in results.items():
         df, _, hapax = summarize(cw, cl)
         print(f"\n===== {name} =====")
+        print(f"Número de classes: {len(cw)}")
         print(df.round(2).to_string(index=False))
         print(f"Palavras que aparecem uma única vez (hapax): {hapax:,}")
         plot_class_distribution(cl, f"classes_{name}.png")
 
-    cw, cl, sample_labels, sample_texts = results["train"]
+    cw, cl = results["train"]
     _, total, _ = summarize(cw, cl)
     plot_length_hist(cl, "hist_tamanho_docs.png")
     plot_top_words(total, "top_palavras.png")
     plot_zipf(total, "zipf.png")
     plot_wordclouds(cw, total, "wordclouds.png")
     plot_distinctive_words(cw, total, "palavras_distintivas.png")
+    return total
 
-    unsupervised(sample_texts, sample_labels)
+
+def read_chunks(path, chunk_size=CHUNK_SIZE):
+    with open(path, encoding="utf-8") as f:
+        while chunk := list(islice(f, chunk_size)):
+            yield chunk
+
+
+def vectorize(path, counter):
+    """Bag-of-Words do arquivo inteiro, em blocos para limitar o uso de memória."""
+    blocks, labels = [], []
+    with tqdm(total=count_lines(path), desc=f"BoW {path.name}", unit="docs") as progress:
+        for lines in read_chunks(path):
+            pairs = [line.rstrip("\n").partition(" ") for line in lines]
+            labels.extend(LABEL_IDS[label] for label, _, _ in pairs)
+            blocks.append(counter.transform(text for _, _, text in pairs))
+            progress.update(len(lines))
+    return sp.vstack(blocks, format="csr"), np.array(labels, dtype=np.int8)
+
+
+def to_tfidf(bow, tfidf):
+    return sp.vstack([tfidf.transform(bow[i:i + CHUNK_SIZE]).astype(np.float32)
+                      for i in range(0, bow.shape[0], CHUNK_SIZE)], format="csr")
+
+
+def build_numeric_dataset(total):
+    """BoW e TF-IDF de treino e teste. Vocabulário e IDF vêm só do treino (sem vazamento)."""
+    vocab = [w for w, _ in total.most_common(VOCAB_SIZE)]
+    # O texto já está tokenizado: basta separar por espaço, sem descartar tokens de 1 letra
+    counter = CountVectorizer(vocabulary=vocab, tokenizer=str.split, token_pattern=None,
+                              lowercase=False, dtype=np.int32)
+    tfidf = TfidfTransformer(sublinear_tf=True)
+
+    print(f"\nDataset numérico: {len(vocab):,} termos (os mais frequentes do treino)")
+    for split, path in PROCESSED.items():
+        bow, y = vectorize(path, counter)
+        if split == "train":
+            tfidf.fit(bow)
+        sp.save_npz(ASSETS / f"{split}.bow.npz", bow, compressed=False)
+        sp.save_npz(ASSETS / f"{split}.tfidf.npz", to_tfidf(bow, tfidf), compressed=False)
+        np.save(ASSETS / f"{split}.labels.npy", y)
+        print(f"  {split}: {bow.shape[0]:,} docs x {bow.shape[1]:,} termos, "
+              f"densidade {100 * bow.nnz / (bow.shape[0] * bow.shape[1]):.3f}%")
+    (ASSETS / "vocab.txt").write_text("\n".join(vocab), encoding="utf-8")
+
+
+def main():
+    build_numeric_dataset(explore())
     print(f"\nFiguras salvas em {OUT.resolve()}")
+    print(f"Dataset numérico salvo em {ASSETS.resolve()}")
 
 
 if __name__ == "__main__":
