@@ -1,0 +1,5 @@
+representacao,real,previsto_negativo,previsto_positivo
+bow,negativo,177062,22938
+bow,positivo,19685,180315
+tfidf,negativo,178110,21890
+tfidf,positivo,20090,179910
