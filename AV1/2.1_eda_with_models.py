@@ -1,14 +1,3 @@
-"""Aprendizado não supervisionado sobre o dataset numérico gerado por 2_eda.py (rode-o antes).
-
-Numa amostra do TF-IDF de treino:
-  1. LSA + t-SNE (visualização)
-  2. K-Means (clusterização)
-  3. NMF (tópicos)
-
-Tabelas (CSV) e figuras em outputs/models/.
-
-Dependências: pip install numpy pandas matplotlib scipy scikit-learn
-"""
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -21,12 +10,12 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import adjusted_rand_score, silhouette_score
 from sklearn.preprocessing import Normalizer
 
-ASSETS = Path("./assets")
-OUT = Path("./outputs/models")
+MODEL_INPUTS = Path("./assets/model_inputs")
+OUT = Path("./outputs/eda_with_models")
 OUT.mkdir(parents=True, exist_ok=True)
-CLASS_NAMES = np.array(["negativo", "positivo"])  # índices usados em *.labels.npy
+CLASS_NAMES = np.array(["negativo", "positivo"])
 SEED = 42
-SAMPLE_SIZE = 100_000  # docs do treino usados nas três aplicações
+SAMPLE_SIZE = 100_000
 N_TOPICS = 10
 
 
@@ -37,10 +26,10 @@ def save(fig, filename):
 
 
 def load_sample():
-    y = np.load(ASSETS / "train.labels.npy")
+    y = np.load(MODEL_INPUTS / "train.labels.npy")
     idx = np.random.default_rng(SEED).choice(len(y), min(SAMPLE_SIZE, len(y)), replace=False)
-    X = sp.load_npz(ASSETS / "train.tfidf.npz")[idx]
-    terms = np.array((ASSETS / "vocab.txt").read_text(encoding="utf-8").split("\n"))
+    X = sp.load_npz(MODEL_INPUTS / "train.tfidf.npz")[idx]
+    terms = np.array((MODEL_INPUTS / "vocab.txt").read_text(encoding="utf-8").split("\n"))
     return X, CLASS_NAMES[y[idx]], terms
 
 
@@ -49,16 +38,18 @@ def top_terms(weights, terms, n=10):
 
 
 def lsa(X):
-    """Redução de dimensionalidade (LSA) usada por clusterização e visualização."""
     svd = TruncatedSVD(n_components=100, random_state=SEED)
     Z = Normalizer(copy=False).fit_transform(svd.fit_transform(X))
+    summary = pd.DataFrame([{"documentos": X.shape[0], "termos": X.shape[1],
+                             "componentes": svd.n_components,
+                             "variancia_explicada": svd.explained_variance_ratio_.sum()}])
+    summary.to_csv(OUT / "lsa.csv", index=False)
     print(f"\nAmostra TF-IDF: {X.shape[0]:,} docs x {X.shape[1]:,} termos")
     print(f"Variância explicada pelo SVD (100 comp.): {svd.explained_variance_ratio_.sum():.1%}")
     return Z
 
 
 def tsne(Z, labels):
-    """Aplicação 1: redução de dimensionalidade + visualização (LSA + t-SNE)."""
     sub = np.random.default_rng(SEED).choice(len(Z), size=min(5000, len(Z)), replace=False)
     emb = TSNE(n_components=2, perplexity=30, init="pca", random_state=SEED).fit_transform(Z[sub])
     points = pd.DataFrame({"x": emb[:, 0], "y": emb[:, 1], "classe": labels[sub]})
@@ -72,7 +63,6 @@ def tsne(Z, labels):
 
 
 def kmeans(X, Z, labels, terms):
-    """Aplicação 2: clusterização (MiniBatchKMeans), k escolhido por silhouette."""
     rows = []
     for k in range(2, 11):
         km = MiniBatchKMeans(k, random_state=SEED, n_init=3, batch_size=4096).fit(Z)
@@ -94,13 +84,16 @@ def kmeans(X, Z, labels, terms):
     clusters["top_termos"] = [top_terms(np.asarray(X[km.labels_ == c].mean(axis=0)).ravel(), terms)
                               for c in clusters.index]
     clusters.to_csv(OUT / "kmeans_clusters.csv")
+    final = pd.DataFrame([{"k": best_k, "inercia": km.inertia_,
+                           "silhouette": silhouette_score(Z, km.labels_, sample_size=10_000, random_state=SEED),
+                           "ari": adjusted_rand_score(labels, km.labels_)}])
+    final.to_csv(OUT / "kmeans_final.csv", index=False)
     print(f"\n[K-Means] k escolhido por silhouette = {best_k}")
-    print(f"ARI vs. rótulos reais: {adjusted_rand_score(labels, km.labels_):.3f}")
+    print(f"ARI vs. rótulos reais: {final.ari[0]:.3f}")
     print(clusters.to_string())
 
 
 def nmf_topics(X, labels, terms):
-    """Aplicação 3: modelagem de tópicos (NMF sobre TF-IDF)."""
     nmf = NMF(n_components=N_TOPICS, init="nndsvd", random_state=SEED, max_iter=300)
     W = nmf.fit_transform(X)
     # Proporção dos documentos de cada classe cujo tópico dominante é t

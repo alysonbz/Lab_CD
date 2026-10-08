@@ -1,0 +1,451 @@
+painel,palavra,frequencia
+Corpus completo,book,2207923
+Corpus completo,one,1398180
+Corpus completo,good,1281528
+Corpus completo,get,1216433
+Corpus completo,like,1133248
+Corpus completo,great,1100437
+Corpus completo,buy,896995
+Corpus completo,read,880698
+Corpus completo,make,834794
+Corpus completo,would,834672
+Corpus completo,use,820693
+Corpus completo,time,814023
+Corpus completo,work,760912
+Corpus completo,movie,684546
+Corpus completo,love,667109
+Corpus completo,well,646278
+Corpus completo,go,629693
+Corpus completo,dont,622440
+Corpus completo,really,573559
+Corpus completo,think,570049
+Corpus completo,find,539435
+Corpus completo,much,501507
+Corpus completo,look,499735
+Corpus completo,even,499570
+Corpus completo,first,494435
+Corpus completo,product,484561
+Corpus completo,say,448601
+Corpus completo,want,446281
+Corpus completo,year,445447
+Corpus completo,see,437313
+Corpus completo,give,436676
+Corpus completo,bad,431902
+Corpus completo,cd,429466
+Corpus completo,know,419874
+Corpus completo,story,418942
+Corpus completo,best,415141
+Corpus completo,take,414973
+Corpus completo,album,398530
+Corpus completo,come,398037
+Corpus completo,try,373760
+Corpus completo,also,372595
+Corpus completo,way,369309
+Corpus completo,new,366820
+Corpus completo,song,366807
+Corpus completo,could,364746
+Corpus completo,thing,355638
+Corpus completo,little,346643
+Corpus completo,im,343850
+Corpus completo,many,332334
+Corpus completo,back,329510
+Corpus completo,write,326002
+Corpus completo,need,324628
+Corpus completo,money,324130
+Corpus completo,recommend,322607
+Corpus completo,never,307821
+Corpus completo,music,307583
+Corpus completo,old,307378
+Corpus completo,still,300965
+Corpus completo,two,297684
+Corpus completo,purchase,297302
+Corpus completo,game,294406
+Corpus completo,sound,287862
+Corpus completo,people,282816
+Corpus completo,review,282133
+Corpus completo,play,280740
+Corpus completo,ever,280403
+Corpus completo,character,273906
+Corpus completo,didnt,273737
+Corpus completo,day,271756
+Corpus completo,watch,269817
+Corpus completo,put,268665
+Corpus completo,ive,268288
+Corpus completo,end,263230
+Corpus completo,dvd,259761
+Corpus completo,quality,258947
+Corpus completo,seem,253287
+Corpus completo,lot,247589
+Corpus completo,show,245550
+Corpus completo,keep,244962
+Corpus completo,cant,244926
+Corpus completo,life,242267
+Corpus completo,another,240438
+Corpus completo,film,239993
+Corpus completo,easy,232893
+Corpus completo,star,232682
+Corpus completo,doesnt,228185
+Corpus completo,problem,225990
+Corpus completo,fan,224381
+Corpus completo,price,223317
+Corpus completo,start,222320
+Corpus completo,enjoy,221434
+Corpus completo,every,221165
+Corpus completo,worth,218467
+Corpus completo,long,218409
+Corpus completo,author,213250
+Corpus completo,waste,211321
+Corpus completo,something,210926
+Corpus completo,set,210912
+Corpus completo,order,207586
+Corpus completo,last,207273
+Corpus completo,big,190651
+Corpus completo,hard,189952
+Corpus completo,feel,189235
+Corpus completo,part,186843
+Corpus completo,right,186793
+Corpus completo,nice,183630
+Corpus completo,excellent,183559
+Corpus completo,since,183148
+Corpus completo,must,181945
+Corpus completo,u,181280
+Corpus completo,month,180152
+Corpus completo,tell,179060
+Corpus completo,however,178502
+Corpus completo,enough,176625
+Corpus completo,amazon,174706
+Corpus completo,help,174063
+Corpus completo,real,173999
+Corpus completo,nothing,173557
+Corpus completo,hear,172544
+Corpus completo,listen,169731
+Corpus completo,anyone,169250
+Corpus completo,different,167107
+Corpus completo,without,165665
+Corpus completo,series,164794
+Corpus completo,return,163870
+Corpus completo,fun,161463
+Corpus completo,expect,161374
+Corpus completo,small,161203
+Corpus completo,though,160787
+Corpus completo,version,159374
+Corpus completo,page,154875
+Corpus completo,far,154224
+Corpus completo,item,152292
+Corpus completo,around,149467
+Corpus completo,turn,148871
+Corpus completo,pretty,147405
+Corpus completo,bit,146673
+Corpus completo,sure,146063
+Corpus completo,picture,145870
+Corpus completo,leave,144391
+Corpus completo,cover,143696
+Corpus completo,may,141615
+Corpus completo,live,141506
+Corpus completo,actually,141108
+Corpus completo,child,140888
+Corpus completo,always,139150
+Corpus completo,away,136736
+Corpus completo,high,133866
+Corpus completo,piece,132498
+Corpus completo,receive,132493
+negativo,book,1061983
+negativo,one,712695
+negativo,get,688865
+negativo,good,586699
+negativo,like,582171
+negativo,buy,562923
+negativo,would,516378
+negativo,make,440503
+negativo,time,436769
+negativo,use,432169
+negativo,work,428532
+negativo,dont,418188
+negativo,read,389846
+negativo,movie,366278
+negativo,bad,359300
+negativo,go,352904
+negativo,think,318487
+negativo,even,316650
+negativo,product,310500
+negativo,really,280199
+negativo,much,279412
+negativo,look,276178
+negativo,money,269762
+negativo,well,267820
+negativo,find,265474
+negativo,try,260963
+negativo,say,260786
+negativo,first,256454
+negativo,great,250237
+negativo,want,241551
+negativo,give,233328
+negativo,could,222854
+negativo,see,216607
+negativo,know,216544
+negativo,take,211060
+negativo,year,203770
+negativo,waste,203266
+negativo,thing,198470
+negativo,back,197579
+negativo,come,196891
+negativo,way,192399
+negativo,im,191651
+negativo,didnt,191119
+negativo,never,183271
+negativo,new,182534
+negativo,review,179995
+negativo,write,179495
+negativo,story,177280
+negativo,purchase,175581
+negativo,cd,170590
+negativo,two,170582
+negativo,love,160573
+negativo,also,159351
+negativo,many,158686
+negativo,seem,157174
+negativo,need,155773
+negativo,doesnt,155352
+negativo,quality,153444
+negativo,sound,152183
+negativo,game,150450
+negativo,little,150048
+negativo,people,149252
+negativo,old,148406
+negativo,end,148297
+negativo,character,147761
+negativo,dvd,145754
+negativo,another,143661
+negativo,return,142866
+negativo,album,142565
+negativo,song,142267
+negativo,problem,140640
+negativo,cant,137817
+negativo,ever,137003
+negativo,star,135700
+negativo,day,135320
+negativo,play,134047
+negativo,still,133900
+negativo,nothing,133401
+negativo,something,133216
+negativo,put,132304
+negativo,watch,130824
+negativo,author,130551
+negativo,order,129858
+negativo,film,126799
+negativo,month,122749
+negativo,ive,122346
+negativo,recommend,118806
+negativo,last,117255
+negativo,start,117248
+negativo,music,116935
+negativo,amazon,116903
+negativo,poor,113325
+negativo,worth,112788
+negativo,keep,112436
+negativo,lot,109656
+negativo,show,107709
+negativo,however,107343
+negativo,long,107110
+negativo,item,106240
+negativo,hard,104977
+negativo,part,103268
+negativo,big,103041
+negativo,page,101279
+negativo,expect,100563
+negativo,disappointed,100284
+negativo,tell,99122
+negativo,best,99003
+negativo,set,97755
+negativo,fan,97590
+negativo,enough,96352
+negativo,version,95385
+negativo,right,94686
+negativo,receive,94248
+negativo,break,93379
+negativo,every,92914
+negativo,real,91072
+negativo,since,90960
+negativo,pay,89679
+negativo,turn,88107
+negativo,anything,87689
+negativo,piece,87365
+negativo,price,86736
+negativo,call,86320
+negativo,feel,86284
+negativo,actually,84564
+negativo,picture,83625
+negativo,away,83292
+negativo,leave,83206
+negativo,without,82883
+negativo,instead,81711
+negativo,different,81265
+negativo,send,80837
+negativo,small,80683
+negativo,cheap,80342
+negativo,life,79572
+negativo,sure,79231
+negativo,week,79008
+negativo,hear,78862
+negativo,u,78304
+negativo,plot,77498
+negativo,cover,76861
+negativo,terrible,76293
+negativo,battery,76240
+negativo,minute,75724
+negativo,save,75261
+negativo,may,75192
+negativo,far,74894
+negativo,original,73937
+negativo,though,73749
+negativo,pretty,73032
+positivo,book,1145940
+positivo,great,850200
+positivo,good,694829
+positivo,one,685485
+positivo,like,551077
+positivo,get,527568
+positivo,love,506536
+positivo,read,490852
+positivo,make,394291
+positivo,use,388524
+positivo,well,378458
+positivo,time,377254
+positivo,buy,334072
+positivo,work,332380
+positivo,would,318294
+positivo,movie,318268
+positivo,best,316138
+positivo,really,293360
+positivo,go,276789
+positivo,find,273961
+positivo,cd,258876
+positivo,album,255965
+positivo,think,251562
+positivo,year,241677
+positivo,story,241662
+positivo,first,237981
+positivo,song,224540
+positivo,look,223557
+positivo,much,222095
+positivo,see,220706
+positivo,also,213244
+positivo,want,204730
+positivo,dont,204252
+positivo,take,203913
+positivo,recommend,203801
+positivo,give,203348
+positivo,know,203330
+positivo,come,201146
+positivo,little,196595
+positivo,music,190648
+positivo,say,187815
+positivo,new,184286
+positivo,even,182920
+positivo,easy,179695
+positivo,way,176910
+positivo,product,174061
+positivo,many,173648
+positivo,need,168855
+positivo,still,167065
+positivo,life,162695
+positivo,excellent,159971
+positivo,old,158972
+positivo,enjoy,158878
+positivo,thing,157168
+positivo,im,152199
+positivo,play,146693
+positivo,write,146507
+positivo,ive,145942
+positivo,game,143956
+positivo,ever,143400
+positivo,could,141892
+positivo,watch,138993
+positivo,lot,137933
+positivo,show,137841
+positivo,price,136581
+positivo,day,136436
+positivo,put,136361
+positivo,sound,135679
+positivo,people,133564
+positivo,keep,132526
+positivo,back,131931
+positivo,every,128251
+positivo,two,127102
+positivo,fan,126791
+positivo,character,126145
+positivo,never,124550
+positivo,must,121937
+positivo,purchase,121721
+positivo,fun,120823
+positivo,nice,119225
+positivo,end,114933
+positivo,dvd,114007
+positivo,film,113194
+positivo,set,113157
+positivo,try,112797
+positivo,long,111299
+positivo,cant,107109
+positivo,wonderful,106041
+positivo,worth,105679
+positivo,quality,105503
+positivo,start,105072
+positivo,help,103241
+positivo,favorite,103223
+positivo,u,102976
+positivo,feel,102951
+positivo,review,102138
+positivo,listen,100574
+positivo,series,99504
+positivo,anyone,99432
+positivo,perfect,97033
+positivo,star,96982
+positivo,another,96777
+positivo,seem,96113
+positivo,hear,93682
+positivo,highly,93393
+positivo,since,92188
+positivo,right,92107
+positivo,last,90018
+positivo,always,89545
+positivo,bit,89132
+positivo,big,87610
+positivo,though,87038
+positivo,live,87030
+positivo,world,86008
+positivo,different,85842
+positivo,problem,85350
+positivo,hard,84975
+positivo,part,83575
+positivo,real,82927
+positivo,without,82782
+positivo,author,82699
+positivo,didnt,82618
+positivo,small,80520
+positivo,enough,80273
+positivo,tell,79938
+positivo,far,79330
+positivo,friend,78562
+positivo,child,78524
+positivo,order,77728
+positivo,something,77710
+positivo,around,77038
+positivo,track,76499
+positivo,band,74729
+positivo,pretty,74373
+positivo,learn,74365
+positivo,kid,74099
+positivo,doesnt,72833
+positivo,bad,72602
+positivo,family,71852
+positivo,however,71159
+positivo,beautiful,69712
+positivo,awesome,69309
+positivo,classic,68067
+positivo,yet,67517
+positivo,quite,66865
+positivo,cover,66835
+positivo,sure,66832
+positivo,job,66608
+positivo,may,66423
+positivo,rock,65664

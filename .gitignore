@@ -3,3 +3,8 @@
 uv.lock
 .python-version
 pyproject.toml
+
+# AV1: arquivos com mais de 50 MB
+AV1/assets/*.ft.txt
+AV1/assets/*.processed.txt
+AV1/assets/model_inputs/*.npz

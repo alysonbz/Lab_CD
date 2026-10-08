@@ -14,7 +14,7 @@ As respostas devem ser apresentadas no próprio repositório, em um arquivo, con
 A dupla deve aplicar e justificar as etapas de pré-processamento adotadas, considerando técnicas como:
 
 * Normalização
-* Remoção de ruído 
+* Remoção de ruído
 * Tokenização
 * Lematização ou stemming
 * Tratamento de desbalanceamento, quando necessário
@@ -46,7 +46,7 @@ Cada dupla deve escolher **ao menos dois** modelos diferentes, por exemplo:
 **Implementações:**
 
 * Descrição clara dos modelos e justificativa da escolha
-* Representação das features (Bag-of-Words, TF-IDF )
+* Representação das features (Bag-of-Words, TF-IDF)
 * Código de treinamento e validação
 
 ---
