@@ -10,7 +10,7 @@
 
 **Dataset:** Amazon Reviews for Sentiment Analysis
 
-**Equipe:** Kevin Marcos e Ricardinho Borogodó
+**Equipe:** Kevin, Marcos e Ricardo
 
 <br>
 
