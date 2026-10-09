@@ -71,21 +71,21 @@ def run_pipeline(filepath: str = 'buscape.csv'):
     print("[INFO] GERANDO NUVENS DE PALAVRAS (SEM STEMMING)")
     print("="*60)
 
-    # 4. Nuvens de Palavras (Original, EDA, SMOTE)
+    # 4. Nuvens de Palavras (Original, EDA, SMOTE) usando o método correto `generate_wordclouds`
     if 'review_text_cleaned' in df_proc.columns:
-        print("[INFO] Gerando Nuvem de Palavras: Dataset Original...")
+        print("[INFO] Gerando Nuvens de Palavras: Dataset Original...")
         analyzer_proc = CorpusExploratoryAnalyzer(df_proc, text_column='review_text_cleaned', label_column=label_col)
-        analyzer_proc.generate_wordcloud(df_proc['review_text_cleaned'])
+        analyzer_proc.generate_wordclouds(df_proc, text_column='review_text_cleaned', label_column=label_col)
 
     if 'review_text_cleaned' in df_eda.columns:
-        print("[INFO] Gerando Nuvem de Palavras: Dataset Aumentado EDA...")
+        print("[INFO] Gerando Nuvens de Palavras: Dataset Aumentado EDA...")
         analyzer_eda = CorpusExploratoryAnalyzer(df_eda, text_column='review_text_cleaned', label_column=label_col)
-        analyzer_eda.generate_wordcloud(df_eda['review_text_cleaned'])
+        analyzer_eda.generate_wordclouds(df_eda, text_column='review_text_cleaned', label_column=label_col)
 
     if 'review_text_cleaned' in df_smote.columns:
-        print("[INFO] Gerando Nuvem de Palavras: Dataset Aumentado SMOTE...")
+        print("[INFO] Gerando Nuvens de Palavras: Dataset Aumentado SMOTE...")
         analyzer_smote = CorpusExploratoryAnalyzer(df_smote, text_column='review_text_cleaned', label_column=label_col)
-        analyzer_smote.generate_wordcloud(df_smote['review_text_cleaned'])
+        analyzer_smote.generate_wordclouds(df_smote, text_column='review_text_cleaned', label_column=label_col)
     else:
         tfidf_cols = [c for c in df_smote.columns if c.startswith('tfidf_')]
         if tfidf_cols:
@@ -100,7 +100,7 @@ def run_pipeline(filepath: str = 'buscape.csv'):
                 smote_series = pd.Series([smote_text])
                 
                 analyzer_smote = CorpusExploratoryAnalyzer(df_smote, text_column=label_col, label_column=label_col)
-                analyzer_smote.generate_wordcloud(smote_series)
+                analyzer_smote.generate_wordclouds(pd.DataFrame({'review_text_cleaned': smote_series}), text_column='review_text_cleaned', label_column=label_col)
 
     print(
         '\n[SUCESSO] Pipeline de Análise, Pré-processamento e Nuvens de Palavras concluído.'

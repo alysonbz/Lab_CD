@@ -20,19 +20,7 @@ class ModelEvaluator:
     def evaluate_models(self, experiments_results: dict) -> pd.DataFrame:
         """
         Calcula as métricas e gera relatórios e matrizes de confusão para
-        múltiplos experimentos (ex: SMOTE vs EDA e CountVectorizer vs TF-IDF).
-        
-        Esperado em `experiments_results`:
-        {
-            "SMOTE": {
-                "y_test": array,
-                "predictions": {
-                    "CountVectorizer": {"ModeloA": y_pred, ...},
-                    "TF-IDF": {"ModeloA": y_pred, ...}
-                }
-            },
-            "EDA": { ... }
-        }
+        múltiplas combinações de experimentos, vetorizações e modelos.
         """
         metrics = []
 
@@ -92,6 +80,7 @@ class ModelEvaluator:
                         )
                     )
 
+                    # Plota e salva a matriz de confusão para esta combinação específica
                     self._save_confusion_matrix(
                         y_test,
                         y_pred,
@@ -116,7 +105,7 @@ class ModelEvaluator:
             )
 
             print("\n" + "="*70)
-            print("=== COMPARAÇÃO CONSOLIDADA DOS MODELOS (SMOTE vs EDA | Word Vec vs TF-IDF) ===")
+            print("=== COMPARAÇÃO CONSOLIDADA DOS MODELOS ===")
             print("="*70)
             print(metrics_df.to_string(index=False))
 
@@ -132,7 +121,7 @@ class ModelEvaluator:
         vectorizer_name: str,
         technique_name: str
     ):
-        """Gera e salva a matriz de confusão identificando a técnica e representação."""
+        """Gera e salva a matriz de confusão isolada identificando a técnica, modelo e vetorizador."""
 
         figure, axis = plt.subplots(figsize=(8, 6))
 
@@ -141,11 +130,14 @@ class ModelEvaluator:
             y_pred,
             ax=axis,
             xticks_rotation="vertical",
-            colorbar=False
+            colorbar=False,
+            cmap="Blues"
         )
 
         axis.set_title(
-            f"Matriz de Confusão - {model_name}\n({technique_name} | {vectorizer_name})"
+            f"Matriz de Confusão - {model_name}\n({technique_name} | {vectorizer_name})",
+            fontsize=12,
+            fontweight="bold"
         )
 
         figure.tight_layout()

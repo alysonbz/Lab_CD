@@ -228,6 +228,17 @@ class TextPreprocessor:
         output_dir = os.path.join("pre_process_and_analisis", "data")
         os.makedirs(output_dir, exist_ok=True)
 
+        processed_filename = os.path.join(output_dir, f"{output_prefix}_preprocessados.csv")
+        smote_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_smote.csv")
+        eda_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_eda.csv")
+
+        if os.path.exists(processed_filename) and os.path.exists(smote_filename) and os.path.exists(eda_filename):
+            print(f"[CACHE] Datasets finais já encontrados em '{output_dir}'. Pulando pré-processamento e carregando dos arquivos CSV...")
+            df_processed = pd.read_csv(processed_filename)
+            df_smote = pd.read_csv(smote_filename)
+            df_eda = pd.read_csv(eda_filename)
+            return df_processed, df_smote, df_eda
+
         initial_len = len(df_original)
         df_original = df_original.dropna(subset=[target_column, text_column]).copy()
         dropped_len = initial_len - len(df_original)
@@ -239,7 +250,6 @@ class TextPreprocessor:
         for col in processed_df_cols.columns:
             df_processed[col] = processed_df_cols[col]
             
-        processed_filename = os.path.join(output_dir, f"{output_prefix}_preprocessados.csv")
         df_processed.to_csv(processed_filename, index=False)
         print(f"[SUCESSO] Dados pré-processados exportados para: {processed_filename}")
         
@@ -274,6 +284,9 @@ class TextPreprocessor:
             df_eda = df_processed.copy()
             df_eda['tipo_dado'] = 'original'
             
+            df_smote.to_csv(smote_filename, index=False)
+            df_eda.to_csv(eda_filename, index=False)
+            
             return df_processed, df_smote, df_eda
 
         minority_class = classes[np.argmin(counts)]
@@ -281,7 +294,7 @@ class TextPreprocessor:
         
         print(f"[ALERTA] Desbalanceamento detectado! (Razão {imbalance_ratio:.2f} < limite {imbalance_threshold}).")
         print(f"   - Classe minoritária: {minority_class}")
-        print(f"   - Serão geradas {n_needed} novas amostras para equilibrar as classes.\n")
+        print(f"   - Serão geradas {n_needed} novas amostras para equilibrar las classes.\n")
         
         X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 1), max_features=1500)
         X_res, y_res = handle_imbalance_smote(X_vec, y, target_class=minority_class, n_synthetic=n_needed)
@@ -298,7 +311,6 @@ class TextPreprocessor:
         num_originals = len(df_processed)
         df_smote['tipo_dado'] = ['original' if i < num_originals else 'gerado_smote' for i in range(len(df_smote))]
         
-        smote_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_smote.csv")
         df_smote.to_csv(smote_filename, index=False)
         print(f"[SUCESSO] Dataset SMOTE exportado para: {smote_filename}")
 
@@ -311,7 +323,6 @@ class TextPreprocessor:
             num_aug=num_aug_per_sample
         )
         
-        eda_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_eda.csv")
         df_eda.to_csv(eda_filename, index=False)
         print(f"[SUCESSO] Dataset EDA exportado para: {eda_filename}")
 

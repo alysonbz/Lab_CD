@@ -53,7 +53,15 @@ class CorpusExploratoryAnalyzer:
         return datasets
 
     def get_basic_metrics(self, df: pd.DataFrame = None, text_column: str = None, label_column: str = None, save_csv: bool = True) -> dict:
-        """Calcula métricas descritivas do corpus e exporta os relatórios para CSV."""
+        metrics_csv_path = self.output_dir / 'corpus_metrics.csv'
+        class_csv_path = self.output_dir / 'class_distribution.csv'
+
+        if save_csv and metrics_csv_path.exists() and class_csv_path.exists():
+            print(f"[CACHE] Relatórios de métricas já existem em '{self.output_dir}'. Pulando cálculo.")
+            metrics_summary = pd.read_csv(metrics_csv_path)
+            df_class_dist = pd.read_csv(class_csv_path)
+            return {'metrics_summary': metrics_summary, 'class_distribution': df_class_dist}
+
         target_df = df if df is not None else self.df
         t_col = text_column or self.text_column
         l_col = label_column or self.label_column
@@ -120,15 +128,17 @@ class CorpusExploratoryAnalyzer:
         print('=' * 50)
 
         if save_csv:
-            metrics_csv_path = self.output_dir / 'corpus_metrics.csv'
-            class_csv_path = self.output_dir / 'class_distribution.csv'
             metrics_summary.to_csv(metrics_csv_path, index=False, encoding='utf-8-sig')
             df_class_dist.to_csv(class_csv_path, index=False, encoding='utf-8-sig')
 
         return {'metrics_summary': metrics_summary, 'class_distribution': df_class_dist}
 
     def plot_class_distribution(self, save_path: str = None):
-        """Gera e salva o gráfico de barras da distribuição de classes do corpus."""
+        save_path = Path(save_path) if save_path else self.output_dir / 'class_distribution.png'
+        if save_path.exists():
+            print(f"[CACHE] Gráfico '{save_path.name}' já existe. Pulando geração.")
+            return
+
         if self.df is None or self.df.empty:
             return
 
@@ -146,14 +156,17 @@ class CorpusExploratoryAnalyzer:
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         plt.tight_layout()
 
-        save_path = Path(save_path) if save_path else self.output_dir / 'class_distribution.png'
         save_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(save_path, dpi=300)
         print(f'[INFO] Gráfico de distribuição de classes salvo em: {save_path}')
         plt.close()
 
     def plot_datasets_class_comparison(self, datasets: dict, label_column: str = 'polarity', save_path: str = None):
-        """Gera um gráfico comparativo de barras com o número de amostras por classe em cada dataset."""
+        save_path = Path(save_path) if save_path else self.output_dir / 'comparison_class_distribution.png'
+        if save_path.exists():
+            print(f"[CACHE] Gráfico comparativo '{save_path.name}' já existe. Pulando geração.")
+            return
+
         data = []
         for name, df_item in datasets.items():
             if label_column in df_item.columns:
@@ -180,14 +193,17 @@ class CorpusExploratoryAnalyzer:
                             textcoords='offset points')
 
         plt.tight_layout()
-        save_path = Path(save_path) if save_path else self.output_dir / 'comparison_class_distribution.png'
         plt.savefig(save_path, dpi=300)
         print(f'[INFO] Gráfico comparativo de classes salvo em: {save_path}')
         plt.close()
 
     def plot_top_words_per_class(self, datasets: dict, text_column: str = 'review_text_cleaned', label_column: str = 'polarity', top_n: int = 10):
-        """Gera gráficos ordenados das palavras/features mais frequentes para cada classe em cada dataset."""
         for ds_name, df_item in datasets.items():
+            save_path = self.output_dir / f'top_words_{ds_name.lower()}.png'
+            if save_path.exists():
+                print(f"[CACHE] Gráfico de palavras mais frequentes para '{ds_name}' já existe. Pulando.")
+                continue
+
             if label_column not in df_item.columns:
                 continue
 
@@ -216,39 +232,93 @@ class CorpusExploratoryAnalyzer:
 
                 if words:
                     df_words = pd.DataFrame({'Palavra': words, 'Frequência': freqs})
-                    sns.barplot(data=df_words, x='Frequência', y='Palavra', ax=axes[idx], palette='crest')
+                    sns.barplot(data=df_words, x='Frequência', y='Palavra', hue='Palavra', ax=axes[idx], palette='crest', legend=False)
                     axes[idx].set_title(f'Classe: {cls}', fontsize=12, fontweight='bold')
                     axes[idx].set_xlabel('Frequência / Peso Sumarizado')
                     axes[idx].set_ylabel('')
                     axes[idx].grid(axis='x', linestyle='--', alpha=0.7)
 
             plt.tight_layout()
-            save_path = self.output_dir / f'top_words_{ds_name.lower()}.png'
             plt.savefig(save_path, dpi=300)
             print(f'[INFO] Gráfico de palavras mais frequentes ({ds_name}) salvo em: {save_path}')
             plt.close(fig)
 
-    def generate_wordcloud(self, corpus_series: pd.Series, save_path: str = None):
-        """Gera e salva a nuvem de palavras com os termos de maior frequência de forma limpa."""
-        texts = corpus_series.dropna().astype(str).tolist()
-        cleaned_texts = [" ".join(set(t.split())) for t in texts]
-        all_text = ' '.join(cleaned_texts)
+    def generate_wordclouds(self, df: pd.DataFrame = None, text_column: str = None, label_column: str = None):
+        """
+        Gera e salva nuvem de palavras para o dataset completo e para cada classe separadamente,
+        removendo stop words de negação e termos estruturais apenas para estas visualizações.
+        """
+        target_df = df if df is not None else self.df
+        t_col = text_column or self.text_column
+        l_col = label_column or self.label_column
 
-        wordcloud = WordCloud(
-            width=800, height=400, background_color='white', max_words=100, colormap='viridis'
-        ).generate(all_text)
+        if target_df is None or target_df.empty or t_col not in target_df.columns:
+            return
 
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        plt.title('Nuvem de Palavras do Corpus Pré-processado', fontsize=14, fontweight='bold')
-        plt.tight_layout()
+        negation_and_structural = {'nao', 'nao_gostei', 'gostei', 'nunca', 'jamais', 'sem', 'pouco'}
 
-        save_path = Path(save_path) if save_path else self.output_dir / 'wordcloud.png'
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(save_path, dpi=300)
-        print(f'[INFO] Nuvem de palavras salva em: {save_path}')
-        plt.close()
+        # 1. WordCloud para o Dataset Completo
+        overall_path = self.output_dir / 'wordcloud_completo.png'
+        if not overall_path.exists():
+            texts = target_df[t_col].dropna().astype(str).tolist()
+            filtered_texts = []
+            for t in texts:
+                words = [w for w in t.split() if w not in negation_and_structural]
+                if words:
+                    filtered_texts.append(" ".join(words))
+
+            all_text = ' '.join(filtered_texts)
+            if all_text.strip():
+                wordcloud = WordCloud(
+                    width=800, height=400, background_color='white', max_words=100, colormap='viridis'
+                ).generate(all_text)
+
+                plt.figure(figsize=(10, 5))
+                plt.imshow(wordcloud, interpolation='bilinear')
+                plt.axis('off')
+                plt.title('Nuvem de Palavras - Corpus Completo', fontsize=14, fontweight='bold')
+                plt.tight_layout()
+                plt.savefig(overall_path, dpi=300)
+                print(f'[INFO] Nuvem de palavras do corpus completo salva em: {overall_path}')
+                plt.close()
+        else:
+            print(f"[CACHE] Nuvem de palavras do corpus completo já existe. Pulando.")
+
+        # 2. WordClouds por Classe
+        if l_col in target_df.columns:
+            classes = sorted(target_df[l_col].unique())
+            for cls in classes:
+                class_path = self.output_dir / f'wordcloud_classe_{cls}.png'
+                if class_path.exists():
+                    print(f"[CACHE] Nuvem de palavras para a Classe {cls} já existe. Pulando.")
+                    continue
+
+                df_cls = target_df[target_df[l_col] == cls]
+                texts_cls = df_cls[t_col].dropna().astype(str).tolist()
+                filtered_cls_texts = []
+                for t in texts_cls:
+                    words = [w for w in t.split() if w not in negation_and_structural]
+                    if words:
+                        filtered_cls_texts.append(" ".join(words))
+
+                class_text = ' '.join(filtered_cls_texts)
+                if class_text.strip():
+                    wordcloud_cls = WordCloud(
+                        width=800, height=400, background_color='white', max_words=100, colormap='plasma'
+                    ).generate(class_text)
+
+                    plt.figure(figsize=(10, 5))
+                    plt.imshow(wordcloud_cls, interpolation='bilinear')
+                    plt.axis('off')
+                    plt.title(f'Nuvem de Palavras - Classe {cls}', fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    plt.savefig(class_path, dpi=300)
+                    print(f'[INFO] Nuvem de palavras da Classe {cls} salva em: {class_path}')
+                    plt.close()
+
+    # Alias mantido por compatibilidade com chamadas antigas no singular
+    def generate_wordcloud(self, df: pd.DataFrame = None, text_column: str = None, label_column: str = None):
+        return self.generate_wordclouds(df=df, text_column=text_column, label_column=label_column)
 
     def apply_unsupervised_analysis(
         self,
@@ -258,11 +328,21 @@ class CorpusExploratoryAnalyzer:
         top_n_words: int = 6,
         save_csv: bool = True
     ) -> pd.DataFrame:
-        """
-        Aplica K-Means e LDA no corpus, rotula os documentos com base nas palavras mais
-        representativas de cada grupo e gera gráficos explicativos e relatórios CSV.
-        """
         target_df = (df if df is not None else self.df).copy()
+        csv_path = self.output_dir / 'unsupervised_clustering_results.csv'
+        summary_csv_path = self.output_dir / 'unsupervised_summary.csv'
+        plot_path = self.output_dir / 'unsupervised_clusters_distribution.png'
+        pca_path = self.output_dir / 'kmeans_pca_scatter.png'
+
+        if save_csv and csv_path.exists() and summary_csv_path.exists() and plot_path.exists() and pca_path.exists():
+            print(f"[CACHE] Resultados de agrupamento não supervisionado já existem em '{self.output_dir}'. Pulando execução.")
+            if target_df is not None and 'kmeans_cluster' not in target_df.columns:
+                try:
+                    return pd.read_csv(csv_path)
+                except Exception:
+                    pass
+            return target_df
+
         t_col = text_column or self.text_column
 
         if target_df is None or t_col not in target_df.columns:
@@ -275,7 +355,6 @@ class CorpusExploratoryAnalyzer:
         print(f"[INFO] EXECUTANDO AGRUPAMENTO NÃO SUPERVISIONADO (K-Means & LDA - {n_clusters} Grupos)")
         print("="*60)
 
-        # 1. Vetorização TF-IDF para K-Means e CountVectorizer para LDA
         tfidf_vec = TfidfVectorizer(max_features=1000)
         X_tfidf = tfidf_vec.fit_transform(text_series)
         tfidf_features = np.array(tfidf_vec.get_feature_names_out())
@@ -284,7 +363,6 @@ class CorpusExploratoryAnalyzer:
         X_count = count_vec.fit_transform(text_series)
         count_features = np.array(count_vec.get_feature_names_out())
 
-        # 2. K-Means Clustering
         kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
         target_df['kmeans_cluster'] = kmeans.fit_predict(X_tfidf)
 
@@ -296,7 +374,6 @@ class CorpusExploratoryAnalyzer:
 
         target_df['kmeans_label'] = target_df['kmeans_cluster'].map(kmeans_labels)
 
-        # 3. LDA (Latent Dirichlet Allocation)
         lda = LatentDirichletAllocation(n_components=n_clusters, random_state=42)
         lda_probs = lda.fit_transform(X_count)
         target_df['lda_topic'] = lda_probs.argmax(axis=1)
@@ -309,26 +386,23 @@ class CorpusExploratoryAnalyzer:
 
         target_df['lda_label'] = target_df['lda_topic'].map(lda_labels)
 
-        # 4. Visualização 1: Distribuição dos Grupos K-Means e Tópicos LDA
         fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-        sns.countplot(data=target_df, y='kmeans_label', ax=axes[0], palette='viridis')
+        sns.countplot(data=target_df, y='kmeans_label', hue='kmeans_label', ax=axes[0], palette='viridis', legend=False)
         axes[0].set_title('K-Means: Distribuição de Avaliações por Grupo', fontsize=12, fontweight='bold')
         axes[0].set_xlabel('Quantidade de Avaliações')
         axes[0].set_ylabel('')
 
-        sns.countplot(data=target_df, y='lda_label', ax=axes[1], palette='magma')
+        sns.countplot(data=target_df, y='lda_label', hue='lda_label', ax=axes[1], palette='magma', legend=False)
         axes[1].set_title('LDA: Distribuição de Avaliações por Tópico', fontsize=12, fontweight='bold')
         axes[1].set_xlabel('Quantidade de Avaliações')
         axes[1].set_ylabel('')
 
         plt.tight_layout()
-        plot_path = self.output_dir / 'unsupervised_clusters_distribution.png'
         plt.savefig(plot_path, dpi=300)
         print(f"[INFO] Gráfico de distribuição de clusters salvo em: {plot_path}")
         plt.close(fig)
 
-        # 5. Visualização 2: Projeção 2D dos Clusters K-Means via PCA
         pca = PCA(n_components=2, random_state=42)
         coords_2d = pca.fit_transform(X_tfidf.toarray())
         pca_df = pd.DataFrame({
@@ -341,14 +415,11 @@ class CorpusExploratoryAnalyzer:
         sns.scatterplot(data=pca_df, x='PCA1', y='PCA2', hue='Grupo', palette='tab10', alpha=0.5, s=25)
         plt.title('Projeção 2D dos Clusters K-Means (PCA)', fontsize=14, fontweight='bold')
         plt.tight_layout()
-        pca_path = self.output_dir / 'kmeans_pca_scatter.png'
         plt.savefig(pca_path, dpi=300)
         print(f"[INFO] Projeção PCA de clusters salva em: {pca_path}")
         plt.close()
 
-        # 6. Exportação de Relatórios em CSV
         if save_csv:
-            csv_path = self.output_dir / 'unsupervised_clustering_results.csv'
             target_df.to_csv(csv_path, index=False, encoding='utf-8-sig')
             print(f"[SUCESSO] Dataset rotulado não supervisionado exportado para: {csv_path}")
 
@@ -377,7 +448,8 @@ if __name__ == '__main__':
 
         if "Original" in datasets:
             analyzer.get_basic_metrics(df=datasets["Original"], text_column="review_text_cleaned", label_column="polarity")
-            analyzer.generate_wordcloud(datasets["Original"]["review_text_cleaned"])
+            
+            analyzer.generate_wordclouds(datasets["Original"], text_column="review_text_cleaned", label_column="polarity")
 
             analyzer.apply_unsupervised_analysis(
                 df=datasets["Original"],
