@@ -2,3 +2,4 @@ venv/
 buscape.csv
 __pycache__/
 pre_process_and_analisis/data
+pre_process_and_analisis/cache_checkpoint

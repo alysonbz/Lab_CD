@@ -7,12 +7,13 @@ from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from scipy.sparse import issparse
 
-from text_cleaner import worker_clean_chunk
-from spell_checker import ensure_pt_dictionary, worker_symspell_chunk, worker_symspell_refine_chunk
-from stemmer import worker_stem_chunk
-from eda_augmenter import worker_eda_chunk
-from smote_handler import handle_imbalance_smote
+from pre_process_and_analisis.text_cleaner import worker_clean_chunk
+from pre_process_and_analisis.spell_checker import ensure_pt_dictionary, worker_symspell_chunk, worker_symspell_refine_chunk
+from pre_process_and_analisis.lemmatizer import worker_lemmatize_chunk
+from pre_process_and_analisis.eda_augmenter import worker_eda_chunk
+from pre_process_and_analisis.smote_handler import handle_imbalance_smote
 
 
 class TextPreprocessor:
@@ -43,15 +44,13 @@ class TextPreprocessor:
         self.vectorizer_tfidf = None
 
     def _ensure_nltk_downloads(self):
-        resources = ['punkt', 'stopwords', 'rslp', 'punkt_tab']
+        resources = ['punkt', 'stopwords', 'punkt_tab']
         for resource in resources:
             try:
                 if resource in ['punkt', 'punkt_tab']:
                     nltk.data.find(f'tokenizers/{resource}')
                 elif resource == 'stopwords':
                     nltk.data.find(f'corpora/{resource}')
-                elif resource == 'rslp':
-                    nltk.data.find(f'stemmers/{resource}')
             except LookupError:
                 nltk.download(resource, quiet=True)
 
@@ -108,6 +107,19 @@ class TextPreprocessor:
                     with open(chunk_file, "wb") as f:
                         pickle.dump(res, f)
                         
+                    try:
+                        pkl_files = [
+                            os.path.join(self.cache_dir, f) 
+                            for f in os.listdir(self.cache_dir) 
+                            if f.endswith('.pkl')
+                        ]
+                        if len(pkl_files) > 2:
+                            pkl_files.sort(key=os.path.getmtime)
+                            for old_file in pkl_files[:-2]:
+                                os.remove(old_file)
+                    except Exception:
+                        pass
+                        
                     pbar.update(len(chunk_list))
 
         return [item for sublist in results for item in sublist]
@@ -152,13 +164,13 @@ class TextPreprocessor:
                     extra_arg=rare_words
                 )
             
-        # Step 3: Tokenização e Stemming
-        print("[INFO] Executando tokenização e stemming em paralelo...")
+        # Step 3: Tokenização e Lematização
+        print("[INFO] Executando tokenização e lematização em paralelo...")
         processed = self._parallel_execute(
-            worker_stem_chunk, 
+            worker_lemmatize_chunk, 
             cleaned, 
-            desc=f"Tokenização & Stemming ({task_prefix}p3)" if task_prefix else "Tokenização & Stemming", 
-            task_id=f"{task_prefix}step3_stemming", 
+            desc=f"Tokenização & Lematização ({task_prefix}p3)" if task_prefix else "Tokenização & Lematização", 
+            task_id=f"{task_prefix}step3_lemmatization", 
             extra_arg=self.language
         )
 
@@ -237,6 +249,7 @@ class TextPreprocessor:
         
         print("\n" + "="*50)
         print(f"[INFO] ANÁLISE DE BALANCEAMENTO DA COLUNA '{target_column}'")
+        print("="*50)
         for cls, count in zip(classes, counts):
             percentage = (count / total_samples) * 100
             print(f"   - Classe {cls}: {count} amostras ({percentage:.1f}%)")
@@ -270,11 +283,16 @@ class TextPreprocessor:
         print(f"   - Classe minoritária: {minority_class}")
         print(f"   - Serão geradas {n_needed} novas amostras para equilibrar as classes.\n")
         
-        X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 2))
-        X_res, y_res = handle_imbalance_smote(X_vec.toarray(), y, target_class=minority_class, n_synthetic=n_needed)
+        X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 1), max_features=1500)
+        X_res, y_res = handle_imbalance_smote(X_vec, y, target_class=minority_class, n_synthetic=n_needed)
         
+        if issparse(X_res):
+            X_res_dense = X_res.toarray()
+        else:
+            X_res_dense = X_res
+            
         feature_names = [f"tfidf_{feat}" for feat in self.vectorizer_tfidf.get_feature_names_out()]
-        df_smote = pd.DataFrame(X_res, columns=feature_names)
+        df_smote = pd.DataFrame(X_res_dense, columns=feature_names)
         df_smote[target_column] = y_res
         
         num_originals = len(df_processed)

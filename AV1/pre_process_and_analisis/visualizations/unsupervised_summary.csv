@@ -1,0 +1,5 @@
+﻿ID_Grupo,KMeans_TopPalavras,KMeans_Qtd_Docs,LDA_TopPalavras,LDA_Qtd_Docs
+0,"Cluster 0: [de, que, um, nao, com, para]",37644,"Tópico 0: [nao, de, gostei, que, produto, muito]",20149
+1,"Cluster 1: [bom, muito, gostei, nao, produto, nada]",4920,"Tópico 1: [gostei, nao, muito, bom, produto, de]",25220
+2,"Cluster 2: [excelente, otimo, produto, custo, beneficio, qualidade]",8499,"Tópico 2: [que, de, um, produto, gostei, muito]",9355
+3,"Cluster 3: [gostei, nao, muito, produto, de, nada]",22563,"Tópico 3: [de, que, com, nao, para, um]",18902

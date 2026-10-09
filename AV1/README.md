@@ -1,37 +1,83 @@
 # NLP Buscapé - Classificação e Análise de Sentimentos
 
-Este projeto é um pipeline completo de Processamento de Linguagem Natural (NLP) em Python 3.11, desenvolvido sob os princípios de **Programação Orientada a Objetos (POO)** e boas práticas de arquitetura de software.
-
-O projeto abrange as 5 etapas da atividade de NLP sobre o dataset de avaliações do Buscapé:
-
-1. **Pré-processamento e Limpeza Textual** *(Implementado)*
-2. **Análise Exploratória do Corpus** *(Implementado)*
-3. **Modelos de Classificação de Texto** *(Esboço / Em expansão)*
-4. **Avaliação Quantitativa dos Resultados** *(Esboço / Em expansão)*
-5. **Relatório e Conclusões** *(Esboço / Em expansão)*
+Pipeline completo de Processamento de Linguagem Natural (NLP) em Python 3.11, desenvolvido sob os princípios de **Programação Orientada a Objetos (POO)** e boas práticas de arquitetura modular, aplicado ao dataset de avaliações de e-commerce do Buscapé.
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📁 Estrutura do Repositório
 
 ```text
 AV1/
-├── pre_process_and_analisis/      # PARTES 1 e 2 (Implementadas)
-│   ├── text_preprocessor.py       # Limpeza, stemming, TF-IDF / CountVectorizer e SMOTE
-│   ├── corpus_analyzer.py         # EDA, estatísticas, gráficos e nuvem de palavras
-│   └── analise_and_preprocess.py  # Orquestrador das Partes 1 e 2
+├── pre_process_and_analisis/        # PARTES 1 e 2: EDA, Pré-processamento e Aumento de Dados
+│   ├── cache_checkpoint/            # Cache incremental para multiprocessamento (.pkl)
+│   ├── data/                        # Datasets gerados (Preprocessados, SMOTE e EDA)
+│   ├── visualizations/              # Gráficos gerados (EDA, Nuvens de Palavras e Clusters)
+│   ├── utils/                       # Dicionários customizados e mapas de abreviações
+│   ├── text_preprocessor.py         # Orquestrador principal do pré-processamento paralelo
+│   ├── text_cleaner.py              # Limpeza e normalização de strings
+│   ├── spell_checker.py             # Correção ortográfica em dois passes com SymSpell + Expansão de Gírias
+│   ├── lemmatizer.py                # Tokenização, remoção de stopwords e lematização via spaCy
+│   ├── smote_handler.py             # Balanceamento sintético otimizado anti-estouro de RAM
+│   ├── eda_augmenter.py             # Aumento de dados por Easy Data Augmentation (EDA)
+│   ├── corpus_analyzer.py           # Análise descritiva, estatísticas, K-Means e LDA
+│   └── analise_and_preprocess.py    # Orquestrador central da Parte 1 e 2
 │
-├── classification/                # PARTE 3 (Esboço / A Adicionar)
-│   ├── text_classifier.py         # Encapsulamento dos modelos (Naive Bayes, SVM, Logistic Regression, MLP)
-│   └── model_trainer.py           # Pipeline de treino, validação e cross-validation
+├── classification/                  # PARTE 3: Modelagem e Aprendizado
+│   ├── text_classifier.py           # Encapsulamento dos 4 modelos base (Naive Bayes, SVM, LogReg, MLP)
+│   └── model_trainer.py             # Treinamento por época (Loss/Acurácia) e curvas de aprendizado
 │
-├── evaluation/                    # PARTE 4 (Esboço / A Adicionar)
-│   └── model_evaluator.py         # Cálculo de métricas (Accuracy, F1, Precision, Recall) e matrizes de confusão
+├── evaluation/                      # PARTE 4: Avaliação Consolidada
+│   ├── model_evaluator.py           # Métricas quantitativas (F1-score, Acurácia, Precision, Recall)
+│   └── results/                     # Gráficos de curvas de aprendizado e relatórios de avaliação
 │
-├── main.py                        # Entrypoint central do pipeline completo
-├── requirements.txt               # Dependências do projeto (Python 3.11)
-└── README.md                      # Documentação do projeto
+├── main.py                          # Entrypoint central orquestrando o pipeline completo
+├── buscape.csv                      # Dataset original brutó (Necessário na raiz)
+├── requirements.txt                 # Dependências do projeto (Python 3.11)
+└── README.md                        # Documentação do projeto
+
 ```
+
+---
+
+## 🔄 Fluxo de Execução do Pipeline
+
+O pipeline opera de forma integrada e sequencial quando o comando principal é acionado:
+
+### 1. Ingestão e Análise Exploratória Inicial (EDA)
+
+* O `main.py` carrega o arquivo `buscape.csv` e valida a presença das colunas de texto e rótulo.
+* O `CorpusExploratoryAnalyzer` calcula as métricas descritivas do corpus bruto (tamanho total, média de palavras/caracteres, distribuição de classes) e exporta os relatórios para a pasta de visualizações.
+
+### 2. Pré-processamento Paralelizado e Limpeza Textual
+
+Gerenciado pelo `TextPreprocessor` utilizando múltiplos núcleos de CPU com checkpoints incrementais em cache:
+
+* **Limpeza (`text_cleaner.py`):** Remoção de URLs, menções, caracteres especiais e normalização de espaços.
+* **Correção Ortográfica (`spell_checker.py`):** Utiliza o SymSpell em dois passes. No **Passe 1**, converte automaticamente abreviações e gírias da internet e e-commerce (ex: *pq -> por que*, *obg -> obrigado*, *vc -> voce*) mapeadas no `ABBREVIATIONS_MAP` e aplica correção de distância editável com preservação de termos críticos do domínio. O **Passe 2** realiza um refinamento focado em palavras raras.
+* **Lematização (`lemmatizer.py`):** Executado via `spaCy` (`pt_core_news_sm`), extrai o lema real de cada palavra e remove *stopwords* irrelevantes, preservando termos de negação essenciais (*não, nunca, jamais*).
+
+### 3. Aumento de Dados Otimizado (SMOTE & EDA)
+
+Para mitigar o forte desbalanceamento de classes do corpus original:
+
+* **SMOTE (`smote_handler.py`):** Converte o texto pré-processado em matrizes esparsas via TF-IDF restrito e aplica sobreamostragem sintética de forma controlada, com travas de segurança contra estouro de memória RAM e fallback robusto.
+* **EDA (`eda_augmenter.py`):** Aplica técnicas de substituição e inserção sinônima baseada em regras no corpus da classe minoritária.
+
+### 4. Análise Não Supervisionada (K-Means & LDA)
+
+* O corpus limpo passa por vetorização TF-IDF e CountVectorizer para o agrupamento não supervisionado.
+* O K-Means e a Latent Dirichlet Allocation (LDA) agrupam os documentos em tópicos representativos, rotulam os grupos com base nas palavras mais frequentes, geram gráficos de distribuição e exportam os resultados mapeados em CSV.
+
+### 5. Treinamento Comparativo e Curvas de Aprendizado
+
+Gerenciado pelo `ModelTrainer` utilizando os 4 classificadores do projeto (`Naive Bayes`, `SVM`, `Regressão Logística` e `MLP`):
+
+* Os modelos iterativos (`MLP` e `Regressão Logística` / `SGD`) são treinados época por época utilizando estratégias incrementais (`warm_start`), calculando e plotando a evolução da **Loss** e da **Acurácia** (treino vs teste) ao longo das épocas.
+* Os modelos não iterativos (`Naive Bayes` e `SVM`) geram curvas de aprendizado baseadas na variação do tamanho de sub-amostras do dataset.
+
+### 6. Avaliação Consolidada
+
+* O `ModelEvaluator` consolida as predições de todos os experimentos (SMOTE vs EDA) gerando relatórios quantitativos definitivos (Acurácia, F1-Score, Precision, Recall) e elegendo o melhor modelo global.
 
 ---
 
@@ -39,63 +85,39 @@ AV1/
 
 ### 1. Criar e Ativar o Ambiente Virtual (`venv`)
 
-Para garantir o uso do **Python 3.11**, utilize o comando apropriado para o seu sistema operacional:
+* **Windows** (via Python Launcher `py`):
+```cmd
+py -3.11 -m venv venv
+venv\Scripts\activate
 
-* **Windows** (usando o Python Launcher `py`):
-  ```cmd
-  py -3.11 -m venv venv
-  venv\Scripts\activate
-  ```
+```
 
-* **Linux**:
-  ```bash
-  python3.11 -m venv venv
-  source venv/bin/activate
-  ```
 
-* **macOS** (via Homebrew ou instalador oficial):
-  ```bash
-  python3.11 -m venv venv
-  source venv/bin/activate
-  ```
+* **Linux / macOS**:
+```bash
+python3.11 -m venv venv
+source venv/bin/activate
+
+```
+
+
 
 ### 2. Instalar Dependências
+
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
+python -m spacy download pt_core_news_sm
+
 ```
 
 ### 3. Posicionar o Dataset
-Adicione o ficheiro `buscape.csv` baixado do Kaggle na raiz do projeto (`AV1/buscape.csv`).
 
-> ⚠️ **Nota:** A presença do ficheiro `buscape.csv` na raiz é obrigatória. Se não for encontrado, a aplicação lança um erro (`FileNotFoundError`) e interrompe a execução.
+Adicione o ficheiro do dataset na raiz do projeto: `AV1/buscape.csv`.
 
-### 4. Executar o Pipeline
+### 4. Executar o Pipeline Completo
+
 ```bash
 python main.py
+
 ```
-
----
-
-## 🛠️ Esboço da Adição das Próximas Partes
-
-As novas etapas foram arquitetadas para serem integradas de forma modular sem alterar o código existente nas Partes 1 e 2:
-
-### 🔹 Parte 3: Construção dos Modelos (`classification/`)
-* **`text_classifier.py`**: Classe responsável por inicializar e configurar os classificadores (ex.: `MultinomialNB`, `LogisticRegression`, `SVC`, `MLPClassifier`).
-* **`model_trainer.py`**: Classe responsável por dividir os dados (treino/teste), treinar os modelos comparando **CountVectorizer** vs **TF-IDF**, e aplicar validação cruzada.
-
-### 🔹 Parte 4: Avaliação Quantitativa (`evaluation/`)
-* **`model_evaluator.py`**: Classe responsável por gerar tabelas comparativas com métricas de desempenho (Acurácia, Precision, Recall, F1-Score) e plotar as matrizes de confusão.
-
-### 🔹 Parte 5: Conclusões e Relatório
-* Apresentação das respostas reflexivas sobre limitações, dificuldades encontradas, propostas de melhoria e aplicações no mundo real.
-
----
-
-## 🤝 Como Contribuir e Adicionar Novas Partes
-
-1. Crie o módulo correspondente na pasta indicada (ex.: `classification/text_classifier.py`).
-2. Siga os princípios de POO (encapsulamento e responsabilidade única).
-3. Importe e chame os novos módulos no `main.py` após o término da execução do `run_pipeline()`.
-4. Abra um Pull Request com a nova funcionalidade implementada.
