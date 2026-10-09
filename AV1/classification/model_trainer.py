@@ -95,4 +95,3 @@ class ModelTrainer:
                 results["models"][vectorizer_name][model_name] = model
 
         return results
-```
