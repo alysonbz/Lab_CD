@@ -18,6 +18,7 @@ class ModelTrainer:
         labels = labels.reset_index(drop=True)
         texts = texts.reset_index(drop=True)
 
+        # Separação dos dados em treinamento e teste
         X_train, X_test, y_train, y_test = train_test_split(
             texts,
             labels,
@@ -26,12 +27,11 @@ class ModelTrainer:
             stratify=labels
         )
 
+        # Representações textuais utilizadas
         vectorizers = {
             "CountVectorizer": CountVectorizer(max_features=5000),
             "TF-IDF": TfidfVectorizer(max_features=5000)
         }
-
-        models = self.classifier.get_models()
 
         results = {
             "y_test": y_test,
@@ -39,13 +39,15 @@ class ModelTrainer:
             "models": {}
         }
 
+        # Treinamento para cada representação textual
         for vectorizer_name, vectorizer in vectorizers.items():
             print(f"\n=== Representação: {vectorizer_name} ===")
 
+            # Transforma os textos em representações numéricas
             X_train_vectorized = vectorizer.fit_transform(X_train)
             X_test_vectorized = vectorizer.transform(X_test)
 
-            # O balanceamento é aplicado somente aos dados de treinamento.
+            # O balanceamento é aplicado somente aos dados de treinamento
             class_counts = y_train.value_counts()
 
             if len(class_counts) > 1 and class_counts.min() >= 2:
@@ -69,13 +71,20 @@ class ModelTrainer:
                 X_train_balanced = X_train_vectorized
                 y_train_balanced = y_train
 
+            # Guarda os resultados desta representação
             results["predictions"][vectorizer_name] = {}
             results["models"][vectorizer_name] = {}
+
+            # Cria novas instâncias dos modelos para cada representação
+            models = self.classifier.get_models()
 
             for model_name, model in models.items():
                 print(f"Treinando modelo: {model_name}")
 
-                model.fit(X_train_balanced, y_train_balanced)
+                model.fit(
+                    X_train_balanced,
+                    y_train_balanced
+                )
 
                 predictions = model.predict(X_test_vectorized)
 
@@ -85,6 +94,5 @@ class ModelTrainer:
 
                 results["models"][vectorizer_name][model_name] = model
 
-        results["y_test"] = y_test
-
         return results
+```
