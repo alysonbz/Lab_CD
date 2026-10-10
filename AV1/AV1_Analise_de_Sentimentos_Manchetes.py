@@ -642,7 +642,7 @@ X_count = count_vectorizer.fit_transform(
 print("Dimensões da matriz CountVectorizer:", X_count.shape)
 print("Quantidade de termos:", len(count_vectorizer.get_feature_names_out()))
 
-# Método do cotovelo para definir o k
+# Metodo do cotovelo para definir o k
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
