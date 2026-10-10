@@ -20,7 +20,7 @@ def load_dataset(filepath: str = 'buscape.csv') -> pd.DataFrame:
 
 
 def run_pipeline(filepath: str = 'buscape.csv'):
-    """Executa o pipeline completo da Parte 1 e Parte 2, gerando análises e nuvens de palavras para os datasets."""
+    """Executa o pipeline completo integrando SMOTE, EDA e Back-Translation local."""
     df = load_dataset(filepath)
 
     text_col = 'review_text' if 'review_text' in df.columns else df.columns[0]
@@ -43,7 +43,7 @@ def run_pipeline(filepath: str = 'buscape.csv'):
     analyzer.get_basic_metrics(save_csv=True)
     analyzer.plot_class_distribution()
 
-    # 2. Execução do Pré-processamento e Aumento de Dados
+    # 2. Execução do Pré-processamento e Aumento de Dados (Incluindo Back-Translation)
     preprocessor = TextPreprocessor(
         language='portuguese',
         enable_spell_check=True,
@@ -51,7 +51,7 @@ def run_pipeline(filepath: str = 'buscape.csv'):
         cache_dir='pre_process_and_analisis/cache_checkpoint'
     )
 
-    df_proc, df_smote, df_eda = preprocessor.export_pipeline_results(
+    df_proc, df_smote, df_eda, df_translation = preprocessor.export_pipeline_results(
         df_original=df,
         text_column=text_col,
         target_column=label_col,
@@ -71,7 +71,7 @@ def run_pipeline(filepath: str = 'buscape.csv'):
     print("[INFO] GERANDO NUVENS DE PALAVRAS (SEM STEMMING)")
     print("="*60)
 
-    # 4. Nuvens de Palavras (Original, EDA, SMOTE) usando o método correto `generate_wordclouds`
+    # 4. Nuvens de Palavras (Original, EDA, SMOTE, Back-Translation)
     if 'review_text_cleaned' in df_proc.columns:
         print("[INFO] Gerando Nuvens de Palavras: Dataset Original...")
         analyzer_proc = CorpusExploratoryAnalyzer(df_proc, text_column='review_text_cleaned', label_column=label_col)
@@ -81,6 +81,11 @@ def run_pipeline(filepath: str = 'buscape.csv'):
         print("[INFO] Gerando Nuvens de Palavras: Dataset Aumentado EDA...")
         analyzer_eda = CorpusExploratoryAnalyzer(df_eda, text_column='review_text_cleaned', label_column=label_col)
         analyzer_eda.generate_wordclouds(df_eda, text_column='review_text_cleaned', label_column=label_col)
+
+    if df_translation is not None and 'review_text_cleaned' in df_translation.columns:
+        print("[INFO] Gerando Nuvens de Palavras: Dataset Aumentado por Tradução...")
+        analyzer_trans = CorpusExploratoryAnalyzer(df_translation, text_column='review_text_cleaned', label_column=label_col)
+        analyzer_trans.generate_wordclouds(df_translation, text_column='review_text_cleaned', label_column=label_col)
 
     if 'review_text_cleaned' in df_smote.columns:
         print("[INFO] Gerando Nuvens de Palavras: Dataset Aumentado SMOTE...")
@@ -105,7 +110,7 @@ def run_pipeline(filepath: str = 'buscape.csv'):
     print(
         '\n[SUCESSO] Pipeline de Análise, Pré-processamento e Nuvens de Palavras concluído.'
     )
-    return df_proc, df_smote, df_eda
+    return df_proc, df_smote, df_eda, df_translation
 
 
 if __name__ == '__main__':

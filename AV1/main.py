@@ -11,16 +11,16 @@ def main():
     
     print("=== INICIANDO PIPELINE DO PROJETO DE NLP (BUSCAPÉ) ===")
     
-    # 1. Análise Exploratória, Pré-processamento, K-Means/LDA e Aumento de Dados (SMOTE & EDA)
-    df_proc, df_smote, df_eda = run_pipeline(DATASET_PATH)
+    # 1. Análise Exploratória, Pré-processamento, K-Means/LDA e Aumento de Dados (SMOTE, EDA & Back-Translation)
+    df_proc, df_smote, df_eda, df_translation = run_pipeline(DATASET_PATH)
     
     print("\n=== PRÉ-PROCESSAMENTO E AUMENTO DE DADOS CONCLUÍDOS COM SUCESSO ===")
 
-    # 2. Treinamento dos Modelos e Geração das Curvas de Aprendizado (SMOTE vs EDA)
+    # 2. Treinamento dos Modelos e Geração das Curvas de Aprendizado (SMOTE vs EDA vs Tradução)
     trainer = ModelTrainer(random_state=42, test_size=0.2, output_dir="evaluation/results")
     experiments_results = {}
 
-    print("\n--- [EXPERIMENTO 1/2] TREINANDO COM DADOS AUMENTADOS VIA SMOTE ---")
+    print("\n--- [EXPERIMENTO 1/3] TREINANDO COM DADOS AUMENTADOS VIA SMOTE ---")
     experiments_results["SMOTE"] = trainer.train_models(
         df=df_smote,
         target_column='polarity',
@@ -29,9 +29,18 @@ def main():
         epochs=30
     )
 
-    print("\n--- [EXPERIMENTO 2/2] TREINANDO COM DADOS AUMENTADOS VIA EDA ---")
+    print("\n--- [EXPERIMENTO 2/3] TREINANDO COM DADOS AUMENTADOS VIA EDA ---")
     experiments_results["EDA"] = trainer.train_models(
         df=df_eda,
+        target_column='polarity',
+        tipo_dado_column='tipo_dado',
+        text_column='review_text_processed',
+        epochs=30
+    )
+
+    print("\n--- [EXPERIMENTO 3/3] TREINANDO COM DADOS AUMENTADOS VIA TRADUÇÃO ---")
+    experiments_results["Tradução"] = trainer.train_models(
+        df=df_translation,
         target_column='polarity',
         tipo_dado_column='tipo_dado',
         text_column='review_text_processed',

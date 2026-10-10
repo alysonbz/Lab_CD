@@ -2,6 +2,8 @@ import os
 import spacy
 import nltk
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 from pre_process_and_analisis.spell_checker import get_pt_dictionary_path
 
 try:
@@ -10,10 +12,20 @@ except Exception:
     os.system("python -m spacy download pt_core_news_sm")
     nlp = spacy.load("pt_core_news_sm", disable=["ner", "parser"])
 
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords', quiet=True)
+# Garante o download de todos os recursos necessários do NLTK
+for resource in ['punkt_tab', 'wordnet', 'omw-1.4', 'averaged_perceptron_tagger_eng', 'stopwords']:
+    try:
+        if resource == 'stopwords':
+            nltk.data.find('corpora/stopwords')
+        elif 'punkt' in resource:
+            nltk.data.find(f'tokenizers/{resource}')
+        else:
+            nltk.data.find(f'corpora/{resource}')
+    except LookupError:
+        nltk.download(resource, quiet=True)
+
+# Inicializa o lematizador do NLTK
+lemmatizer = WordNetLemmatizer()
 
 # Cache global por processo para o dicionário e o mapa de infinitivo O(1)
 _VALID_WORDS_CACHE = None
@@ -53,11 +65,8 @@ def _load_dictionary_caches():
                         word = parts[0].lower()
                         valid_words.add(word)
                         
-                        # Heurística inteligente baseada no dicionário gigante: 
-                        # Identifica infinitivos (-ar, -er, -ir) e mapeia variações comuns se existirem na base
                         if word.endswith(('ar', 'er', 'ir')) and len(word) > 4:
                             stem = word[:-2]
-                            # Mapeia gerúndios, particípios e pretéritos comuns para o infinitivo encontrado no dicionário
                             for suffix_variant, target_ending in [('ou', 'ar'), ('ava', 'ar'), ('am', 'ar'), ('ando', 'ar'),
                                                                 ('eu', 'er'), ('ia', 'er'), ('endo', 'er'),
                                                                 ('iu', 'ir'), ('indo', 'ir')]:
@@ -74,7 +83,7 @@ def _load_dictionary_caches():
 
 
 def worker_lemmatize_chunk(args) -> list:
-    """Worker paralelo otimizado utilizando o dicionário gigante de 300k+ palavras e mapeamento O(1) para infinitivo."""
+    """Worker paralelo otimizado utilizando tokenização NLTK e dicionário gigante O(1)."""
     if isinstance(args, tuple):
         chunk = args[0]
         language = args[1] if len(args) > 1 else 'portuguese'
@@ -98,35 +107,32 @@ def worker_lemmatize_chunk(args) -> list:
             lemmatized_list.append("")
             continue
         
-        doc = nlp(text)
+        # Tokenização robusta com NLTK
+        tokens = word_tokenize(text)
         lemmas = []
         
-        for token in doc:
-            if not token.is_alpha:
-                continue
-                
-            token_lower = token.text.lower()
-            lemma_lower = token.lemma_.lower()
-            
-            if lemma_lower in effective_stop_words and token_lower not in valid_words:
+        for token in tokens:
+            token_lower = token.lower()
+            if not token_lower.isalpha():
                 continue
                 
             if len(token_lower) <= 1:
                 continue
+                
+            if token_lower in effective_stop_words and token_lower not in valid_words:
+                continue
 
-            # 1. Consulta o mapa otimizado de infinitivo extraído do dicionário gigante O(1)
+            # 1. Consulta o mapa otimizado de infinitivo extraído do dicionário O(1)
             if token_lower in inf_mapping:
                 final_word = inf_mapping[token_lower]
-            elif lemma_lower in inf_mapping:
-                final_word = inf_mapping[lemma_lower]
-            # 2. Valida se o lema do spaCy existe no dicionário gigante sem corrupções
-            elif lemma_lower in valid_words and not lemma_lower.endswith(('eirer', 'podeiro', 'recomer')):
-                final_word = lemma_lower
-            # 3. Fallback para a palavra original se presente no dicionário
+            # 2. Valida se a palavra exata existe no dicionário gigante
             elif token_lower in valid_words:
                 final_word = token_lower
             else:
-                final_word = lemma_lower
+                # 3. Fallback aplicando o lemmatizador do NLTK
+                final_word = lemmatizer.lemmatize(token_lower)
+                if final_word not in valid_words and final_word not in inf_mapping.values():
+                    final_word = token_lower
 
             lemmas.append(final_word)
 

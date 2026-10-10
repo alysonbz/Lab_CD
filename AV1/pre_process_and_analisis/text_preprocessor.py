@@ -14,6 +14,7 @@ from pre_process_and_analisis.spell_checker import ensure_pt_dictionary, worker_
 from pre_process_and_analisis.lemmatizer import worker_lemmatize_chunk
 from pre_process_and_analisis.eda_augmenter import worker_eda_chunk
 from pre_process_and_analisis.smote_handler import handle_imbalance_smote
+from pre_process_and_analisis.back_translation_augmenter import LocalBackTranslationAugmenter
 
 
 class TextPreprocessor:
@@ -59,7 +60,7 @@ class TextPreprocessor:
         if total == 0:
             return []
             
-        n_chunks = min(total, self.n_jobs * 8)
+        n_chunks = min(total, self.n_jobs * 2)
         chunks = np.array_split(data_list, n_chunks)
         results = [None] * len(chunks)
         
@@ -138,7 +139,6 @@ class TextPreprocessor:
         
         # Step 2: Correção Ortográfica (Dois Passes)
         if self.enable_spell_check:
-            # Passe 1
             print("[INFO] Passe 1: Executando correção ortográfica SymSpell em paralelo...")
             cleaned = self._parallel_execute(
                 worker_symspell_chunk, 
@@ -147,13 +147,11 @@ class TextPreprocessor:
                 task_id=f"{task_prefix}step2_spell_p1"
             )
             
-            # Cálculo da frequência de palavras
             print("[INFO] Calculando frequência de palavras no corpus...")
             word_counts = Counter(word for text in cleaned for word in text.split())
             rare_words = {word for word, count in word_counts.items() if count == 1}
             print(f"[INFO] Identificadas {len(rare_words)} palavras raras (frequência = 1) para reanálise.")
             
-            # Passe 2: Refinamento
             if len(rare_words) > 0:
                 print("[INFO] Passe 2: Executando refinamento estendido para palavras de frequência = 1...")
                 cleaned = self._parallel_execute(
@@ -187,7 +185,8 @@ class TextPreprocessor:
     def generate_eda_dataset(self, df: pd.DataFrame, text_column: str, target_column: str, target_class: int, num_aug: int) -> pd.DataFrame:
         print("[INFO] Gerando aumento de dados textuais via EDA em paralelo...")
         df_eda = df.copy()
-        df_eda['tipo_dado'] = 'original'
+        if 'tipo_dado' not in df_eda.columns:
+            df_eda['tipo_dado'] = 'original'
         
         minority_rows = df_eda[df_eda[target_column] == target_class]
         texts_to_aug = minority_rows[text_column].astype(str).tolist()
@@ -205,7 +204,7 @@ class TextPreprocessor:
             for aug_text in aug_texts:
                 new_row = row.copy()
                 new_row[text_column] = aug_text
-                new_row['tipo_dado'] = 'gerado_eda'
+                new_row['tipo_dado'] = 'gerado_eda'  # Identificação explícita do dado sintético
                 augmented_rows.append(new_row)
                 
         df_aug = pd.DataFrame(augmented_rows)
@@ -231,13 +230,15 @@ class TextPreprocessor:
         processed_filename = os.path.join(output_dir, f"{output_prefix}_preprocessados.csv")
         smote_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_smote.csv")
         eda_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_eda.csv")
+        translation_filename = os.path.join(output_dir, f"{output_prefix}_aumentados_traducao.csv")
 
-        if os.path.exists(processed_filename) and os.path.exists(smote_filename) and os.path.exists(eda_filename):
+        if os.path.exists(processed_filename) and os.path.exists(smote_filename) and os.path.exists(eda_filename) and os.path.exists(translation_filename):
             print(f"[CACHE] Datasets finais já encontrados em '{output_dir}'. Pulando pré-processamento e carregando dos arquivos CSV...")
             df_processed = pd.read_csv(processed_filename)
             df_smote = pd.read_csv(smote_filename)
             df_eda = pd.read_csv(eda_filename)
-            return df_processed, df_smote, df_eda
+            df_translation = pd.read_csv(translation_filename)
+            return df_processed, df_smote, df_eda, df_translation
 
         initial_len = len(df_original)
         df_original = df_original.dropna(subset=[target_column, text_column]).copy()
@@ -246,6 +247,8 @@ class TextPreprocessor:
             print(f"[AVISO] Foram removidas {dropped_len} linhas que continham valores nulos (NaN).")
 
         df_processed = df_original.copy()
+        df_processed['tipo_dado'] = 'original'
+        
         processed_df_cols = self.preprocess_corpus(df_processed[text_column])
         for col in processed_df_cols.columns:
             df_processed[col] = processed_df_cols[col]
@@ -283,19 +286,24 @@ class TextPreprocessor:
             
             df_eda = df_processed.copy()
             df_eda['tipo_dado'] = 'original'
+
+            df_translation = df_processed.copy()
+            df_translation['tipo_dado'] = 'original'
             
             df_smote.to_csv(smote_filename, index=False)
             df_eda.to_csv(eda_filename, index=False)
+            df_translation.to_csv(translation_filename, index=False)
             
-            return df_processed, df_smote, df_eda
+            return df_processed, df_smote, df_eda, df_translation
 
         minority_class = classes[np.argmin(counts)]
         n_needed = max_count - min_count
         
         print(f"[ALERTA] Desbalanceamento detectado! (Razão {imbalance_ratio:.2f} < limite {imbalance_threshold}).")
         print(f"   - Classe minoritária: {minority_class}")
-        print(f"   - Serão geradas {n_needed} novas amostras para equilibrar las classes.\n")
+        print(f"   - Serão geradas {n_needed} novas amostras para equilibrar as classes.\n")
         
+        # 1. Geração SMOTE
         X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 1), max_features=1500)
         X_res, y_res = handle_imbalance_smote(X_vec, y, target_class=minority_class, n_synthetic=n_needed)
         
@@ -310,10 +318,10 @@ class TextPreprocessor:
         
         num_originals = len(df_processed)
         df_smote['tipo_dado'] = ['original' if i < num_originals else 'gerado_smote' for i in range(len(df_smote))]
-        
         df_smote.to_csv(smote_filename, index=False)
         print(f"[SUCESSO] Dataset SMOTE exportado para: {smote_filename}")
 
+        # 2. Geração EDA
         num_aug_per_sample = int(np.ceil(n_needed / min_count))
         df_eda = self.generate_eda_dataset(
             df_original, 
@@ -322,11 +330,31 @@ class TextPreprocessor:
             target_class=minority_class, 
             num_aug=num_aug_per_sample
         )
-        
         df_eda.to_csv(eda_filename, index=False)
         print(f"[SUCESSO] Dataset EDA exportado para: {eda_filename}")
 
-        return df_processed, df_smote, df_eda
+        # 3. Geração por Back-Translation Local (Hugging Face)
+        from pre_process_and_analisis.back_translation_augmenter import LocalBackTranslationAugmenter
+        translator = LocalBackTranslationAugmenter()
+        
+        df_translation = translator.augment_minority_class(
+            df=df_original,
+            text_column=text_column,
+            target_column=target_column,
+            target_class=minority_class,
+            n_needed=n_needed
+        )
+        
+        # Pré-processa o dataset gerado por tradução para extrair colunas limpas e lematizadas
+        print("[INFO] Executando pré-processamento no dataset gerado por Back-Translation...")
+        processed_trans_cols = self.preprocess_corpus(df_translation[text_column], task_prefix="trans_")
+        for col in processed_trans_cols.columns:
+            df_translation[col] = processed_trans_cols[col]
+
+        df_translation.to_csv(translation_filename, index=False)
+        print(f"[SUCESSO] Dataset Back-Translation exportado para: {translation_filename}")
+
+        return df_processed, df_smote, df_eda, df_translation
 
 
 if __name__ == "__main__":
@@ -339,7 +367,7 @@ if __name__ == "__main__":
         cache_dir='pre_process_and_analisis/cache_checkpoint'
     )
 
-    df_proc, df_smote, df_eda = preprocessor.export_pipeline_results(
+    df_proc, df_smote, df_eda, df_translation = preprocessor.export_pipeline_results(
         df_original=df, 
         text_column='review_text', 
         target_column='polarity',

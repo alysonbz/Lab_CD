@@ -1,5 +1,0 @@
-﻿ID_Grupo,KMeans_TopPalavras,KMeans_Qtd_Docs,LDA_TopPalavras,LDA_Qtd_Docs
-0,"Cluster 0: [custo, beneficio, gostei, nao, excelente, bom]",4966,"Tópico 0: [gostei, nao, produto, otimo, bom, excelente]",11950
-1,"Cluster 1: [gostei, nao, produto, boa, bom, facil]",52720,"Tópico 1: [gostei, nao, imagem, qualidade, tv, boa]",15584
-2,"Cluster 2: [bom, gostei, nao, nada, produto, jogo]",6434,"Tópico 2: [nao, gostei, aparelho, problema, pois, sem]",15886
-3,"Cluster 3: [produto, otimo, excelente, gostei, qualidade, nao]",9506,"Tópico 3: [gostei, nao, produto, bom, facil, nada]",30206
