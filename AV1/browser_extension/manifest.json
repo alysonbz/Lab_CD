@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Peacemaker-Reborn",
+  "version": "1.0.0",
+  "description": "Interceptor de mensagens negativas em formulários e redes sociais com base em IA.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.google.com/*",
+    "*://*.youtube.com/*",
+    "*://*.twitter.com/*",
+    "*://*.x.com/*",
+    "*://*.facebook.com/*",
+    "*://*.instagram.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.google.com/*",
+        "*://*.youtube.com/*",
+        "*://*.twitter.com/*",
+        "*://*.x.com/*",
+        "*://*.facebook.com/*",
+        "*://*.instagram.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+        "resources": [
+            "assets/peacemaker_closed.png",
+            "assets/peacemaker_open.png",
+            "assets/peacemaker_logo.png",
+            "assets/peacemaker_logo_horizontal.png"
+        ],
+        "matches": ["*://*.google.com/*", "*://*.youtube.com/*", "*://*.twitter.com/*", "*://*.x.com/*", "*://*.facebook.com/*", "*://*.instagram.com/*"]
+    }
+    ]
+}

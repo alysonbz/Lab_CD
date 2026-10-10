@@ -2,14 +2,14 @@ import os
 import torch
 from transformers import MarianTokenizer, MarianMTModel
 import pandas as pd
+from tqdm import tqdm
 from dotenv import load_dotenv
 
-# Carrega as variáveis do arquivo .env
 load_dotenv()
 
 class LocalBackTranslationAugmenter:
-    """Realiza aumento de dados por tradução reversa utilizando modelos MarianMT locais,
-    lendo o token de autenticação de forma segura a partir de um arquivo .env.
+    """Realiza aumento de dados por tradução reversa utilizando o modelo unificado MarianMT 
+    (Helsinki-NLP/opus-mt-tc-big-en-pt) para ida e volta, com barra de progresso e token do .env.
     """
     def __init__(self, device: str = None):
         if device is not None:
@@ -22,44 +22,46 @@ class LocalBackTranslationAugmenter:
         if not self.hf_token:
             print("[AVISO] HUGGINGFACE_API_KEY não encontrada no arquivo .env. Tentando acesso público...")
 
-        print(f"[INFO] Carregando modelos de tradução local no dispositivo: {self.device}")
+        print(f"[INFO] Carregando modelo unificado de tradução local no dispositivo: {self.device}")
         
-        # Identificadores oficiais dos modelos Marian para o par Português <-> Inglês
-        self.pt_to_en_model_name = "Helsinki-NLP/opus-mt-pt-en"
-        self.en_to_pt_model_name = "Helsinki-NLP/opus-mt-en-pt"
+        # Modelo oficial unificado do Tatoeba Challenge para o par EN-PT
+        self.model_name = "Helsinki-NLP/opus-mt-tc-big-en-pt"
         
-        print("[INFO] Carregando tradutor PT -> EN...")
-        self.tokenizer_pt_en = MarianTokenizer.from_pretrained(self.pt_to_en_model_name, token=self.hf_token)
-        self.model_pt_en = MarianMTModel.from_pretrained(self.pt_to_en_model_name, token=self.hf_token).to(self.device)
-        
-        print("[INFO] Carregando tradutor EN -> PT...")
-        self.tokenizer_en_pt = MarianTokenizer.from_pretrained(self.en_to_pt_model_name, token=self.hf_token)
-        self.model_en_pt = MarianMTModel.from_pretrained(self.en_to_pt_model_name, token=self.hf_token).to(self.device)
+        print("[INFO] Carregando tokenizer e modelo MarianMT...")
+        self.tokenizer = MarianTokenizer.from_pretrained(self.model_name, token=self.hf_token)
+        self.model = MarianMTModel.from_pretrained(self.model_name, token=self.hf_token).to(self.device)
 
-    def translate(self, texts: list, model, tokenizer, batch_size: int = 16) -> list:
+    def translate(self, texts: list, target_lang: str, batch_size: int = 16, desc: str = "Traduzindo") -> list:
+        """Traduz os textos injetando o prefixo do idioma de destino com barra de progresso (tqdm)."""
         translated_texts = []
-        for i in range(0, len(texts), batch_size):
-            batch = texts[i:i + batch_size]
-            encoded = tokenizer(batch, return_tensors="pt", padding=True, truncation=True, max_length=512).to(self.device)
-            
-            with torch.no_grad():
-                translated_tokens = model.generate(**encoded, max_length=512, num_beams=4)
+        prefixed_batch = [f"{target_lang} {t}" for t in texts]
+        
+        total_batches = (len(prefixed_batch) + batch_size - 1) // batch_size
+        
+        with tqdm(total=total_batches, desc=desc, unit="lote") as pbar:
+            for i in range(0, len(prefixed_batch), batch_size):
+                batch = prefixed_batch[i:i + batch_size]
+                encoded = self.tokenizer(batch, return_tensors="pt", padding=True, truncation=True, max_length=512).to(self.device)
                 
-            decoded = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
-            translated_texts.extend(decoded)
-            
+                with torch.no_grad():
+                    translated_tokens = self.model.generate(**encoded, max_length=512, num_beams=4)
+                    
+                decoded = self.tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
+                translated_texts.extend(decoded)
+                pbar.update(1)
+                
         return translated_texts
 
     def back_translate(self, texts: list, batch_size: int = 16) -> list:
-        """Executa a ida (PT -> EN) e a volta (EN -> PT)."""
+        """Executa a ida (PT -> EN) e a volta (EN -> PT) com barras de progresso dedicadas."""
         if not texts:
             return []
             
-        print("[INFO] Traduzindo de Português para Inglês...")
-        english_batch = self.translate(texts, self.model_pt_en, self.tokenizer_pt_en, batch_size)
+        print("[INFO] Traduzindo de Português para Inglês (Ida)...")
+        english_batch = self.translate(texts, target_lang=">>en<<", batch_size=batch_size, desc="PT -> EN")
         
-        print("[INFO] Traduzindo de volta para Português (Gerando variações)...")
-        back_translated_batch = self.translate(english_batch, self.model_en_pt, self.tokenizer_en_pt, batch_size)
+        print("[INFO] Traduzindo de volta para Português (Volta/Variação)...")
+        back_translated_batch = self.translate(english_batch, target_lang=">>por<<", batch_size=batch_size, desc="EN -> PT")
         
         return back_translated_batch
 
