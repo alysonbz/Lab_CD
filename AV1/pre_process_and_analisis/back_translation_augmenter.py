@@ -1,69 +1,62 @@
 import os
-import torch
-from transformers import MarianTokenizer, MarianMTModel
+import pickle
+import time
+from random import uniform
 import pandas as pd
 from tqdm import tqdm
-from dotenv import load_dotenv
-
-load_dotenv()
+from deep_translator import GoogleTranslator
 
 class LocalBackTranslationAugmenter:
-    """Realiza aumento de dados por tradução reversa utilizando o modelo unificado MarianMT 
-    (Helsinki-NLP/opus-mt-tc-big-en-pt) para ida e volta, com barra de progresso e token do .env.
+    """Realiza aumento de dados por tradução reversa utilizando lote (translate_batch) 
+    para alta velocidade, com proteções anti-rate-limit e salvamento incremental.
     """
-    def __init__(self, device: str = None):
-        if device is not None:
-            self.device = device
-        else:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+    def __init__(self, cache_dir: str = 'pre_process_and_analisis/cache_checkpoint'):
+        self.cache_dir = cache_dir
+        os.makedirs(self.cache_dir, exist_ok=True)
+        print("[INFO] Tradutor por API otimizado com lote (translate_batch) e checkpointing.")
+
+    def back_translate_batch(self, texts: list, batch_size: int = 50, retries: int = 3) -> list:
+        """Executa a ida (PT -> EN) e a volta (EN -> PT) em lotes para máxima performance."""
+        back_translated_texts = []
+        
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            success = False
             
-        # Pega o token do .env
-        self.hf_token = os.getenv("HUGGINGFACE_API_KEY")
-        if not self.hf_token:
-            print("[AVISO] HUGGINGFACE_API_KEY não encontrada no arquivo .env. Tentando acesso público...")
-
-        print(f"[INFO] Carregando modelo unificado de tradução local no dispositivo: {self.device}")
-        
-        # Modelo oficial unificado do Tatoeba Challenge para o par EN-PT
-        self.model_name = "Helsinki-NLP/opus-mt-tc-big-en-pt"
-        
-        print("[INFO] Carregando tokenizer e modelo MarianMT...")
-        self.tokenizer = MarianTokenizer.from_pretrained(self.model_name, token=self.hf_token)
-        self.model = MarianMTModel.from_pretrained(self.model_name, token=self.hf_token).to(self.device)
-
-    def translate(self, texts: list, target_lang: str, batch_size: int = 16, desc: str = "Traduzindo") -> list:
-        """Traduz os textos injetando o prefixo do idioma de destino com barra de progresso (tqdm)."""
-        translated_texts = []
-        prefixed_batch = [f"{target_lang} {t}" for t in texts]
-        
-        total_batches = (len(prefixed_batch) + batch_size - 1) // batch_size
-        
-        with tqdm(total=total_batches, desc=desc, unit="lote") as pbar:
-            for i in range(0, len(prefixed_batch), batch_size):
-                batch = prefixed_batch[i:i + batch_size]
-                encoded = self.tokenizer(batch, return_tensors="pt", padding=True, truncation=True, max_length=512).to(self.device)
-                
-                with torch.no_grad():
-                    translated_tokens = self.model.generate(**encoded, max_length=512, num_beams=4)
+            for attempt in range(retries):
+                try:
+                    # 1. Ida: Português para Inglês em lote
+                    en_batch = GoogleTranslator(source='pt', target='en').translate_batch(batch)
+                    if not en_batch:
+                        en_batch = batch
+                        
+                    # Pequena pausa de respiro entre a ida e a volta
+                    time.sleep(uniform(0.1, 0.3))
                     
-                decoded = self.tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
-                translated_texts.extend(decoded)
-                pbar.update(1)
-                
-        return translated_texts
-
-    def back_translate(self, texts: list, batch_size: int = 16) -> list:
-        """Executa a ida (PT -> EN) e a volta (EN -> PT) com barras de progresso dedicadas."""
-        if not texts:
-            return []
+                    # 2. Volta: Inglês para Português em lote
+                    pt_batch = GoogleTranslator(source='en', target='portuguese').translate_batch(en_batch)
+                    if not pt_batch:
+                        pt_batch = en_batch
+                        
+                    # Consolida os resultados garantindo fallback caso algum item venha nulo
+                    final_batch = [p if p else o for p, o in zip(pt_batch, batch)]
+                    back_translated_texts.extend(final_batch)
+                    success = True
+                    break
+                    
+                except Exception as e:
+                    if attempt < retries - 1:
+                        sleep_time = (2 ** attempt) * 2  # Backoff exponencial (2s, 4s, 8s)
+                        time.sleep(sleep_time)
+                    else:
+                        # Se esgotar as tentativas, mantém o texto original para não perder dados
+                        back_translated_texts.extend(batch)
+                        success = True
+                        
+            # Pausa rápida e segura entre os blocos
+            time.sleep(uniform(0.2, 0.4))
             
-        print("[INFO] Traduzindo de Português para Inglês (Ida)...")
-        english_batch = self.translate(texts, target_lang=">>en<<", batch_size=batch_size, desc="PT -> EN")
-        
-        print("[INFO] Traduzindo de volta para Português (Volta/Variação)...")
-        back_translated_batch = self.translate(english_batch, target_lang=">>por<<", batch_size=batch_size, desc="EN -> PT")
-        
-        return back_translated_batch
+        return back_translated_texts
 
     def augment_minority_class(self, df: pd.DataFrame, text_column: str, target_column: str, target_class: int, n_needed: int) -> pd.DataFrame:
         df_aug = df.copy()
@@ -74,11 +67,44 @@ class LocalBackTranslationAugmenter:
         if len(minority_rows) == 0:
             return df_aug
             
-        sampled_rows = minority_rows.sample(n=min(n_needed, len(minority_rows)), replace=True, random_state=42)
+        sampled_rows = minority_rows.sample(n=n_needed, replace=True, random_state=42)
         texts_to_translate = sampled_rows[text_column].astype(str).tolist()
         
-        print(f"[INFO] Iniciando tradução reversa para gerar {len(texts_to_translate)} novas amostras sintéticas...")
-        generated_texts = self.back_translate(texts_to_translate, batch_size=16)
+        cache_file = os.path.join(self.cache_dir, "back_translation_progress.pkl")
+        generated_texts = []
+        start_idx = 0
+        
+        # Recupera o cache anterior caso o script tenha sido interrompido
+        if os.path.exists(cache_file):
+            try:
+                with open(cache_file, "rb") as f:
+                    generated_texts = pickle.load(f)
+                    start_idx = len(generated_texts)
+                    print(f"[CACHE] Progresso anterior encontrado! Retomando a partir da amostra {start_idx}/{len(texts_to_translate)}.")
+            except Exception:
+                generated_texts = []
+                start_idx = 0
+
+        remaining_texts = texts_to_translate[start_idx:]
+        
+        if len(remaining_texts) > 0:
+            print(f"[INFO] Iniciando tradução em lote via API para {len(remaining_texts)} amostras restantes (Total: {len(texts_to_translate)})...")
+            
+            # Processa em blocos de 100 amostras por ciclo de salvamento no checkpoint
+            chunk_size = 100
+            with tqdm(total=len(remaining_texts), desc="Back-Translation Batch API", unit="amostra") as pbar:
+                for j in range(0, len(remaining_texts), chunk_size):
+                    chunk = remaining_texts[j:j + chunk_size]
+                    
+                    # Traduz o bloco utilizando lotes internos de 50
+                    translated_chunk = self.back_translate_batch(chunk, batch_size=50)
+                    generated_texts.extend(translated_chunk)
+                    
+                    # Salva o checkpoint imediatamente após cada bloco
+                    with open(cache_file, "wb") as f:
+                        pickle.dump(generated_texts, f)
+                        
+                    pbar.update(len(chunk))
         
         augmented_rows = []
         for (_, row), new_text in zip(sampled_rows.iterrows(), generated_texts):
@@ -89,6 +115,13 @@ class LocalBackTranslationAugmenter:
                 augmented_rows.append(new_row)
                 
         df_augmented_final = pd.concat([df_aug, pd.DataFrame(augmented_rows)], ignore_index=True)
-        print(f"[SUCESSO] Aumento por tradução concluído. Total de registros resultante: {len(df_augmented_final)}")
+        print(f"[SUCESSO] Aumento por tradução concluído. Total: {len(df_augmented_final)}")
         
+        # Limpa o arquivo de checkpoint após concluir com sucesso
+        if os.path.exists(cache_file):
+            try:
+                os.remove(cache_file)
+            except Exception:
+                pass
+                
         return df_augmented_final

@@ -60,7 +60,7 @@ class TextPreprocessor:
         if total == 0:
             return []
             
-        n_chunks = min(total, self.n_jobs * 2)
+        n_chunks = min(total, self.n_jobs)
         chunks = np.array_split(data_list, n_chunks)
         results = [None] * len(chunks)
         
@@ -182,32 +182,40 @@ class TextPreprocessor:
         self.vectorizer_tfidf = TfidfVectorizer(max_features=max_features, ngram_range=ngram_range)
         return self.vectorizer_tfidf.fit_transform(corpus)
 
-    def generate_eda_dataset(self, df: pd.DataFrame, text_column: str, target_column: str, target_class: int, num_aug: int) -> pd.DataFrame:
+    def generate_eda_dataset(self, df: pd.DataFrame, text_column: str, target_column: str, target_class: int, n_needed: int) -> pd.DataFrame:
         print("[INFO] Gerando aumento de dados textuais via EDA em paralelo...")
         df_eda = df.copy()
         if 'tipo_dado' not in df_eda.columns:
             df_eda['tipo_dado'] = 'original'
         
         minority_rows = df_eda[df_eda[target_column] == target_class]
-        texts_to_aug = minority_rows[text_column].astype(str).tolist()
+        if len(minority_rows) == 0 or n_needed <= 0:
+            return df_eda
+            
+        sampled_rows = minority_rows.sample(n=n_needed, replace=True, random_state=42)
+        texts_to_aug = sampled_rows[text_column].astype(str).tolist()
         
         augmented_results = self._parallel_execute(
             worker_eda_chunk, 
             texts_to_aug, 
             desc="Aumento EDA", 
             task_id="step_eda_aug", 
-            extra_arg=num_aug
+            extra_arg=1
         )
         
         augmented_rows = []
-        for (_, row), aug_texts in zip(minority_rows.iterrows(), augmented_results):
+        for (_, row), aug_texts in zip(sampled_rows.iterrows(), augmented_results):
             for aug_text in aug_texts:
                 new_row = row.copy()
                 new_row[text_column] = aug_text
-                new_row['tipo_dado'] = 'gerado_eda'  # Identificação explícita do dado sintético
+                new_row['tipo_dado'] = 'gerado_eda'
                 augmented_rows.append(new_row)
                 
         df_aug = pd.DataFrame(augmented_rows)
+        
+        if len(df_aug) > n_needed:
+            df_aug = df_aug.iloc[:n_needed]
+            
         df_final_eda = pd.concat([df_eda, df_aug], ignore_index=True)
 
         processed_cols = self.preprocess_corpus(df_final_eda[text_column], task_prefix="eda_")
@@ -322,19 +330,17 @@ class TextPreprocessor:
         print(f"[SUCESSO] Dataset SMOTE exportado para: {smote_filename}")
 
         # 2. Geração EDA
-        num_aug_per_sample = int(np.ceil(n_needed / min_count))
         df_eda = self.generate_eda_dataset(
             df_original, 
             text_column=text_column, 
             target_column=target_column, 
             target_class=minority_class, 
-            num_aug=num_aug_per_sample
+            n_needed=n_needed
         )
         df_eda.to_csv(eda_filename, index=False)
         print(f"[SUCESSO] Dataset EDA exportado para: {eda_filename}")
 
-        # 3. Geração por Back-Translation Local (Hugging Face)
-        from pre_process_and_analisis.back_translation_augmenter import LocalBackTranslationAugmenter
+        # 3. Geração por Back-Translation Otimizado (Hugging Face)
         translator = LocalBackTranslationAugmenter()
         
         df_translation = translator.augment_minority_class(
@@ -345,7 +351,6 @@ class TextPreprocessor:
             n_needed=n_needed
         )
         
-        # Pré-processa o dataset gerado por tradução para extrair colunas limpas e lematizadas
         print("[INFO] Executando pré-processamento no dataset gerado por Back-Translation...")
         processed_trans_cols = self.preprocess_corpus(df_translation[text_column], task_prefix="trans_")
         for col in processed_trans_cols.columns:
