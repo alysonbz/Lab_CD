@@ -265,7 +265,20 @@ const constructiveFragments = {
     "receita de bolo de chocolate super fácil e rápida",
     "lugares tranquilos para ver o pôr do sol",
     "curiosidades fascinantes sobre águias e aves de rapina",
-    "filmes de comédia leve para rir hoje"
+    "filmes de comédia leve para rir hoje",
+    "como montar um jardim de suculentas em casa",
+    "benefícios de tomar chá verde pela manhã",
+    "dicas para começar a ler mais livros este ano",
+    "melhores trilhas sonoras para relaxar e estudar",
+    "como fazer pão caseiro fofinho",
+    "lugares bonitos para viajar no fim de semana",
+    "como cuidar de plantas de sombra na sala",
+    "receita de limonada suíça cremosa",
+    "ideias criativas para decoração de quarto",
+    "melhores aplicativos de meditação e mindfulness",
+    "como fazer origami passo a passo",
+    "benefícios de caminhar ao ar livre todos os dias",
+    "filmes clássicos de animação para assistir com a família"
   ],
   social: [
     "Acho que todo mundo merece comer um bom hambúrguer hoje! 🍔",
@@ -274,6 +287,19 @@ const constructiveFragments = {
     "Mandando muita energia positiva e abraços virtuais para todo mundo!",
     "Vamos focar nas coisas boas da vida e espalhar sorrisos!",
     "Alguém recomenda uma série legal para maratonar no fim de semana?",
-    "Paz, amor e muita música boa para todos!"
+    "Paz, amor e muita música boa para todos!",
+    "Desejando uma semana maravilhosa e cheia de conquistas para todos! 🌟",
+    "Nada como um bom café quentinho para começar o dia bem. ☕",
+    "Lembrete amigável: você está indo muito bem, continue assim! 💪❤️",
+    "Alguém mais ama dias chuvosos enrolado numa coberta? 🌧️",
+    "Espalhe gentileza por onde for, o mundo precisa disso! ✨",
+    "Compartilhando boas vibrações para o dia de hoje!",
+    "Que tal tirar uns minutinhos hoje para ouvir sua música favorita?",
+    "Aproveitem cada momento especial com quem vocês amam! 🥰",
+    "Um sorriso pode mudar o dia de alguém. Vamos sorrir mais! 😁",
+    "Sextou com muita paz no coração e boas energias!",
+    "Quem mais ama o cheirinho de bolo saindo do forno? 🍰",
+    "Que a sua semana seja leve, doce e cheia de paz!",
+    "Gratidão por todas as pequenas coisas boas de hoje! 🙏"
   ]
 };

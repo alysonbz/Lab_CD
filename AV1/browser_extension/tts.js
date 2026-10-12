@@ -1,14 +1,26 @@
 // ==========================================
-// MÓDULO DE TTS (SINTETIZADOR DE VOZ)
+// MÓDULO DE TTS (SINTETIZADOR DE VOZ) - CORRIGIDO
 // ==========================================
 function speakPeacemakerText(text, targetDurationMs) {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     if (!('speechSynthesis' in window)) {
       resolve();
       return;
     }
 
     window.speechSynthesis.cancel();
+
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+      voices = await new Promise((resolveVoices) => {
+        window.speechSynthesis.onvoiceschanged = () => {
+          resolveVoices(window.speechSynthesis.getVoices());
+        };
+        setTimeout(() => {
+          resolveVoices(window.speechSynthesis.getVoices());
+        }, 150);
+      });
+    }
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
@@ -22,7 +34,6 @@ function speakPeacemakerText(text, targetDurationMs) {
       utterance.rate = 0.95;
     }
 
-    const voices = window.speechSynthesis.getVoices();
     const preferredVoice = voices.find(v => 
       v.lang.startsWith('pt') && 
       (v.name.toLowerCase().includes('natural') || 
