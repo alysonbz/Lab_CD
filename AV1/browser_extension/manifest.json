@@ -14,11 +14,16 @@
     "*://*.twitter.com/*",
     "*://*.x.com/*",
     "*://*.facebook.com/*",
-    "*://*.instagram.com/*",
-    "http://localhost:5000/*"
+    "*://*.instagram.com/*"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "lib/ort.min.js",
+      "background.js"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
   "content_scripts": [
     {
@@ -42,6 +47,10 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "lib/*",
+        "vocab.json",
+        "models/bilstm_model.onnx",
+        "models/bilstm_model.onnx.data",
         "assets/peacemaker_closed.png",
         "assets/peacemaker_open.png",
         "assets/peacemaker_logo.png",

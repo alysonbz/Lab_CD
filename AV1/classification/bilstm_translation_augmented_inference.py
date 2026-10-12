@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
@@ -23,6 +24,30 @@ class SentimentInference:
         if onnx_path is None:
             onnx_path = os.path.join("evaluation", "results", "bilstm_model.onnx")
 
+        self.vocab_path = os.path.join(parent_dir, "browser_extension", "vocab.json")
+        os.makedirs(os.path.dirname(self.vocab_path), exist_ok=True)
+
+        if os.path.exists(self.vocab_path):
+            print(f"[INFO] Vocabulário encontrado! Carregando diretamente de '{self.vocab_path}'...")
+            try:
+                with open(self.vocab_path, "r", encoding="utf-8") as f:
+                    self.word2idx = json.load(f)
+            except Exception as e:
+                print(f"[AVISO] Falha ao ler o cache do vocabulário ({e}). Reconstruindo...")
+                self._build_and_export_vocab(dataset_path, vocab_size)
+        else:
+            self._build_and_export_vocab(dataset_path, vocab_size)
+
+        self.max_length = max_length
+
+        print(f"[INFO] Carregando motor de inferência ONNX Runtime: {onnx_path}")
+        if not os.path.exists(onnx_path):
+            raise FileNotFoundError(f"[ERRO] Arquivo ONNX não encontrado em '{onnx_path}'. Execute o treinamento do bilstm.py primeiro.")
+        
+        self.ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
+        print("[SUCESSO] Sistema de inferência pronto para uso!\n")
+
+    def _build_and_export_vocab(self, dataset_path, vocab_size):
         print("[INFO] Carregando dataset para reconstruir o vocabulário...")
         try:
             df = pd.read_csv(dataset_path)
@@ -39,14 +64,10 @@ class SentimentInference:
         self.word2idx = {word: idx + 2 for idx, (word, count) in enumerate(most_common)}
         self.word2idx["<PAD>"] = 0
         self.word2idx["<OOV>"] = 1
-        self.max_length = max_length
 
-        print(f"[INFO] Carregando motor de inferência ONNX Runtime: {onnx_path}")
-        if not os.path.exists(onnx_path):
-            raise FileNotFoundError(f"[ERRO] Arquivo ONNX não encontrado em '{onnx_path}'. Execute o treinamento do bilstm.py primeiro.")
-        
-        self.ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
-        print("[SUCESSO] Sistema de inferência pronto para uso!\n")
+        print(f"[INFO] Exportando vocabulário gerado para '{self.vocab_path}'...")
+        with open(self.vocab_path, "w", encoding="utf-8") as f:
+            json.dump(self.word2idx, f, ensure_ascii=False)
 
     def _preprocess_text(self, texts):
         """Aplica o mesmo pipeline de limpeza e lematização do treinamento nos novos textos."""
@@ -54,9 +75,7 @@ class SentimentInference:
             texts = [texts]
         
         cleaned = worker_clean_chunk(list(texts))
-        
         processed = worker_lemmatize_chunk((cleaned, 'portuguese'))
-        
         return processed
 
     def _tokenize_and_pad(self, texts):
@@ -110,7 +129,7 @@ def main():
         return
 
     print("=" * 60)
-    print("      SISTEMA DE INFERÊNCIA ONNX - ANÁLISE DE SENTIMENTOS")
+    print("       SISTEMA DE INFERÊNCIA ONNX - ANÁLISE DE SENTIMENTOS")
     print("=" * 60)
     print("Escolha o modo de operação:")
     print(" [1] Executar frases de teste pré-definidas")
@@ -134,7 +153,7 @@ def main():
             print(f"Review: {res['text']}")
             print(f"Sentimento Previsto: {res['label_name']}")
             print(f"Confiança: {res['confidence']:.2f}%")
-        print("-" * 50)
+            print("-" * 50)
 
     elif modo == "2":
         print("\n--- MODO 2: ENTRADA INTERATIVA DO USUÁRIO ---")
