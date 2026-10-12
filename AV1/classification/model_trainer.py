@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
 from .text_classifier import TextClassifier, PyTorchMLPWrapper
+from .bilstm import PyTorchBiLSTMWrapper
 
 
 class ModelTrainer:
@@ -59,10 +60,18 @@ class ModelTrainer:
             "models": {}
         }
 
+        has_text_col = text_column in df.columns
+        if has_text_col:
+            X_train_text = df_train[text_column].fillna("").astype(str)
+            X_test_text = df_test[text_column].fillna("").astype(str)
+        else:
+            X_train_text = None
+            X_test_text = None
+
         feature_cols = [col for col in df.columns if col not in [target_column, tipo_dado_column, text_column, 'review_text_cleaned', 'review_text']]
         
         is_pre_vectorized = False
-        if len(feature_cols) > 0:
+        if not has_text_col or len(feature_cols) > 0:
             try:
                 is_pre_vectorized = all(pd.api.types.is_numeric_dtype(df[col]) for col in feature_cols)
             except Exception:
@@ -71,9 +80,6 @@ class ModelTrainer:
         if is_pre_vectorized:
             representations = {"PreVectorized": (df_train[feature_cols].values, df_test[feature_cols].values)}
         else:
-            X_train_text = df_train[text_column].fillna("").astype(str)
-            X_test_text = df_test[text_column].fillna("").astype(str)
-
             vectorizers = {
                 "CountVectorizer": CountVectorizer(max_features=5000),
                 "TF-IDF": TfidfVectorizer(max_features=5000)
@@ -92,30 +98,40 @@ class ModelTrainer:
             models = self.classifier.get_models()
 
             for model_name, model in models.items():
+                if model_name == "BiLSTM" and not has_text_col:
+                    print(f"[AVISO] Pulando {model_name}: dataset SMOTE é puramente numérico e não possui colunas de texto.")
+                    continue
+
                 print(f"Treinando e analisando aprendizado: {model_name}")
 
-                if isinstance(model, (PyTorchMLPWrapper, LogisticExpression if 'LogisticExpression' in globals() else LogisticRegression)):
+                if model_name == "BiLSTM":
+                    train_input = X_train_text
+                    test_input = X_test_text
+                else:
+                    train_input = X_train
+                    test_input = X_test
+
+                if isinstance(model, (PyTorchMLPWrapper, PyTorchBiLSTMWrapper, LogisticRegression)):
                     if isinstance(model, PyTorchMLPWrapper):
                         model.max_iter = epochs
-                        model.fit(X_train, y_train)
-                        
-                        history = {"loss_train": [0.1] * epochs, "accuracy_train": [0.9] * epochs, 
-                                   "loss_test": [0.15] * epochs, "accuracy_test": [0.85] * epochs}
+                        model.fit(train_input, y_train)
+                    elif isinstance(model, PyTorchBiLSTMWrapper):
+                        model.fit(train_input, y_train)
                     else:
-                        history = self._train_epoch_model(model, X_train, y_train, X_test, y_test, classes, epochs)
-                    
-                    self._plot_epoch_curves(history, model_name, rep_name, epochs)
-                    y_pred = model.predict(X_test)
+                        history = self._train_epoch_model(model, train_input, y_train, test_input, y_test, classes, epochs)
+                        self._plot_epoch_curves(history, model_name, rep_name, epochs)
+
+                    y_pred = model.predict(test_input)
 
                     if isinstance(model, PyTorchMLPWrapper):
                         onnx_path = self.output_dir / f"model_{model_name}_{rep_name}.onnx".replace(" ", "_")
                         sample_shape = (1, X_train.shape[1] if not hasattr(X_train, "shape") else X_train.shape[1])
                         model.export_to_onnx(str(onnx_path), sample_input_shape=sample_shape)
                 else:
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
+                    model.fit(train_input, y_train)
+                    y_pred = model.predict(test_input)
 
-                    history = self._evaluate_learning_by_sample_size(model, X_train, y_train, X_test, y_test, classes)
+                    history = self._evaluate_learning_by_sample_size(model, train_input, y_train, test_input, y_test, classes)
                     self._plot_sample_size_curves(history, model_name, rep_name)
 
                 results["predictions"][rep_name][model_name] = y_pred
@@ -163,14 +179,20 @@ class ModelTrainer:
         history = {"fractions": [], "loss_train": [], "accuracy_train": [], "loss_test": [], "accuracy_test": []}
         
         fractions = np.linspace(0.1, 1.0, steps)
-        total_samples = X_train.shape[0]
+        
+        total_samples = X_train.shape[0] if hasattr(X_train, "shape") else len(X_train)
 
         for frac in fractions:
             n_samples = int(total_samples * frac)
-            X_sub = X_train[:n_samples]
+            
+            if hasattr(X_train, "iloc"):
+                X_sub = X_train.iloc[:n_samples]
+            else:
+                X_sub = X_train[:n_samples]
+                
             y_sub = y_train[:n_samples]
 
-            sub_model = model_class.__class__(**model_class.get_params())
+            sub_model = model_class.__class__(**model_class.get_params()) if hasattr(model_class, "get_params") else model_class
             sub_model.fit(X_sub, y_sub)
 
             y_tr_pred = sub_model.predict(X_sub)

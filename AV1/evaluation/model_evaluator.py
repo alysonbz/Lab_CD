@@ -24,7 +24,6 @@ class ModelEvaluator:
         """
         metrics = []
 
-        # Caso seja passado um único dicionário tradicional de resultados, empacota com chave padrão
         if "y_test" in experiments_results:
             experiments_results = {"Geral": experiments_results}
 
@@ -80,7 +79,6 @@ class ModelEvaluator:
                         )
                     )
 
-                    # Plota e salva a matriz de confusão para esta combinação específica
                     self._save_confusion_matrix(
                         y_test,
                         y_pred,

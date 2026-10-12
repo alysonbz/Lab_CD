@@ -116,17 +116,6 @@ class CorpusExploratoryAnalyzer:
             'percentual': np.round((class_distribution.values / total_docs) * 100, 2),
         })
 
-        print('=' * 50)
-        print('MÉTRICAS BÁSICAS E DESCRITIVAS DO CORPUS')
-        print('=' * 50)
-        print(f'• Tamanho total do corpus: {total_docs} documentos')
-        print(f'• Número de classes únicas: {num_classes}')
-        print(f'• Média de palavras/doc: {mean_words}')
-        print(f'• Média de caracteres/doc: {mean_chars}')
-        print('\nDistribuição de Classes:')
-        print(df_class_dist.to_string(index=False))
-        print('=' * 50)
-
         if save_csv:
             metrics_summary.to_csv(metrics_csv_path, index=False, encoding='utf-8-sig')
             df_class_dist.to_csv(class_csv_path, index=False, encoding='utf-8-sig')
@@ -244,10 +233,6 @@ class CorpusExploratoryAnalyzer:
             plt.close(fig)
 
     def generate_wordclouds(self, df: pd.DataFrame = None, text_column: str = None, label_column: str = None):
-        """
-        Gera e salva nuvem de palavras para o dataset completo e para cada classe separadamente,
-        removendo stop words de negação e termos estruturais apenas para estas visualizações.
-        """
         target_df = df if df is not None else self.df
         t_col = text_column or self.text_column
         l_col = label_column or self.label_column
@@ -257,7 +242,6 @@ class CorpusExploratoryAnalyzer:
 
         negation_and_structural = {'nao', 'nao_gostei', 'gostei', 'nunca', 'jamais', 'sem', 'pouco'}
 
-        # 1. WordCloud para o Dataset Completo
         overall_path = self.output_dir / 'wordcloud_completo.png'
         if not overall_path.exists():
             texts = target_df[t_col].dropna().astype(str).tolist()
@@ -284,7 +268,6 @@ class CorpusExploratoryAnalyzer:
         else:
             print(f"[CACHE] Nuvem de palavras do corpus completo já existe. Pulando.")
 
-        # 2. WordClouds por Classe
         if l_col in target_df.columns:
             classes = sorted(target_df[l_col].unique())
             for cls in classes:
@@ -316,7 +299,6 @@ class CorpusExploratoryAnalyzer:
                     print(f'[INFO] Nuvem de palavras da Classe {cls} salva em: {class_path}')
                     plt.close()
 
-    # Alias mantido por compatibilidade com chamadas antigas no singular
     def generate_wordcloud(self, df: pd.DataFrame = None, text_column: str = None, label_column: str = None):
         return self.generate_wordclouds(df=df, text_column=text_column, label_column=label_column)
 
@@ -324,7 +306,7 @@ class CorpusExploratoryAnalyzer:
         self,
         df: pd.DataFrame = None,
         text_column: str = None,
-        n_clusters: int = 4,
+        n_clusters: int = 8,
         top_n_words: int = 6,
         save_csv: bool = True
     ) -> pd.DataFrame:
@@ -386,7 +368,7 @@ class CorpusExploratoryAnalyzer:
 
         target_df['lda_label'] = target_df['lda_topic'].map(lda_labels)
 
-        fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+        fig, axes = plt.subplots(1, 2, figsize=(16, 8))
 
         sns.countplot(data=target_df, y='kmeans_label', hue='kmeans_label', ax=axes[0], palette='viridis', legend=False)
         axes[0].set_title('K-Means: Distribuição de Avaliações por Grupo', fontsize=12, fontweight='bold')
@@ -411,9 +393,10 @@ class CorpusExploratoryAnalyzer:
             'Grupo': target_df['kmeans_label']
         })
 
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=(12, 8))
         sns.scatterplot(data=pca_df, x='PCA1', y='PCA2', hue='Grupo', palette='tab10', alpha=0.5, s=25)
         plt.title('Projeção 2D dos Clusters K-Means (PCA)', fontsize=14, fontweight='bold')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
         plt.savefig(pca_path, dpi=300)
         print(f"[INFO] Projeção PCA de clusters salva em: {pca_path}")
@@ -454,7 +437,7 @@ if __name__ == '__main__':
             analyzer.apply_unsupervised_analysis(
                 df=datasets["Original"],
                 text_column="review_text_cleaned",
-                n_clusters=4
+                n_clusters=8
             )
 
         analyzer.plot_datasets_class_comparison(datasets, label_column="polarity")

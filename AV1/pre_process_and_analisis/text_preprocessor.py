@@ -178,8 +178,16 @@ class TextPreprocessor:
             'review_text_tokenized': [x.split() for x in processed]
         }, index=series.index)
 
-    def transform_to_features(self, corpus: pd.Series, method: str = 'tfidf', max_features: int = 5000, ngram_range: tuple = (1, 2)):
-        self.vectorizer_tfidf = TfidfVectorizer(max_features=max_features, ngram_range=ngram_range)
+    def transform_to_features(self, corpus: pd.Series, method: str = 'tfidf', max_features: int = 8000, ngram_range: tuple = (1, 3)):
+        """
+        Vetorizador ajustado com ngram_range estendido (1 a 3) e sublinear_tf=True 
+        para suavizar o peso de termos hiperfrequentes e capturar melhor o contexto.
+        """
+        self.vectorizer_tfidf = TfidfVectorizer(
+            max_features=max_features, 
+            ngram_range=ngram_range, 
+            sublinear_tf=True
+        )
         return self.vectorizer_tfidf.fit_transform(corpus)
 
     def generate_eda_dataset(self, df: pd.DataFrame, text_column: str, target_column: str, target_class: int, n_needed: int) -> pd.DataFrame:
@@ -286,7 +294,7 @@ class TextPreprocessor:
             print(f"[INFO] As classes já estão balanceadas (Razão min/máx = {imbalance_ratio:.2f}). Sem geração sintética.")
 
             df_smote = pd.DataFrame(
-                self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 2)).toarray(),
+                self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 3)).toarray(),
                 columns=[f"tfidf_{feat}" for feat in self.vectorizer_tfidf.get_feature_names_out()]
             )
             df_smote[target_column] = y
@@ -312,7 +320,7 @@ class TextPreprocessor:
         print(f"   - Serão geradas {n_needed} novas amostras para equilibrar as classes.\n")
         
         # 1. Geração SMOTE
-        X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 1), max_features=1500)
+        X_vec = self.transform_to_features(df_processed['review_text_processed'], method='tfidf', ngram_range=(1, 2), max_features=3000)
         X_res, y_res = handle_imbalance_smote(X_vec, y, target_class=minority_class, n_synthetic=n_needed)
         
         if issparse(X_res):
@@ -378,3 +386,4 @@ if __name__ == "__main__":
         target_column='polarity',
         output_prefix='reviews_ecommerce'
     )
+    

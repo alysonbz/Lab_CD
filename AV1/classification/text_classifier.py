@@ -6,6 +6,8 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 
+from .bilstm import PyTorchBiLSTMWrapper
+
 
 class PyTorchMLPClassifier(nn.Module):
     """Implementação de uma Rede Neural Multicamadas (MLP) utilizando PyTorch."""
@@ -31,7 +33,6 @@ class PyTorchMLPWrapper:
         self.max_iter = max_iter
         self.random_state = random_state
         
-        # Detecção automática de GPU (CUDA para NVIDIA, MPS para Apple Silicon ou CPU)
         if device is not None:
             self.device = torch.device(device)
         else:
@@ -55,11 +56,9 @@ class PyTorchMLPWrapper:
         else:
             X_dense = np.array(X)
 
-        # Envia os tensores para a GPU/device configurado
         X_tensor = torch.tensor(X_dense, dtype=torch.float32).to(self.device)
         y_tensor = torch.tensor(y, dtype=torch.long).to(self.device)
 
-        # Cálculo dinâmico de pesos por classe para balanceamento no PyTorch (CrossEntropyLoss com weight)
         class_counts = np.bincount(y)
         total_samples = len(y)
         weights = total_samples / (len(class_counts) * class_counts.astype(np.float32))
@@ -68,7 +67,6 @@ class PyTorchMLPWrapper:
         input_dim = X_tensor.shape[1]
         self.model = PyTorchMLPClassifier(input_dim=input_dim, hidden_dim=self.hidden_dim).to(self.device)
         
-        # Aplica os pesos balanceados na função de perda
         criterion = nn.CrossEntropyLoss(weight=class_weights_tensor)
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 
@@ -150,6 +148,12 @@ class TextClassifier:
 
             "MLP": PyTorchMLPWrapper(
                 max_iter=30,
+                random_state=self.random_state,
+                device=self.device
+            ),
+
+            "BiLSTM": PyTorchBiLSTMWrapper(
+                max_epochs=5,
                 random_state=self.random_state,
                 device=self.device
             )
