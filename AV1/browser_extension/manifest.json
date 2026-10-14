@@ -3,6 +3,17 @@
   "name": "Peacemaker-Reborn",
   "version": "1.0.0",
   "description": "Interceptor de mensagens negativas em formulários e redes sociais com base em IA.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "peacemaker-reborn@seu-projeto.local",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
   "permissions": [
     "activeTab",
     "scripting",
