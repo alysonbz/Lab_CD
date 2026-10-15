@@ -1,0 +1,21 @@
+﻿indice,classe,relatedness,escore_anomalia,premissa,hipotese
+591,NONE,1.75,0.66,"Em 50, 45 dias de trabalho, foram 15 jogos.","Ele treinará normalmente na semana, mas não jogará."
+517,PARAPHRASE,5.0,0.66,"Na versão a diesel de 180 cv, a massa é de 1.665 kg, enquanto na configuração a gasolina são 1.861 kg.",A versão diesel de 180 cv pesa apenas 1.665 kg e na configuração a gasolina são 1.861 kg.
+562,NONE,2.25,0.652,"Somente neste ano, 97 condutores morreram no estado.","No Estado de Minas Gerais a PRF fiscalizou 972 motocicletas, aplicou 397 multas e 19 motos foram apreendidas."
+803,NONE,1.5,0.643,Moradores informaram que por volta das 6h era possível escutar barulhos de fogos de artifício.,Até as 7h não havia informações sobre prisões e apreensões.
+1055,NONE,1.25,0.642,"Não é isso que está em causa na Grécia, nem em nenhum país.",Só esperamos que termine numa resolução.
+2499,NONE,1.5,0.639,"Ele também não conquista um Grand Slam desde 2012, quando se sagrou hepta em Wimbledon.","Naturalmente, é uma grande conquista render o máximo nos torneios importantes."
+2193,PARAPHRASE,5.0,0.637,A assessoria de imprensa da Câmara informou que Eduardo Cunha não conhece o delator Eduardo Musa.,"Segundo a assessoria de imprensa da Câmara, Cunha disse não conhecer o delator Eduardo Musa."
+382,NONE,1.5,0.631,"Em dois jogos, foram oito gols marcados e nenhum sofrido.","Na soma dos três jogos são 10 tentos marcados, uma média de mais de 3 gols por jogo."
+1779,ENTAILMENT,3.75,0.63,Ainda não se sabe o que teria motivado o crime e até a tarde desta segunda-feira ninguém havia sido preso.,"Até a tarde desta segunda-feira, ninguém havia sido preso."
+93,NONE,2.0,0.625,A presidente pediu apoio para enfrentar a oposição.,"Para a presidenta, os pedidos de impeachment não têm qualquer materialidade."
+2252,NONE,3.5,0.624,"Apesar de vídeos em 8K serem novidade, este não é o primeiro do YouTube.",O YouTube agora tem vídeos em 8K – inclusive em 360º.
+1071,ENTAILMENT,4.0,0.624,"Sofia, que passou pelo transplante de cinco órgãos, não resistiu e morreu na madrugada desta segunda-feira (14), vítima de uma parada cardíaca.","Sofia passou pelo transplante de cinco órgãos, mas teve uma parada cardíaca."
+1454,ENTAILMENT,3.25,0.622,"O atacante de 35 anos não era chamado para a seleção dese 2007, quando disputou amistoso contra Gana.","O último jogo do atacante com a camisa da seleção foi em 2007, em amistoso contra Gana."
+2206,NONE,1.75,0.622,"Pode trazer o Guardiola, se não mudarmos a postura, não vai adiantar nada.",O jogador não pode se acomodar jamais.
+80,ENTAILMENT,4.0,0.621,"A Companhia do Metropolitano do DF fechou todas as 24 estações do metrô, que ficaram sem energia por uma hora.",Todas as 24 estações do Metrô ficaram fechadas e sem energia por uma hora.
+1834,ENTAILMENT,4.0,0.621,"Nessa quarta, o time abriu 2 a 0 com quatro minutos de jogo.",O time abriu 2 a 0 em menos de cinco minutos de jogo.
+576,ENTAILMENT,3.75,0.619,A última vez que o Palmeiras venceu o Inter no Beira-Rio foi no dia 6 de dezembro de 1997.,Faz tempo que o Palmeiras não vence no Beira-Rio: desde 1997.
+2493,ENTAILMENT,3.5,0.618,"Se você não fizer o que deve na Tesla, você vai acabar na Apple, por isso que brincamos chamando a Apple de 'cemitério da Tesla'.",Sempre brincamos chamando a Apple de 'cemitério da Tesla'.
+2402,NONE,1.75,0.617,"O celular conta com memória RAM de 2 GB, câmera de 16 megapixels e armazenamento interno de 16 GB.",E os 8GB a mais de armazenamento também não fazem mal nenhum.
+2048,NONE,2.0,0.616,O Corinthians não depende de um jogador e nem um número 9 tem de fazer todos os gols.,A gente vai ficar torcendo para ele voltar a fazer gols.

@@ -1,0 +1,5 @@
+modelo,vetorizador,ngrama,atributos_relacao,estrategia,params,acuracia,precisao_macro,recall_macro,f1_macro,f1_NONE,f1_ENTAILMENT,f1_PARAPHRASE
+NaiveBayes,count,1-2,False,nenhuma,"{""alpha"": 1.0}",0.73,0.459,0.395,0.407,0.839,0.257,0.125
+RegressaoLogistica,tfidf,1-1,True,pesos,"{""C"": 1.0}",0.792,0.63,0.736,0.669,0.873,0.585,0.548
+SVM,tfidf,1-1,True,pesos,"{""C"": 0.01}",0.802,0.659,0.708,0.681,0.88,0.558,0.604
+MLP,tfidf,1-2,True,oversampling,"{""alpha"": 0.01}",0.808,0.687,0.634,0.656,0.892,0.505,0.571

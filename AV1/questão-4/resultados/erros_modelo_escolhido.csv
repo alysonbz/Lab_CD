@@ -1,0 +1,91 @@
+sentence_pair_id,real,previsto,relatedness_score,premise,hypothesis
+1412,NONE,ENTAILMENT,2.75,"Neste domingo, uma mulher de 30 anos morreu na China ao ser “engolida” pela escada rolante.","As imagens mostram a mulher, de 30 anos, subindo na escada rolante."
+61,NONE,ENTAILMENT,3.75,A Apple não oferece dinheiro a quem descobre falhas em seus produtos.,Não é a Apple que está prometendo o valor para quem descobrir a falha.
+714,NONE,ENTAILMENT,2.75,"Hoje, o Palmeiras se encontra em uma condição melhor que o Vasco da Gama.",O Palmeiras manteve a boa fase diante do Vasco da Gama.
+1237,NONE,ENTAILMENT,2.75,"Angelina está aceitando bem as escolhas da filha, assim como Brad.",Brad e Angelina querem dar o melhor para a filha.
+249,NONE,ENTAILMENT,3.5,"Fábio Assunção, de 44 anos, está namorando a atriz Carol Macedo, de 22 anos.",Fábio Assunção e Carol Macedo seguiram a mesma linha.
+763,NONE,ENTAILMENT,2.5,"Lambert surpreendeu cantando um sucesso seu, Ghost Town.",Você cantou “Ghost Town” pela primeira vez com o Queen.
+1238,NONE,ENTAILMENT,2.5,A pré-venda dos aparelhos já começou e o lançamento da linha Fire está previsto para o dia 30 de setembro.,Ambos começarão a ser entregues a partir de 30 de setembro.
+1158,NONE,ENTAILMENT,4.0,Cunha tinha esperança de conseguir derrubar no encontro de hoje o veto ao financiamento privado de campanha.,A intenção é derrubar sobretudo o veto ao financiamento privado de campanhas eleitorais.
+834,NONE,ENTAILMENT,2.0,"No caso do Surface Pro 4, 128 GB é a quantidade de memória interna do modelo de entrada.",O iPad Pro de maior capacidade oferece 128 GB de memória interna.
+301,NONE,ENTAILMENT,3.5,"Na semifinal, o adversário será o Chile, que passou pelo Uruguai na véspera.","Com o resultado, o Peru será o adversário do Chile nas semifinais."
+1759,NONE,ENTAILMENT,3.5,Os líderes falaram com a imprensa após reunião de coordenação política com a presidente Dilma Rousseff.,O vice-presidente concedeu entrevista após reunião da coordenação política com a presidente Dilma Rousseff.
+667,NONE,ENTAILMENT,3.5,Tiba estava internado no Hospital Sírio Libanês e morreu às 19h deste domingo (2).,Ele estava internado no Hospital Sírio Libanês desde o final do ano passado.
+1489,NONE,ENTAILMENT,2.25,A edição de 2015 do Rock in Rio acabou neste domingo (27).,"Será o primeiro show dela após a apresentação do Rock in Rio, neste domingo (27)."
+1990,NONE,ENTAILMENT,2.75,Os três ataques aconteceram no mês sagrado do Ramadã – período de jejum para os muçulmanos.,"O local estava lotado por conta do Ramadã, mês sagrado para os muçulmanos."
+491,NONE,ENTAILMENT,3.25,As primeiras imagens de Lady GaGa na série American Horror Story: Hotel foram divulgadas no primeiro trailer oficial.,"Lady Gaga promete arrasar mesmo em American Horror Story Hotel, série de terror estrelada por ela."
+742,NONE,PARAPHRASE,2.75,"Assim que desembarcaram no Aeroporto de Congonhas, Mouche, Cristaldo e Barrios pegaram um taxi rumo à Academia.","Cristaldo, Mouche e Barrios passaram por apuros depois de desembarcar no Aeroporto de Congonhas, em São Paulo."
+1661,NONE,PARAPHRASE,3.5,Outro fenômeno como este só está previsto para acontecer novamente em 2033.,Os dois fenômenos naturais só voltarão a acontecer juntos em 2033.
+1868,NONE,PARAPHRASE,4.25,O crédito bancário estará disponível no dia 17 deste mês.,O crédito da restituição será feito no dia 17 de agosto.
+583,NONE,PARAPHRASE,3.0,A última movimentação confirmou o retorno do zagueiro Pedro Geromel.,"Em contrapartida há o retorno do zagueiro Pedro Geromel, recuperado de lesão."
+1735,NONE,PARAPHRASE,3.25,Uma reunião que envolverá os líderes dos 28 estados-membros da União Europeia.,"No domingo, a decisão dos líderes dos 28 países da União Europeia."
+250,NONE,PARAPHRASE,3.5,O peruano Guerrero é o único jogador na relação para atuar no futebol brasileiro.,"O peruano Guerrero, do Flamengo, é o único de seu país especulado para atuar no futebol brasileiro."
+722,NONE,PARAPHRASE,3.75,"O atacante recebeu o cruzamento de Robinho e, de cabeça, fez o seu segundo no jogo.","O atacante palmeirense aproveitou cruzamento de Robinho e marcou o quarto, de cabeça."
+1970,NONE,PARAPHRASE,4.25,O mercado possuiu alguns nomes importantes que vamos analisar com calma a partir de agora.,"O mercado possui, em disponibilidade, alguns nomes importantes que serão contactados."
+117,NONE,PARAPHRASE,3.25,"O meia Renato Augusto, do Corinthians, é outro nome novo.","E apresentou algumas surpresas, como a presença do meia Renato Augusto do Corinthians."
+1224,NONE,PARAPHRASE,2.5,O corpo do homem será encaminhado ao Instituto Médico Legal (IML) de Salvador.,Uma equipe do Instituto Médico Legal (IML) fez a remoção do corpo de Roberto José.
+602,NONE,PARAPHRASE,3.0,O corpo foi retirado pelos Bombeiros e está na perícia forense da cidade de Quixeramobim.,O corpo foi resgatado pelos Bombeiros e levado para a perícia forense de Quixadá.
+374,NONE,PARAPHRASE,3.25,Também pode compartilhar suas experiências e aprender novas funções por meio de sua conexão permanente à internet.,O Pepper pode ainda aprender novas funções através da sua conexão permanente com a internet.
+1114,NONE,PARAPHRASE,3.5,Apenas serviços de emergência e urgência serão mantidos no hospital regional da cidade.,"Durante a mobilização, a categoria promete manter apenas os serviços de urgência e emergência."
+349,NONE,PARAPHRASE,3.0,"O Alvinegro teve uma ótima chance com Bill, logo nos segundos iniciais.","Já no segundo tempo, Bill perdeu uma ótima chance."
+1405,NONE,PARAPHRASE,3.75,Quem terá mais motivos para se preocupar agora é o técnico Luis Enrique.,O técnico Luis Enrique deve se preocupar com a situação do jogador.
+992,ENTAILMENT,NONE,3.75,As lojas do Extra e do Pão de Açúcar da Baixada Santista também estão com oportunidades de trabalho disponíveis.,Supermercados da Baixada Santista estão em busca de novos profissionais.
+1208,ENTAILMENT,NONE,4.0,"Street Fighter V terá versões de PC e PS4, e chega às prateleiras físicas e virtuais em 2016.",Street Fighter 5 será lançado em 2016 apenas para PS4 e PC.
+747,ENTAILMENT,NONE,4.25,Eles estão presos em caráter temporário na carceragem da Superintendência da PF.,"Atualmente, eles estão presos na Superintendência da Polícia Federal."
+275,ENTAILMENT,NONE,4.0,"Aos 13, Uendel cruzou na cabeça de Vagner Love, que fez o segundo.","O lateral cruzou e Vagner Love, de cabeça, mandou para o gol."
+1127,ENTAILMENT,NONE,4.25,O texto restringe ainda a doação de gametas (espermatozóides e óvulos).,A resolução também trata da doação de gametas (espermatozoides e óvulos).
+5,ENTAILMENT,NONE,4.25,"O Fluminense vive crise em campo e não vence há seis rodadas, são cinco derrotas e um empate.","Nos últimos seis jogos, o Fluminense foi derrotado em cinco ocasiões e empatou em uma."
+1632,ENTAILMENT,NONE,4.25,"No entanto, o CEO da Apple, Tim Cook, recusa-se por enquanto a falar publicamente do projeto.","O CEO da Apple, Tim Cook, é esquivo quando questionado sobre o assunto."
+400,ENTAILMENT,NONE,3.75,A seleção está eliminada da Copa América depois de perder por 4 a 3 nos pênaltis para o Paraguai.,A Seleção Brasileira foi eliminada da Copa América pelo Paraguai no último sábado.
+230,ENTAILMENT,NONE,3.75,A entidade trabalha em silêncio para reeditar o Rio-São Paulo já no ano que vem.,Uma saída cogitada nos bastidores da entidade é o retorno do Torneio Rio-São Paulo.
+470,ENTAILMENT,NONE,4.0,O eclipse total começou às 23h11 do domingo e terminou à 0h23m (horário de Brasília).,O eclipse começou por volta das 23h de domingo e entrou pela noite.
+153,ENTAILMENT,NONE,3.75,"Rihanna divulgou o título do seu próximo disco, ""Anti"", e revelou a capa do álbum.",Finalmente Rihanna mostrou ao mundo seu mais novo álbum.
+781,ENTAILMENT,NONE,4.25,Dilma reuniu-se com 12 ministros no fim de semana.,Dilma se reuniu com ministros no sábado e no domingo.
+926,ENTAILMENT,NONE,4.0,"Como já foi aprovada pelas duas Casas do Congresso, a medida segue para sanção presidencial.","Como já foi aprovada pela Câmara, a proposta segue agora para sanção presidencial."
+1847,ENTAILMENT,NONE,3.5,"Sem Juan Carlos Osorio, expulso no intervalo por reclamação, o São Paulo se perdeu na segunda etapa.","No intervalo, Juan Carlos Osório ainda foi expulso, por reclamação."
+1869,ENTAILMENT,NONE,4.0,O sorteio foi realizado no Caminhão da Sorte em ITAOCARA (RJ).,"O sorteio foi realizado em Itaocara, interior do Rio de Janeiro."
+1781,ENTAILMENT,PARAPHRASE,4.25,"De acordo com os dados da OIM, pelo menos 2.812 pessoas morreram nesta travessia.","De acordo com os levantamentos da organização, pelo menos 2.812 pessoas morreram tentando a travessia."
+1030,ENTAILMENT,PARAPHRASE,4.5,Há dois anos ele lutava contra um câncer no cérebro.,Lutava contra um tumor no cérebro há mais de um ano.
+1396,ENTAILMENT,PARAPHRASE,3.75,"O calendário de reposição de aulas não está definido, e deve ser decidido em cada universidade.",Ainda não está definido como será o calendário para a reposição das aulas perdidas.
+1157,ENTAILMENT,PARAPHRASE,4.0,Servidores do INSS na Bahia aderiram à greve nacional deflagrada nesta terça-feira.,Servidores do Instituto Nacional do Seguro Social (INSS) na Bahia aderiram à greve nacional.
+318,ENTAILMENT,PARAPHRASE,4.25,O Atlético (PR) anunciou ontem que Milton Mendes não é mais o treinador da equipe.,O técnico Milton Mendes não está mais no comando da equipe do Atlético Paranaense.
+502,ENTAILMENT,PARAPHRASE,4.75,"Nas últimas 24 horas, mais de 3,3 mil imigrantes entraram na Hungria pela fronteira com a Sérvia.","Somente nas últimas 24 horas, mais de 3.225 imigrantes entraram na Hungria vindos da Sérvia."
+1871,ENTAILMENT,PARAPHRASE,3.5,"Neymar também falou sobre a marca de 100 jogos pelo Barcelona, completada no último domingo.",Neymar chegou recentemente à marca de 100 jogos com a camisa do Barcelona.
+1493,ENTAILMENT,PARAPHRASE,4.0,"Na quinta bateria do dia, Wiggolly Dantas desafiou o australiano Taj Burrow e se deu bem.","Na quinta bateria do dia, Wiggolly Dantas enfrentou australiano Taj Burrow."
+631,ENTAILMENT,PARAPHRASE,3.75,"A segunda é sempre meio ano após a primeira e a terceira e última dose do ciclo de imunização, 60 meses após a primeira.","A terceira, que fecha o ciclo de imunização, deve ser tomada cinco anos após a primeira dose."
+13,ENTAILMENT,PARAPHRASE,4.5,"Por enquanto, vídeos em 360 graus só funcionam na versão web do Facebook e no aplicativo para Android.",Os vídeos em 360 graus já estão disponíveis na versão web do Facebook e também no aplicativo para Android.
+181,ENTAILMENT,PARAPHRASE,4.25,A CBF divulgou nesta terça-feira o calendário de competições de 2016.,A CBF anunciou o calendário 2016 das competições administradas pela instituição.
+1043,ENTAILMENT,PARAPHRASE,4.25,"O novo texto foi aprovado por 323 votos favoráveis, 155 contrários e duas abstenções.",A emenda terminou sendo aprovada por 323 votos favoráveis e 155 votos contrários.
+256,ENTAILMENT,PARAPHRASE,4.0,Cerca de 400 policiais cumprem 145 mandados em seis estados e no Distrito Federal.,Uma equipe de cerca de 400 policiais federais cumprem 145 mandados judiciais.
+709,ENTAILMENT,PARAPHRASE,4.0,"Na próxima rodada, a Ponte visita o Figueirense no Orlando Scarpelli.","A Ponte Preta encara o Figueirense, no Orlando Scarpelli."
+600,ENTAILMENT,PARAPHRASE,4.25,"O governo reduziu a previsão de gastos com o PAC em R$ 3,8 bilhões.","Com relação ao PAC, haverá uma redução de prevsão de gastos de R$ 3,8 bilhões."
+1663,PARAPHRASE,NONE,4.75,"A PF diz ainda que os valores foram recebidos por ""empresas de fachada"".","Os pagamentos ocorriam por meio de empresas de fachada, conforme a PF."
+804,PARAPHRASE,NONE,4.75,"Além de entusiasta do time do Brasil, o Gaúcho da Copa era um gremista fanático.","Apesar de seu amor pela Seleção Brasileira, o Gaúcho da Copa era fanático pelo Grêmio."
+1294,PARAPHRASE,NONE,4.75,A nossa missão na Microsoft é empoderar pessoas e organizações para que continuem melhorando.,A missão da Microsoft é dar poder a cada pessoa ou organização no mundo para atingir mais objetivos.
+858,PARAPHRASE,NONE,5.0,"Do lado israelense, foram 73 mortos, a grande maioria de soldados.","Do lado de Israel, o conflito causou 73 mortos, quase todos soldados."
+321,PARAPHRASE,NONE,4.75,Os ucranianos lutarão agora pela sobrevivência na repescagem das eliminatórias da Eurocopa 2016.,A Ucrânia terá que disputar a repescagem das Eliminatórias da Eurocopa 2016.
+335,PARAPHRASE,NONE,4.5,Bené foi preso em maio deste ano e deixou a cadeia após pagamento de fiança.,"Bené chegou a ser preso em maio, mas liberado após pagar fiança."
+1664,PARAPHRASE,NONE,5.0,Aquela região tem sido palco de intensas lutas nos últimos dias.,A área tem sido cena de uma intensa batalha nos últimos dias.
+1340,PARAPHRASE,NONE,4.75,"Pelo menos 16 pessoas morreram, das quais nove integravam ONG.","Ataque fez ao menos 16 mortos, dos quais 9 integravam ONG."
+636,PARAPHRASE,NONE,5.0,Já o Xbox 360 passará a ser vendido por R$1.099.,"Já para o Xbox 360 o novo preço é de R$ 1.099,00."
+33,PARAPHRASE,NONE,4.25,"Enquanto isto, não deixar que cães e gatos se aproximem do mamífero.",Cães e gatos devem ficar afastados do mamífero.
+154,PARAPHRASE,NONE,5.0,Nunca antes um pontífice havia ido ao plenário das Casa Legislativas dos Estados Unidos.,Ele será o primeiro papa no plenário da Casa Legislativa dos Estados Unidos.
+816,PARAPHRASE,NONE,4.25,"Já a quadra pagou R$ 699,50 para 4599 pessoas.","Outros 4.599 bilhetes acertaram a quadra e levarão R$ 699,50 cada."
+279,PARAPHRASE,NONE,4.75,"Levy disse ainda que é importante o orçamento federal ter superávit, ou seja, receitas maiores do que despesas.",Levy ressaltou a importância do orçamento federal ser superavitário.
+644,PARAPHRASE,NONE,4.75,Ele pode ser mergulhado a até um metro de profundidade por até meia hora.,Ele pode ficar mergulhado até 1 metro por cerca de 30 minutos.
+622,PARAPHRASE,NONE,4.75,O serviço de comunicação online Skype está instável nesta segunda-feira (21).,"O aplicativo de conversação Skype enfrenta problemas nesta segunda-feira, 21."
+1737,PARAPHRASE,ENTAILMENT,4.75,Ele defendeu a adoção pelo governo federal de medidas que ajudem na manutenção dos empregos da indústria.,Ele pede ações federais que ajudem na manutenção dos empregos da indústria.
+764,PARAPHRASE,ENTAILMENT,4.5,Carlos Miguel Aidar colocará na terça-feira um ponto final em sua passagem como presidente do São Paulo.,Carlos Miguel Aidar vai renunciar da presidência do São Paulo na terça-feira.
+1343,PARAPHRASE,ENTAILMENT,5.0,"No ano passado, a Apple contratou alguns especialistas e manteve conversas com empresas automobilísticas.","No último ano, a Apple contratou especialistas na área e conversou com empresas da indústria automobilística."
+966,PARAPHRASE,ENTAILMENT,4.75,A empresa disse ainda que o prejuízo só com os ônibus queimados chegam a R$ 6 milhões.,"Somente em relação aos queimados, a empresa diz que o prejuízo chega a R$ 6 milhões."
+394,PARAPHRASE,ENTAILMENT,5.0,Os agentes de trânsito deverão fiscalizar os extintores nos veículos em que seu uso é obrigatório.,Veículos que seguem obrigados a usar extintor serão fiscalizados por agentes de trânsito.
+474,PARAPHRASE,ENTAILMENT,5.0,A sequência Hotel Transilvânia 2 conta com vozes de Selena Gomez e Adam Sandler.,Os dubladores Adam Sandler e Selena Gomez farão a sequência Hotel Transilvânia 2.
+1836,PARAPHRASE,ENTAILMENT,4.75,"Na segunda-feira, o primeiro-ministro turco Ahmet Davutoglu apontou o EI como o principal suspeito do ataque.","Davutoglu designou na segunda-feira o EI como ""suspeito número um"" do ataque."
+1447,PARAPHRASE,ENTAILMENT,5.0,A Eletronic Arts (EA) informou que 16 times brasileiros estarão presentes no FIFA 16.,A EA Sports anunciou que 16 times brasileiros estarão no FIFA 16.
+537,PARAPHRASE,ENTAILMENT,4.75,"""Street Fighter V"" tem lançamento previsto para PC e PS4 no começo de 2016.",Street Fighter V chega ao PC e PS4 no início de 2016.
+34,PARAPHRASE,ENTAILMENT,4.75,A Microsoft deve apresentar uma nova geração de aparelhos com Windows 10.,A Microsoft vai revelar novos dispostivos com Windows 10.
+201,PARAPHRASE,ENTAILMENT,5.0,"Além de Luciana Lóssio, o presidente do TSE, Dias Toffoli, precisa apresentar seu voto.","Além de Lóssio, falta votar o presidente do tribunal, Dias Toffoli."
+796,PARAPHRASE,ENTAILMENT,5.0,"Segundo os cientistas, a descoberta pode culminar na criação de novos medicamentos para melhorar as funções pulmonares.",Os cientistas dizem que as descobertas podem levar a novos remédios para melhorar a função pulmonar.
+251,PARAPHRASE,ENTAILMENT,4.75,"Depois de concluída a tramitação na Câmara, ela ainda precisa passar pelo Senado.","Após concluída a análise pelos deputados, ela precisa passar pelo Senado."
+629,PARAPHRASE,ENTAILMENT,4.25,"Inicialmente, o pedido foi encaminhado ao ministro Teori Zavascki, relator dos inquéritos da Lava Jato no STF.","Os trechos da delação foram encaminhados primeiro ao relator da Lava Jato no STF, ministro Teori Zavascki."
+507,PARAPHRASE,ENTAILMENT,4.75,"Sophia Abrahão abandonou os fios ruivos claros e agora exibe cabelos num tom mais escuro, quase vinho.","A atriz e cantora Sophia Abrahão trocou o tom ruivo que vinha exibindo por um vermelho mais escuro, quase vinho."

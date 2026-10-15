@@ -1,0 +1,9 @@
+chave,modelo,vetorizador,ngrama,atributos_relacao,estrategia,params,escolhida_na_validacao,f1_macro_validacao
+NaiveBayes|count,NaiveBayes,count,1-2,False,nenhuma,"{""alpha"": 1.0}",True,0.4069270490002197
+NaiveBayes|tfidf,NaiveBayes,tfidf,1-1,False,oversampling,"{""alpha"": 0.5}",False,0.38405580682445867
+RegressaoLogistica|count,RegressaoLogistica,count,1-2,True,oversampling,"{""C"": 0.1}",False,0.6310043699405402
+RegressaoLogistica|tfidf,RegressaoLogistica,tfidf,1-1,True,pesos,"{""C"": 1.0}",True,0.6688569980220508
+SVM|count,SVM,count,1-1,True,pesos,"{""C"": 0.01}",False,0.641920826456909
+SVM|tfidf,SVM,tfidf,1-1,True,pesos,"{""C"": 0.01}",True,0.6807164064744756
+MLP|count,MLP,count,1-2,True,oversampling,"{""alpha"": 0.01}",False,0.582095938685086
+MLP|tfidf,MLP,tfidf,1-2,True,oversampling,"{""alpha"": 0.01}",True,0.6562252180808882

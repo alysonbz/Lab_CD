@@ -1,0 +1,8 @@
+modelo,atributos_relacao,vetorizador,ngrama,estrategia,acuracia,precisao_macro,recall_macro,f1_macro,f1_NONE,f1_ENTAILMENT,f1_PARAPHRASE
+NaiveBayes,False,count,1-2,nenhuma,0.73,0.459,0.395,0.407,0.839,0.257,0.125
+RegressaoLogistica,False,count,1-2,pesos,0.696,0.407,0.397,0.401,0.816,0.294,0.093
+RegressaoLogistica,True,tfidf,1-1,pesos,0.792,0.63,0.736,0.669,0.873,0.585,0.548
+SVM,False,count,1-2,oversampling,0.68,0.39,0.385,0.386,0.806,0.274,0.08
+SVM,True,tfidf,1-1,pesos,0.802,0.659,0.708,0.681,0.88,0.558,0.604
+MLP,False,tfidf,1-1,oversampling,0.672,0.358,0.354,0.354,0.805,0.164,0.093
+MLP,True,tfidf,1-2,oversampling,0.808,0.687,0.634,0.656,0.892,0.505,0.571

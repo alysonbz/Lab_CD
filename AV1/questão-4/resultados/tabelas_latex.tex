@@ -1,0 +1,69 @@
+% Gerado por etapa2-tabelas-e-figuras.py (requer booktabs e graphicx)
+
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\toprule
+Modelo & Configuração & Acurácia & \textit{Precision} & \textit{Recall} & F1 macro & IC 95\% & F1 valid. \\
+\midrule
+\textit{Baseline} (sempre \textit{none}) & -- & 0,776 & 0,259 & 0,333 & 0,291 & [0,287; 0,295] & -- \\
+Naive Bayes & CountVectorizer, 1-2, relação: não, nenhuma & 0,714 & 0,415 & 0,373 & 0,378 & [0,350; 0,405] & 0,407 \\
+Regressão Logística & TF-IDF, 1-1, relação: sim, pesos & 0,792 & 0,586 & 0,650 & 0,610 & [0,579; 0,642] & 0,669 \\
+SVM linear & TF-IDF, 1-1, relação: sim, pesos & 0,825 & 0,620 & 0,648 & 0,633 & [0,598; 0,664] & 0,681 \\
+MLP & TF-IDF, 1-2, relação: sim, oversampling & 0,820 & 0,626 & 0,586 & 0,599 & [0,563; 0,635] & 0,656 \\
+\bottomrule
+\end{tabular}}
+\caption{Desempenho no teste dos modelos finais (configuração escolhida na validação). \textit{Precision}, \textit{recall} e F1 são médias macro das três classes. IC 95\% obtido por \textit{bootstrap}.}
+\label{tab:q4modelos}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Modelo & Classe & \textit{Precision} & \textit{Recall} & F1 & Suporte \\
+\midrule
+\textit{Baseline} & \textit{none} & 0,776 & 1,000 & 0,874 & 1553 \\
+ & \textit{entailment} & 0,000 & 0,000 & 0,000 & 341 \\
+ & \textit{paraphrase} & 0,000 & 0,000 & 0,000 & 106 \\
+\midrule
+Naive Bayes & \textit{none} & 0,794 & 0,874 & 0,832 & 1553 \\
+ & \textit{entailment} & 0,245 & 0,188 & 0,213 & 341 \\
+ & \textit{paraphrase} & 0,207 & 0,057 & 0,089 & 106 \\
+\midrule
+Regressão Logística & \textit{none} & 0,934 & 0,842 & 0,886 & 1553 \\
+ & \textit{entailment} & 0,505 & 0,674 & 0,578 & 341 \\
+ & \textit{paraphrase} & 0,317 & 0,434 & 0,367 & 106 \\
+\midrule
+SVM linear & \textit{none} & 0,920 & 0,893 & 0,906 & 1553 \\
+ & \textit{entailment} & 0,604 & 0,645 & 0,624 & 341 \\
+ & \textit{paraphrase} & 0,336 & 0,406 & 0,368 & 106 \\
+\midrule
+MLP & \textit{none} & 0,899 & 0,910 & 0,905 & 1553 \\
+ & \textit{entailment} & 0,547 & 0,584 & 0,565 & 341 \\
+ & \textit{paraphrase} & 0,431 & 0,264 & 0,327 & 106 \\
+\bottomrule
+\end{tabular}
+\caption{\textit{Precision}, \textit{recall} e F1 por classe no teste.}
+\label{tab:q4classes}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Modelo & F1 TF-IDF & F1 Count & $\Delta$ & IC 95\% de $\Delta$ & F1$_{par}$ TF-IDF & F1$_{par}$ Count \\
+\midrule
+Naive Bayes & 0,375 & 0,378 & -0,002 & [-0,031; 0,027] & 0,150 & 0,089 \\
+Regressão Logística & 0,610 & 0,602 & 0,008 & [-0,015; 0,031] & 0,367 & 0,335 \\
+SVM linear & 0,633 & 0,604 & 0,029 & [-0,004; 0,060] & 0,368 & 0,303 \\
+MLP & 0,599 & 0,562 & 0,037 & [0,008; 0,067] & 0,327 & 0,264 \\
+\bottomrule
+\end{tabular}
+\caption{TF-IDF contra \textit{CountVectorizer} no teste (F1 macro e F1 da classe \textit{paraphrase}). Cada vetorizador usa sua melhor configuração na validação; $\Delta$ = TF-IDF $-$ Count. Se o IC 95\% de $\Delta$ contém zero, a diferença não é conclusiva.}
+\label{tab:q4vetorizadores}
+\end{table}

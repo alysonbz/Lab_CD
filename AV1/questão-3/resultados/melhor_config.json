@@ -1,0 +1,49 @@
+{
+  "melhor_geral_na_validacao": "SVM",
+  "configuracoes": {
+    "NaiveBayes": {
+      "modelo": "NaiveBayes",
+      "vetorizador": "count",
+      "ngrama": "1-2",
+      "atributos_relacao": false,
+      "estrategia": "nenhuma",
+      "params": {
+        "alpha": 1.0
+      },
+      "f1_macro_validacao": 0.4069270490002197
+    },
+    "RegressaoLogistica": {
+      "modelo": "RegressaoLogistica",
+      "vetorizador": "tfidf",
+      "ngrama": "1-1",
+      "atributos_relacao": true,
+      "estrategia": "pesos",
+      "params": {
+        "C": 1.0
+      },
+      "f1_macro_validacao": 0.6688569980220508
+    },
+    "SVM": {
+      "modelo": "SVM",
+      "vetorizador": "tfidf",
+      "ngrama": "1-1",
+      "atributos_relacao": true,
+      "estrategia": "pesos",
+      "params": {
+        "C": 0.01
+      },
+      "f1_macro_validacao": 0.6807164064744756
+    },
+    "MLP": {
+      "modelo": "MLP",
+      "vetorizador": "tfidf",
+      "ngrama": "1-2",
+      "atributos_relacao": true,
+      "estrategia": "oversampling",
+      "params": {
+        "alpha": 0.01
+      },
+      "f1_macro_validacao": 0.6562252180808882
+    }
+  }
+}

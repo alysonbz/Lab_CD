@@ -1,0 +1,14 @@
+﻿,NONE,ENTAILMENT,PARAPHRASE
+cos_tfidf,0.3991,0.5695,0.6173
+jaccard,0.2414,0.4003,0.4673
+h_contida_em_p,0.4032,0.6687,0.6235
+p_contida_em_h,0.3697,0.4962,0.6244
+n_lemas_p,7.319,8.4737,7.2931
+n_lemas_h,6.6579,6.3295,7.3276
+dif_tamanho,-1.5958,-4.27,-0.1121
+neg_p,0.1094,0.103,0.0862
+neg_h,0.0894,0.0801,0.1034
+negacao_assimetrica,0.1448,0.0503,0.0517
+n_numeros_p,0.5496,0.5378,0.5862
+n_numeros_h,0.4571,0.3112,0.569
+numeros_iguais,0.5624,0.7643,0.9138

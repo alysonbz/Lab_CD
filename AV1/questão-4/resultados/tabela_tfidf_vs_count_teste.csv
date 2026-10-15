@@ -1,0 +1,5 @@
+modelo,f1_tfidf,f1_count,dif_f1,dif_ic95_inf,dif_ic95_sup,diferenca_significativa,f1_paraphrase_tfidf,f1_paraphrase_count,acuracia_tfidf,acuracia_count
+Naive Bayes,0.375,0.378,-0.002,-0.031,0.027,não,0.15,0.089,0.592,0.714
+Regressão Logística,0.61,0.602,0.008,-0.015,0.031,não,0.367,0.335,0.792,0.808
+SVM linear,0.633,0.604,0.029,-0.004,0.06,não,0.368,0.303,0.825,0.829
+MLP,0.599,0.562,0.037,0.008,0.067,sim,0.327,0.264,0.82,0.804

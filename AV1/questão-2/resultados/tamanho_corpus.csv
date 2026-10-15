@@ -1,0 +1,5 @@
+﻿conjunto,pares,frases_unicas,tokens_total,vocabulario_tokens,vocabulario_lemas,palavras_que_aparecem_1x,tokens_por_premissa,tokens_por_hipotese,n_classes
+train,2500,4980,64800,10029,7812,4368,13.96,11.96,3
+validation,500,1000,12848,3543,2947,1811,13.87,11.82,3
+test,2000,3988,52536,8646,6786,3853,14.16,12.11,3
+total,5000,9921,130184,14497,11202,5981,14.03,12.01,3

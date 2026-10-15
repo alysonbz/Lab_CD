@@ -1,0 +1,5 @@
+modelo,configs_pareadas,f1_tfidf_medio,f1_count_medio,dif_media,tfidf_ganha
+NaiveBayes,18,0.345,0.374,-0.029,7
+RegressaoLogistica,36,0.49,0.471,0.019,23
+SVM,36,0.459,0.444,0.016,22
+MLP,16,0.459,0.439,0.021,11

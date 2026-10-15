@@ -1,0 +1,6 @@
+modelo,vetorizador,ngrama,atributos_relacao,estrategia,f1_macro_validacao,acuracia,precisao_macro,recall_macro,f1_macro,f1_NONE,f1_ENTAILMENT,f1_PARAPHRASE,recall_PARAPHRASE,f1_ic95_inf,f1_ic95_sup,gap_val_teste
+Baseline (sempre NONE),-,-,-,-,,0.776,0.259,0.333,0.291,0.874,0.0,0.0,0.0,0.287,0.295,
+Naive Bayes,CountVectorizer,1-2,não,nenhuma,0.407,0.714,0.415,0.373,0.378,0.832,0.213,0.089,0.057,0.35,0.405,0.029
+Regressão Logística,TF-IDF,1-1,sim,pesos,0.669,0.792,0.586,0.65,0.61,0.886,0.578,0.367,0.434,0.579,0.642,0.059
+SVM linear,TF-IDF,1-1,sim,pesos,0.681,0.825,0.62,0.648,0.633,0.906,0.624,0.368,0.406,0.598,0.664,0.048
+MLP,TF-IDF,1-2,sim,oversampling,0.656,0.82,0.626,0.586,0.599,0.905,0.565,0.327,0.264,0.563,0.635,0.057

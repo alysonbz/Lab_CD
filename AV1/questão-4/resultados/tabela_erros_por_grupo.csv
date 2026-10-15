@@ -1,0 +1,8 @@
+grupo,valor,n,acuracia,pct_real_none,pct_previsto_none
+negação assimétrica,não,1738,0.811,75.604,72.209
+negação assimétrica,sim,262,0.92,91.221,96.565
+mesmos números nas duas frases,não,774,0.91,89.276,90.439
+mesmos números nas duas frases,sim,1226,0.772,70.31,65.905
+sobreposição (Jaccard),baixa,667,0.964,96.552,99.85
+sobreposição (Jaccard),média,666,0.896,89.189,93.544
+sobreposição (Jaccard),alta,667,0.615,47.226,32.834

@@ -1,0 +1,7 @@
+real,acertou,count,mean
+NONE,False,166,3.19
+NONE,True,1387,2.66
+ENTAILMENT,False,121,3.97
+ENTAILMENT,True,220,3.96
+PARAPHRASE,False,63,4.82
+PARAPHRASE,True,43,4.88
