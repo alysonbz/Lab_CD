@@ -10,6 +10,8 @@ from wordcloud import WordCloud
 from sklearn.cluster import KMeans
 from sklearn.decomposition import LatentDirichletAllocation, PCA
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.preprocessing import Normalizer
+from sklearn.decomposition import TruncatedSVD
 
 
 class CorpusExploratoryAnalyzer:
@@ -38,13 +40,21 @@ class CorpusExploratoryAnalyzer:
 
     @staticmethod
     def load_datasets(data_dir: str = "pre_process_and_analisis/data", prefix: str = "reviews_ecommerce") -> dict:
-        """Carrega os datasets pré-processados e aumentados (Original, SMOTE, EDA) da pasta informada."""
+        """Carrega os 4 datasets pré-processados e aumentados (Original, SMOTE, EDA e Tradução) da pasta informada."""
         path_orig = os.path.join(data_dir, f"{prefix}_preprocessados.csv")
         path_smote = os.path.join(data_dir, f"{prefix}_aumentados_smote.csv")
         path_eda = os.path.join(data_dir, f"{prefix}_aumentados_eda.csv")
+        path_trad = os.path.join(data_dir, f"{prefix}_aumentados_traducao.csv")
 
         datasets = {}
-        for name, path in [("Original", path_orig), ("SMOTE", path_smote), ("EDA", path_eda)]:
+        file_map = [
+            ("Original", path_orig), 
+            ("SMOTE", path_smote), 
+            ("EDA", path_eda), 
+            ("Tradução", path_trad)
+        ]
+
+        for name, path in file_map:
             if os.path.exists(path):
                 print(f"[INFO] Carregando dataset {name}: '{path}'...")
                 datasets[name] = pd.read_csv(path)
@@ -306,7 +316,7 @@ class CorpusExploratoryAnalyzer:
         self,
         df: pd.DataFrame = None,
         text_column: str = None,
-        n_clusters: int = 8,
+        n_clusters: int = 6,
         top_n_words: int = 6,
         save_csv: bool = True
     ) -> pd.DataFrame:
@@ -315,15 +325,6 @@ class CorpusExploratoryAnalyzer:
         summary_csv_path = self.output_dir / 'unsupervised_summary.csv'
         plot_path = self.output_dir / 'unsupervised_clusters_distribution.png'
         pca_path = self.output_dir / 'kmeans_pca_scatter.png'
-
-        if save_csv and csv_path.exists() and summary_csv_path.exists() and plot_path.exists() and pca_path.exists():
-            print(f"[CACHE] Resultados de agrupamento não supervisionado já existem em '{self.output_dir}'. Pulando execução.")
-            if target_df is not None and 'kmeans_cluster' not in target_df.columns:
-                try:
-                    return pd.read_csv(csv_path)
-                except Exception:
-                    pass
-            return target_df
 
         t_col = text_column or self.text_column
 
@@ -334,18 +335,17 @@ class CorpusExploratoryAnalyzer:
         text_series = target_df[t_col].fillna("").astype(str)
 
         print("\n" + "="*60)
-        print(f"[INFO] EXECUTANDO AGRUPAMENTO NÃO SUPERVISIONADO (K-Means & LDA - {n_clusters} Grupos)")
+        print(f"[INFO] EXECUTANDO AGRUPAMENTO NÃO SUPERVISIONADO OTIMIZADO (K-Means & LDA - {n_clusters} Grupos)")
         print("="*60)
 
-        tfidf_vec = TfidfVectorizer(max_features=1000)
-        X_tfidf = tfidf_vec.fit_transform(text_series)
+        tfidf_vec = TfidfVectorizer(max_features=2500, min_df=10, max_df=0.7, sublinear_tf=True)
+        X_tfidf_raw = tfidf_vec.fit_transform(text_series)
         tfidf_features = np.array(tfidf_vec.get_feature_names_out())
 
-        count_vec = CountVectorizer(max_features=1000)
-        X_count = count_vec.fit_transform(text_series)
-        count_features = np.array(count_vec.get_feature_names_out())
+        normalizer = Normalizer(norm='l2')
+        X_tfidf = normalizer.fit_transform(X_tfidf_raw)
 
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=20)
         target_df['kmeans_cluster'] = kmeans.fit_predict(X_tfidf)
 
         kmeans_labels = {}
@@ -356,7 +356,11 @@ class CorpusExploratoryAnalyzer:
 
         target_df['kmeans_label'] = target_df['kmeans_cluster'].map(kmeans_labels)
 
-        lda = LatentDirichletAllocation(n_components=n_clusters, random_state=42)
+        count_vec = CountVectorizer(max_features=2000, min_df=10, max_df=0.7)
+        X_count = count_vec.fit_transform(text_series)
+        count_features = np.array(count_vec.get_feature_names_out())
+
+        lda = LatentDirichletAllocation(n_components=n_clusters, random_state=42, max_iter=10)
         lda_probs = lda.fit_transform(X_count)
         target_df['lda_topic'] = lda_probs.argmax(axis=1)
 
@@ -369,56 +373,62 @@ class CorpusExploratoryAnalyzer:
         target_df['lda_label'] = target_df['lda_topic'].map(lda_labels)
 
         fig, axes = plt.subplots(1, 2, figsize=(16, 8))
-
         sns.countplot(data=target_df, y='kmeans_label', hue='kmeans_label', ax=axes[0], palette='viridis', legend=False)
-        axes[0].set_title('K-Means: Distribuição de Avaliações por Grupo', fontsize=12, fontweight='bold')
+        axes[0].set_title(f'K-Means: Distribuição por Grupo (k={n_clusters})', fontsize=12, fontweight='bold')
         axes[0].set_xlabel('Quantidade de Avaliações')
         axes[0].set_ylabel('')
 
         sns.countplot(data=target_df, y='lda_label', hue='lda_label', ax=axes[1], palette='magma', legend=False)
-        axes[1].set_title('LDA: Distribuição de Avaliações por Tópico', fontsize=12, fontweight='bold')
+        axes[1].set_title(f'LDA: Distribuição por Tópico (k={n_clusters})', fontsize=12, fontweight='bold')
         axes[1].set_xlabel('Quantidade de Avaliações')
         axes[1].set_ylabel('')
-
         plt.tight_layout()
         plt.savefig(plot_path, dpi=300)
-        print(f"[INFO] Gráfico de distribuição de clusters salvo em: {plot_path}")
         plt.close(fig)
 
+        print("[INFO] Reduzindo dimensionalidade para visualização PCA...")
+        svd = TruncatedSVD(n_components=50, random_state=42)
+        X_svd = svd.fit_transform(X_tfidf)
+        
         pca = PCA(n_components=2, random_state=42)
-        coords_2d = pca.fit_transform(X_tfidf.toarray())
+        coords_2d = pca.fit_transform(X_svd)
+        
         pca_df = pd.DataFrame({
             'PCA1': coords_2d[:, 0],
             'PCA2': coords_2d[:, 1],
-            'Grupo': target_df['kmeans_label']
+            'Grupo': target_df['kmeans_label'],
+            'Polaridade': target_df[self.label_column] if self.label_column in target_df.columns else 0
         })
 
+        if len(pca_df) > 15000:
+            pca_df_plot = pca_df.sample(n=15000, random_state=42)
+        else:
+            pca_df_plot = pca_df
+
         plt.figure(figsize=(12, 8))
-        sns.scatterplot(data=pca_df, x='PCA1', y='PCA2', hue='Grupo', palette='tab10', alpha=0.5, s=25)
-        plt.title('Projeção 2D dos Clusters K-Means (PCA)', fontsize=14, fontweight='bold')
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        sns.scatterplot(
+            data=pca_df_plot, x='PCA1', y='PCA2', hue='Grupo', 
+            palette='tab10', alpha=0.6, s=30, edgecolor=None
+        )
+        plt.title('Projeção 2D Otimizada dos Clusters K-Means (TruncatedSVD + PCA)', fontsize=14, fontweight='bold')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True)
         plt.tight_layout()
         plt.savefig(pca_path, dpi=300)
-        print(f"[INFO] Projeção PCA de clusters salva em: {pca_path}")
         plt.close()
+        print(f"[INFO] Gráfico PCA otimizado salvo em: {pca_path}")
 
         if save_csv:
             target_df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-            print(f"[SUCESSO] Dataset rotulado não supervisionado exportado para: {csv_path}")
-
-            summary_rows = []
-            for i in range(n_clusters):
-                summary_rows.append({
+            summary_rows = [
+                {
                     'ID_Grupo': i,
                     'KMeans_TopPalavras': kmeans_labels[i],
                     'KMeans_Qtd_Docs': (target_df['kmeans_cluster'] == i).sum(),
                     'LDA_TopPalavras': lda_labels[i],
                     'LDA_Qtd_Docs': (target_df['lda_topic'] == i).sum(),
-                })
-            summary_df = pd.DataFrame(summary_rows)
-            summary_csv_path = self.output_dir / 'unsupervised_summary.csv'
-            summary_df.to_csv(summary_csv_path, index=False, encoding='utf-8-sig')
-            print(f"[SUCESSO] Resumo dos agrupamentos exportado para: {summary_csv_path}")
+                } for i in range(n_clusters)
+            ]
+            pd.DataFrame(summary_rows).to_csv(summary_csv_path, index=False, encoding='utf-8-sig')
 
         return target_df
 
@@ -430,6 +440,7 @@ if __name__ == '__main__':
         analyzer = CorpusExploratoryAnalyzer(output_dir="pre_process_and_analisis/visualizations")
 
         if "Original" in datasets:
+            print("\n[INFO] Processando métricas e análises do Corpus Original...")
             analyzer.get_basic_metrics(df=datasets["Original"], text_column="review_text_cleaned", label_column="polarity")
             
             analyzer.generate_wordclouds(datasets["Original"], text_column="review_text_cleaned", label_column="polarity")
@@ -437,8 +448,9 @@ if __name__ == '__main__':
             analyzer.apply_unsupervised_analysis(
                 df=datasets["Original"],
                 text_column="review_text_cleaned",
-                n_clusters=8
+                n_clusters=10
             )
 
+        print("\n[INFO] Gerando gráficos comparativos entre os 4 datasets...")
         analyzer.plot_datasets_class_comparison(datasets, label_column="polarity")
         analyzer.plot_top_words_per_class(datasets, text_column="review_text_cleaned", label_column="polarity", top_n=10)

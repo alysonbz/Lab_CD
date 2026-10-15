@@ -1,5 +1,11 @@
 ﻿ID_Grupo,KMeans_TopPalavras,KMeans_Qtd_Docs,LDA_TopPalavras,LDA_Qtd_Docs
-0,"Cluster 0: [custo, beneficio, gostei, nao, excelente, bom]",4966,"Tópico 0: [gostei, nao, produto, otimo, bom, excelente]",11951
-1,"Cluster 1: [gostei, nao, produto, boa, bom, facil]",52716,"Tópico 1: [gostei, nao, imagem, qualidade, tv, boa]",15583
-2,"Cluster 2: [bom, gostei, nao, nada, produto, jogo]",6436,"Tópico 2: [nao, gostei, aparelho, problema, pois, sem]",15887
-3,"Cluster 3: [produto, otimo, excelente, gostei, qualidade, nao]",9508,"Tópico 3: [gostei, nao, produto, bom, facil, nada]",30205
+0,"Cluster 0: [facil, gostei, manuseio, usar, produto, bom]",5076,"Tópico 0: [gostei, rapida, desempenho, notebook, excelente, sem]",5496
+1,"Cluster 1: [otimo, produto, gostei, grafico, jogo, excelente]",2363,"Tópico 1: [gostei, boa, preco, qualidade, bom, imagem]",8281
+2,"Cluster 2: [produto, gostei, bom, excelente, nada, qualidade]",10174,"Tópico 2: [gostei, perfume, bom, fixacao, comprar, maravilhoso]",7509
+3,"Cluster 3: [excelente, produto, brasil, aqui, valor, graficos]",1014,"Tópico 3: [gostei, facil, produto, bom, bonito, pratico]",8970
+4,"Cluster 4: [beneficio, custo, gostei, bom, excelente, otimo]",3941,"Tópico 4: [tv, gostei, problema, produto, imagem, comprei]",7097
+5,"Cluster 5: [gostei, bom, produto, bem, aparelho, otimo]",35599,"Tópico 5: [gostei, custo, qualidade, beneficio, excelente, otima]",8038
+6,"Cluster 6: [bom, gostei, nada, jogo, diverso, rogabilidade]",2629,"Tópico 6: [gostei, bem, pois, maquinal, aguar, fica]",6458
+7,"Cluster 7: [imagem, tv, som, qualidade, gostei, otima]",6769,"Tópico 7: [gostei, bom, jogo, nada, legal, jogos]",5946
+8,"Cluster 8: [boa, gostei, qualidade, produto, bom, preco]",3032,"Tópico 8: [gostei, produto, otimo, excelente, ainda, nada]",9330
+9,"Cluster 9: [perfume, fixacao, fragrancia, gostei, frasco, mercante]",3029,"Tópico 9: [aparelho, bateria, celular, gostei, cameral, tela]",6501
