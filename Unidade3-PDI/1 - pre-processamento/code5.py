@@ -3,7 +3,7 @@ from pathlib import Path
 root_path = Path(__file__).resolve().parents[2]
 if str(root_path) not in sys.path:
     sys.path.append(str(root_path))
-    
+
 from skimage.color import rgb2gray
 from src.pdi_utils import load_page_image,show_image,manual_rgb2gray
 # Import the otsu threshold function
@@ -17,7 +17,7 @@ show_image(page_image, 'Global thresholding')
 global_thresh = threshold_otsu(page_image)
 
 # Obtain the binary image by applying global thresholding
-binary_global = page_image > threshold_otsu
+binary_global = page_image > global_thresh
 
 # Show the binary image obtained
 show_image(binary_global, 'Global thresholding')
