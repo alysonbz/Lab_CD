@@ -70,7 +70,7 @@ Neste exercício você ira aplicar a equalização do histograma da imagem.
 
 1) Importe o módulo ``exposure`` da ``skimage``.
 2) Calcule o histograma da imagem ``chest_xray_image`` com a função``hist`` da ``matplotlib.pyplot`` . Informe o parâmetro bins = 255.
-3) Com o modulo ``exposure`` use a função ``equalize_hist`` para equalizar o histograma da imagem.
+3) Com o modulo ``exposure`` use a função ```` para equalizar o histograma da imagem.
 4) Mostre a imagem equalizada.
 5) Calcule e mostre o histograma equalizado.
 
