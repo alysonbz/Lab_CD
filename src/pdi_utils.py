@@ -29,7 +29,7 @@ def load_lena():
     return plt.imread("imgs//lena.png")
 
 def load_lools_image():
-    return plt.imread("imgs//shapes52.jpg")
+    return plt.imread("imgs//cat.jpg")
 
 def load_soaps_image():
     return plt.imread("imgs//soaps.jpg")
