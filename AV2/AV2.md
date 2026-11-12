@@ -1,4 +1,4 @@
-## AV2 - Cassificação de imagens com extração de características
+## AV2 - Classificação de imagens com extração de características
 
 ## Descrição Geral
 
