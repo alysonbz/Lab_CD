@@ -149,3 +149,18 @@ print(Counter(no_stops).most_common(2)) # most_common - Exibe as palavras mais f
 # ======= AULA 05 =======
 # Classificação de texto
 # CountVactorizer()
+
+
+
+
+# Aula de Extração de características
+# Ao invés de trabalhar com todos os pixel, podemos trabalhá-la com forma, tamanho, orientação...
+# podemos utilizar também formas geométricas
+# Podemos observar:
+# forma - (Área, perímetro, circularidade ...)
+# Região - (Centróide, momentos de HU - define 7 momentos que identificam um padrão específico da image,
+# Textura - (Ao invés de observar a forma, podemos observar as texturas, Exemplos utilizados: LBP (identificam bordas, cantos, reconhecimento facial), GLCM
+
+
+#
+
