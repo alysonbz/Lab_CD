@@ -85,7 +85,7 @@ Dayanne , Hellen, Suiany: https://github.com/fruits-360/fruits-360-100x100
 
 Elyson e Ramon: https://isy.gitlab-pages.liu.se/cvl/en/datasets/swedish-leaf/
 
-Matias- Kelsey - Kevin: https://www.muratkoklu.com/datasets/
+Matias- Kelsey - Kevin: https://data.lhncbc.nlm.nih.gov/public/Malaria/index.html
 
 ### Observações para o Relatório 
 
