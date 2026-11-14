@@ -8,3 +8,4 @@ pyproject.toml
 AV1/assets/*.ft.txt
 AV1/assets/*.processed.txt
 AV1/assets/model_inputs/*.npz
+AV2/cell_images

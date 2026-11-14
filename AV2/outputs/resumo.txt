@@ -1,0 +1,21 @@
+== Análise do dataset cell_images ==
+Pasta: C:\dev\dsfc\Lab_CD\AV2\cell_images\cell_images
+Classes: Parasitized, Uninfected
+Arquivos lidos: 27.560
+Imagens válidas: 27.558
+
+-- Imagens por classe --
+             arquivos  imagens_validas  invalidas  em_duplicatas proporcao
+classe                                                                    
+Parasitized     13780            13779          1              0     50,0%
+Uninfected      13780            13779          1              0     50,0%
+Razão de desbalanceamento (maior/menor): 1.000
+
+-- Arquivos inválidos --
+classe       tipo        
+Parasitized  não é imagem    1
+Uninfected   não é imagem    1
+
+-- Duplicatas (mesmo conteúdo de pixels) --
+Grupos: 0 | imagens envolvidas: 0 | cópias redundantes: 0
+Grupos com cópias em classes diferentes (possível erro de rótulo): 0
