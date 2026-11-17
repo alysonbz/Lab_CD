@@ -1,0 +1,20 @@
+configuracao,redimensionamento,normalizar,segmentar,features,modelo,f1_macro_cv,acuracia_teste,f1_macro_teste
+64x64_sem_normalizacao,64x64,False,True,cor_textura,SVM (RBF),0.9359773888757402,0.9344734473447344,0.9344698775720156
+64x64_sem_normalizacao,64x64,False,True,cor_textura,Regressão Logística,0.9179712165866756,0.9123312331233124,0.9122903031015324
+64x64_normalizacao_cor,64x64,True,True,cor_textura,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
+64x64_normalizacao_cor,64x64,True,True,cor_textura,SVM (RBF),0.9539348967037488,0.954995499549955,0.954995323078327
+64x64_normalizacao_cor,64x64,True,True,cor_textura,Regressão Logística,0.9481162124271272,0.9488748874887488,0.9488746870169796
+fator2_sem_normalizacao,fator2,False,True,cor_textura,SVM (RBF),0.9351088991085676,0.9357335733573358,0.9357316989188073
+fator2_sem_normalizacao,fator2,False,True,cor_textura,Regressão Logística,0.9193337030348128,0.913051305130513,0.9130079585576454
+fator2_normalizacao_cor,fator2,True,True,cor_textura,SVM (RBF),0.9548473975414208,0.9585958595859586,0.9585943983550408
+fator2_normalizacao_cor,fator2,True,True,cor_textura,Regressão Logística,0.9478395601676756,0.9508550855085508,0.9508541681459152
+original_sem_normalizacao,original,False,True,cor_textura,SVM (RBF),0.9312814692922584,0.936993699369937,0.9369911980503488
+original_sem_normalizacao,original,False,True,cor_textura,Regressão Logística,0.9139587981618033,0.9056705670567056,0.9055810959005064
+original_normalizacao_cor,original,True,True,cor_textura,SVM (RBF),0.9549860312057934,0.9605760576057606,0.9605756436618528
+original_normalizacao_cor,original,True,True,cor_textura,Regressão Logística,0.9480193467413848,0.953015301530153,0.9530150822734718
+64x64_normalizacao_cor_so_cor,64x64,True,True,cor,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
+64x64_normalizacao_cor_so_cor,64x64,True,True,cor,SVM (RBF),0.9536638216154624,0.956975697569757,0.9569742697937496
+64x64_normalizacao_cor_so_cor,64x64,True,True,cor,Regressão Logística,0.949339459091284,0.95013501350135,0.9501331453946285
+64x64_normalizacao_cor_sem_segmentacao,64x64,True,False,cor_textura,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
+64x64_normalizacao_cor_sem_segmentacao,64x64,True,False,cor_textura,SVM (RBF),0.9472356926512816,0.9503150315031504,0.950313278026049
+64x64_normalizacao_cor_sem_segmentacao,64x64,True,False,cor_textura,Regressão Logística,0.936809742031141,0.9465346534653464,0.9465321514395908

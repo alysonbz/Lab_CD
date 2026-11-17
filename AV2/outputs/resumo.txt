@@ -12,10 +12,20 @@ Uninfected      13780            13779          1              0     50,0%
 Razão de desbalanceamento (maior/menor): 1.000
 
 -- Arquivos inválidos --
-classe       tipo        
-Parasitized  não é imagem    1
-Uninfected   não é imagem    1
+     classe   arquivo         tipo detalhe
+Parasitized Thumbs.db não é imagem     .db
+ Uninfected Thumbs.db não é imagem     .db
 
 -- Duplicatas (mesmo conteúdo de pixels) --
 Grupos: 0 | imagens envolvidas: 0 | cópias redundantes: 0
 Grupos com cópias em classes diferentes (possível erro de rótulo): 0
+
+-- Modo de cor --
+modo
+RGB    27558
+
+-- Dimensões (px) --
+         min  median  max
+largura   46     130  394
+altura    40     130  385
+Tamanhos distintos: 1.627 | imagens quadradas: 7,9%

@@ -1,0 +1,3 @@
+modelo,f1_macro_cv,C,gamma
+SVM (RBF),0.9313316413741832,1000.0,0.001
+Regressão Logística,0.9138646749385376,1.0,
