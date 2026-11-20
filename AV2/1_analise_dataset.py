@@ -4,6 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.colors import rgb_to_hsv
 from PIL import Image
 from tqdm import tqdm
 
@@ -16,6 +17,8 @@ IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 Q_LEVELS = 8  # cores quantizadas: 8 níveis por canal (faixas de 32 tons) -> 512 cores possíveis
 TOP_COLORS = 12  # barras por painel no gráfico de paleta
 MIN_SUPPORT = 2e-4  # cor "típica" precisa cobrir ao menos 0,02% dos pixels de célula da classe
+MEAN_COLS = ["media_R", "media_G", "media_B"]  # cor média dos pixels da célula em cada imagem
+N_SWATCHES = 400  # imagens sorteadas por classe nas faixas de cor média
 
 # paleta categórica (ordem fixa por classe), tinta de texto e superfície
 PALETTE = ["#2a78d6", "#eb6834", "#1baf7a"]
@@ -30,8 +33,14 @@ def fmt_pct(p, decimals=1):
     return f"{p:.{decimals}%}".replace(".", ",")
 
 
+def cell_pixels(pixels):
+    """Pixels da célula como matriz (n, 3); o fundo, exatamente (0,0,0), fica de fora."""
+    px = pixels.reshape(-1, 3)
+    return px[px.max(axis=1) > 0]
+
+
 class ColorStats:
-    """Acumula as cores dos pixels da célula de uma classe; o fundo, exatamente (0,0,0), fica de fora."""
+    """Acumula as cores dos pixels da célula de uma classe (recebe só pixels de célula, ver cell_pixels)."""
 
     def __init__(self):
         n_bins = Q_LEVELS ** 3
@@ -39,9 +48,7 @@ class ColorStats:
         self.q_count = np.zeros(n_bins, np.int64)  # nº de pixels em cada cor quantizada
         self.q_sum = np.zeros((n_bins, 3))  # soma de R, G, B por cor quantizada (para a cor média)
 
-    def add(self, pixels):
-        px = pixels.reshape(-1, 3)
-        px = px[px.max(axis=1) > 0]
+    def add(self, px):
         q = px // (256 // Q_LEVELS)
         idx = (q[:, 0].astype(np.intp) * Q_LEVELS + q[:, 1]) * Q_LEVELS + q[:, 2]
         self.q_count += np.bincount(idx, minlength=self.q_count.size)
@@ -74,9 +81,13 @@ def scan():
             except Exception as e:  # PIL levanta OSError, SyntaxError, UnidentifiedImageError...
                 invalid.append({**base, "tipo": "corrompida", "detalhe": f"{type(e).__name__}: {e}"})
                 continue
-            images.append({**base, "largura": width, "altura": height, "modo": mode, "hash": digest})
+            row = {**base, "largura": width, "altura": height, "modo": mode, "hash": digest}
             if mode == "RGB":  # estatística de cor só faz sentido com 3 canais RGB
-                colors.setdefault(class_dir.name, ColorStats()).add(pixels)
+                px = cell_pixels(pixels)
+                colors.setdefault(class_dir.name, ColorStats()).add(px)
+                if len(px):  # cor média da célula nesta imagem
+                    row.update(zip(MEAN_COLS, px.mean(axis=0)))
+            images.append(row)
     images = pd.DataFrame(images)
     invalid = pd.DataFrame(invalid, columns=["classe", "arquivo", "tipo", "detalhe"])
     return images, invalid, colors
@@ -257,6 +268,71 @@ def plot_channels(colors, class_colors):
     plt.close(fig)
 
 
+def eta2(values, groups):
+    """Fração da variância de values explicada por groups (soma dos quadrados entre grupos / total)."""
+    grand = values.mean()
+    g = values.groupby(groups)
+    return (g.size() * (g.mean() - grand) ** 2).sum() / ((values - grand) ** 2).sum()
+
+
+def plot_image_colors(images, class_colors, seed=42):
+    """Cor média da célula em cada imagem (fundo excluído): quanto ela muda de uma imagem para outra.
+
+    Topo: uma faixa por classe com a cor média de N_SWATCHES imagens sorteadas, ordenadas pelo matiz.
+    Embaixo: distribuição da média de cada canal entre as imagens, por classe. η² da classe = fração da
+    variância entre imagens explicada pela classe; o restante é variação de uma imagem para outra que
+    não depende da classe (coloração, iluminação), e é isso que a normalização de cor por imagem remove.
+    """
+    data = images.dropna(subset=MEAN_COLS)
+    classes = [c for c in class_colors if (data["classe"] == c).any()]
+    data = data[data["classe"].isin(classes)]
+    rng = np.random.default_rng(seed)
+
+    fig = plt.figure(figsize=(15, 4.8 + 1.1 * len(classes)), facecolor=SURFACE)
+    grid = fig.add_gridspec(len(classes) + 1, 3, height_ratios=[0.6] * len(classes) + [3])
+
+    for r, cls in enumerate(classes):
+        means = data.loc[data["classe"] == cls, MEAN_COLS].to_numpy() / 255
+        means = means[rng.choice(len(means), size=min(N_SWATCHES, len(means)), replace=False)]
+        hue = rgb_to_hsv(means)[:, 0]
+        means = means[np.argsort((hue + 0.5) % 1)]  # matiz girado meia volta: o rosa (H ≈ 0 ≈ 1) não se parte
+        ax = fig.add_subplot(grid[r, :])
+        ax.imshow(means[None], aspect="auto", interpolation="nearest")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.set_title(f"{cls}: cor média da célula em {fmt_int(len(means))} imagens sorteadas, ordenadas pelo matiz",
+                     loc="left", color=INK)
+
+    axes = []
+    for c, (col, name) in enumerate(zip(MEAN_COLS, ("R (vermelho)", "G (verde)", "B (azul)"))):
+        ax = fig.add_subplot(grid[-1, c], sharey=axes[0] if axes else None)
+        axes.append(ax)
+        edges = bin_edges(data[col], 4)
+        for cls in classes:
+            v = data.loc[data["classe"] == cls, col]
+            counts, _ = np.histogram(v, bins=edges)
+            ax.stairs(counts / len(v), edges, color=class_colors[cls], linewidth=1.6, label=cls)
+        title = f"Canal {name}"
+        if len(classes) > 1:
+            title += f"  ·  η² da classe = {fmt_pct(eta2(data[col], data['classe']))}"
+        ax.set_title(title, loc="left", color=INK)
+        ax.set_xlabel("média da célula na imagem (0–255)", color=INK_2)
+        ax.grid(axis="y", color=GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        style(ax)
+    axes[0].set_ylabel("proporção das imagens da classe", color=INK_2)
+    axes[0].legend(frameon=False, labelcolor=INK_2)
+
+    fig.suptitle("Cor média da célula em cada imagem (fundo preto excluído)\n"
+                 "η² da classe: fração da variância entre imagens explicada pela classe "
+                 "(o resto muda de imagem para imagem)", color=INK)
+    fig.tight_layout()
+    fig.savefig(OUT / "variacao_cor_imagens.png", dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def color_bars(ax, sub, values, labels, title, room):
     """Barras horizontais preenchidas com a própria cor; rótulo direto com o valor.
 
@@ -359,6 +435,7 @@ def main():
         table = color_table(colors)
         table.to_csv(OUT / "cores_quantizadas.csv")
         plot_channels(colors, class_colors)
+        plot_image_colors(images, class_colors)
         plot_palette(table, list(colors))
 
 

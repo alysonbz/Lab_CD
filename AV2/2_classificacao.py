@@ -16,10 +16,13 @@ Uso: python 2_classificacao.py                 -> roda todas as configurações
 4. métricas e matrizes de confusão das predições out-of-fold -> outputs/<config>/validacao_cruzada/
 5. avaliação final no conjunto de teste separado no passo 2 -> outputs/<config>/testset/,
    com as predições por imagem e exemplos de erros do melhor modelo
+6. no final, mede o tempo de extração de features por imagem com redimensionamento fator2 e original
+   -> outputs/tempo_extracao.csv
 """
 
 import re
 import sys
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -45,29 +48,29 @@ OUT = ROOT / "outputs"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # configurações comparadas
-# redimensionamento: "64x64" = tamanho fixo; "fator2" = todas reduzidas à metade;
-#                    "original" = sem redimensionar (ver downscale)
+# redimensionamento: "fator2" = todas reduzidas à metade; "original" = sem redimensionar (ver downscale)
 # normalizar: normalização de cor por imagem (normalize_color)
 # segmentar: estatísticas só nos pixels da célula (cell_mask); False = imagem inteira, com fundo
 # features: conjunto de colunas usado pelos modelos (FEATURE_SETS)
 CONFIGS = {
     f"{size}_{norm_name}": {"redimensionamento": size, "normalizar": norm, "segmentar": True,
                             "features": "cor_textura"}
-    for size in ("64x64", "fator2", "original")
+    for size in ("fator2", "original")
     for norm_name, norm in (("sem_normalizacao", False), ("normalizacao_cor", True))
 }
-# configuração escolhida; as ablações abaixo partem dela. Redimensionamento: 64x64, fator2 e original
-# empataram na validação cruzada (diferença < 0,002 no F1 macro, desvio entre folds ~0,01), então
-# ficou o 64x64, o mais simples e rápido
-FINAL = "64x64_normalizacao_cor"
+# configuração escolhida; as ablações abaixo partem dela. Redimensionamento: fator2 e original
+# empataram na validação cruzada (diferença < 0,002 no F1 macro, desvio entre folds ~0,01); os dois
+# preservam a escala física e a proporção, e o fator2 processa ~1/4 dos pixels (tempo medido no
+# final, em outputs/tempo_extracao.csv), então ficou o fator2
+FINAL = "fator2_normalizacao_cor"
 CONFIGS[f"{FINAL}_so_cor"] = {**CONFIGS[FINAL], "features": "cor"}  # sem textura (LBP)
 CONFIGS[f"{FINAL}_sem_segmentacao"] = {**CONFIGS[FINAL], "segmentar": False}
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 SEED = 42
 N_FOLDS = 5  # 1/5 dos pacientes vai para teste; mesmo nº de folds na validação cruzada
-SIZE = 64  # lado da imagem no redimensionamento "64x64"
 FACTOR = 2  # divisor do redimensionamento "fator2"
+N_BENCH = 1000  # imagens sorteadas na medição do tempo de extração (fator2 x original)
 MASK_EROSION = 1  # raio (px) da erosão da máscara: remove a borda misturada com o fundo pelo resize
 GRAY_TARGET = 0.6  # normalização de cor: média de cada canal na célula passa a valer isso (cinza neutro)
 HIST_BINS = 16
@@ -129,18 +132,20 @@ def patient_id(filename):
 def downscale(full, mode):
     """Redimensiona a imagem antes da extração (menos pixels -> extração mais rápida).
 
-    "64x64": tamanho fixo. As imagens têm de 46 a 394 px, então cada uma é reduzida (ou ampliada) por
-    um fator diferente e a proporção é distorcida: a mesma textura vira escalas diferentes no LBP.
+    Não há tamanho fixo: as features são estatísticas e histogramas divididos por n (nº de pixels da
+    célula), então o vetor tem sempre o mesmo comprimento. Um tamanho fixo (ex.: 64x64) reduziria cada
+    imagem (46 a 394 px) por um fator diferente e distorceria a proporção: a mesma textura viraria
+    escalas diferentes no LBP.
     "fator2": todas reduzidas à metade (média 2x2). Como todas as células foram fotografadas com a
     mesma ampliação, 1 px continua valendo o mesmo tamanho físico em todas, e a proporção é preservada.
-    "original": sem redimensionar. Mesma escala física e proporção, sem perder detalhe do parasita;
-    as features são divididas por n, então não precisam de tamanho fixo. Extração ~2x mais lenta.
+    "original": sem redimensionar. Mesma escala física e proporção, sem perder detalhe do parasita,
+    com ~4x mais pixels (tempo comparado em benchmark_extraction).
     """
     if mode == "original":
         return full
     if mode == "fator2":
         return full.reduce(FACTOR)
-    return full.resize((SIZE, SIZE), Image.Resampling.BILINEAR)
+    raise ValueError(f"redimensionamento desconhecido: {mode}")
 
 
 def cell_mask(full, size):
@@ -453,6 +458,45 @@ def compare():
     print(table.round(4).to_string(index=False))
 
 
+def benchmark_extraction(opts):
+    """Tempo de extração de features por imagem com redimensionamento fator2 e original.
+
+    Mesmas N_BENCH imagens sorteadas e mesmo pré-processamento (opts); só o redimensionamento muda. Os
+    arquivos são lidos uma vez antes da medição (ficam no cache do sistema, e a leitura do disco não
+    pesa só no primeiro modo). Os dois modos são medidos imagem a imagem, alternando qual vai primeiro,
+    para que nenhum seja favorecido pela ordem. O tempo inclui abrir e decodificar o PNG, igual nos dois.
+    """
+    files = sorted(f for d in DATA.iterdir() if d.is_dir() for f in d.iterdir() if f.suffix.lower() in IMAGE_EXTS)
+    rng = np.random.default_rng(SEED)
+    sample = [files[i] for i in rng.choice(len(files), size=min(N_BENCH, len(files)), replace=False)]
+    for f in sample:  # aquecimento: traz os arquivos para o cache do sistema
+        f.read_bytes()
+
+    modes = ("fator2", "original")
+    times = {m: [] for m in modes}
+    for i, f in enumerate(tqdm(sample, desc="tempo de extração", unit="img")):
+        elapsed = {}
+        try:
+            for mode in modes if i % 2 == 0 else modes[::-1]:
+                start = time.perf_counter()
+                extract(f, mode, opts["normalizar"], opts["segmentar"])
+                elapsed[mode] = time.perf_counter() - start
+        except Exception:  # imagem corrompida: fica fora da medição, como em build_dataset
+            continue
+        for mode, t in elapsed.items():
+            times[mode].append(t)
+
+    table = pd.DataFrame([{"redimensionamento": m, "imagens_medidas": len(t),
+                           "ms_por_imagem_media": 1000 * np.mean(t),
+                           "ms_por_imagem_mediana": 1000 * np.median(t),
+                           "estimativa_dataset_s": np.mean(t) * len(files)}  # todas as imagens, 1 núcleo
+                          for m, t in times.items()])
+    table["razao_vs_fator2"] = table["ms_por_imagem_media"] / table.at[0, "ms_por_imagem_media"]
+    table.to_csv(OUT / "tempo_extracao.csv", index=False)
+    print(f"\n== Tempo de extração de features ({fmt_int(len(times['fator2']))} imagens sorteadas) ==")
+    print(table.round(2).to_string(index=False))
+
+
 def main(selected):
     unknown = [c for c in selected if c not in CONFIGS]
     if unknown:
@@ -468,6 +512,7 @@ def main(selected):
         labels = sorted(df["classe"].unique())
         evaluate(train, test, labels, OUT / config, FEATURE_SETS[opts["features"]])
     compare()
+    benchmark_extraction(CONFIGS[FINAL])
 
 
 if __name__ == "__main__":
