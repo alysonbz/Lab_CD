@@ -12,7 +12,8 @@ Uso: python 2_classificacao.py                 -> roda todas as configurações
 2. divide em treino/teste por paciente (StratifiedGroupKFold), sem paciente nos dois conjuntos;
    a divisão é a mesma em todas as configurações
 3. ajusta hiperparâmetros por GridSearchCV com validação cruzada agrupada por paciente,
-   somente no treino; o StandardScaler fica dentro do pipeline (ajustado só no treino de cada fold)
+   somente no treino; StandardScaler e PCA (N_PCA componentes) ficam dentro do pipeline, ajustados só
+   no treino de cada fold, então cada configuração tem o seu próprio PCA (gráfico em outputs/<config>/)
 4. métricas e matrizes de confusão das predições out-of-fold -> outputs/<config>/validacao_cruzada/
 5. avaliação final no conjunto de teste separado no passo 2 -> outputs/<config>/testset/,
    com as predições por imagem e exemplos de erros do melhor modelo
@@ -39,6 +40,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_f
 from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold, cross_val_predict
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from tqdm import tqdm
 
@@ -52,25 +54,31 @@ OUT.mkdir(parents=True, exist_ok=True)
 # normalizar: normalização de cor por imagem (normalize_color)
 # segmentar: estatísticas só nos pixels da célula (cell_mask); False = imagem inteira, com fundo
 # features: conjunto de colunas usado pelos modelos (FEATURE_SETS)
+# pca: True = os modelos recebem só os N_PCA primeiros componentes principais (ver make_pipeline)
 CONFIGS = {
     f"{size}_{norm_name}": {"redimensionamento": size, "normalizar": norm, "segmentar": True,
-                            "features": "cor_textura"}
+                            "features": "cor_textura", "pca": True}
     for size in ("fator2", "original")
     for norm_name, norm in (("sem_normalizacao", False), ("normalizacao_cor", True))
 }
-# configuração escolhida; as ablações abaixo partem dela. Redimensionamento: fator2 e original
-# empataram na validação cruzada (diferença < 0,002 no F1 macro, desvio entre folds ~0,01); os dois
-# preservam a escala física e a proporção, e o fator2 processa ~1/4 dos pixels (tempo medido no
-# final, em outputs/tempo_extracao.csv), então ficou o fator2
+# base das ablações abaixo. Redimensionamento: fator2 e original empataram na validação cruzada
+# (diferença < 0,002 no F1 macro, desvio entre folds ~0,01); os dois preservam a escala física e a
+# proporção, e o fator2 processa ~1/4 dos pixels (tempo medido no final, em
+# outputs/tempo_extracao.csv), então ficou o fator2.
+# A configuração adotada no relatório é f"{FINAL}_sem_pca": o PCA piorou o F1 macro na validação
+# cruzada (SVM 0,955 -> 0,946; regressão logística 0,948 -> 0,929). As ablações de LBP e de
+# segmentação foram medidas com PCA, sobre FINAL
 FINAL = "fator2_normalizacao_cor"
 CONFIGS[f"{FINAL}_so_cor"] = {**CONFIGS[FINAL], "features": "cor"}  # sem textura (LBP)
 CONFIGS[f"{FINAL}_sem_segmentacao"] = {**CONFIGS[FINAL], "segmentar": False}
+CONFIGS[f"{FINAL}_sem_pca"] = {**CONFIGS[FINAL], "pca": False}  # todas as características, sem PCA
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 SEED = 42
 N_FOLDS = 5  # 1/5 dos pacientes vai para teste; mesmo nº de folds na validação cruzada
 FACTOR = 2  # divisor do redimensionamento "fator2"
 N_BENCH = 1000  # imagens sorteadas na medição do tempo de extração (fator2 x original)
+N_PCA = 10  # componentes principais passados aos modelos (os de maior variância explicada)
 MASK_EROSION = 1  # raio (px) da erosão da máscara: remove a borda misturada com o fundo pelo resize
 GRAY_TARGET = 0.6  # normalização de cor: média de cada canal na célula passa a valer isso (cinza neutro)
 HIST_BINS = 16
@@ -111,7 +119,7 @@ MODELS = {
     ),
 }
 
-SURFACE, INK, INK_2, MUTED = "#fcfcfb", "#0b0b0b", "#52514e", "#898781"
+SURFACE, INK, INK_2, MUTED, GRID, ACCENT = "#fcfcfb", "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#2a78d6"
 CMAP = LinearSegmentedColormap.from_list("azul", ["#cde2fb", "#6da7ec", "#2a78d6", "#184f95", "#0d366b"])
 
 
@@ -251,8 +259,21 @@ def describe_split(train, test):
     print(f"Pacientes nos dois conjuntos: {len(shared)}")
 
 
-def tune(estimator, grid, X, y, groups, cv):
-    pipe = Pipeline([("scaler", StandardScaler()), ("clf", estimator)])
+def make_pipeline(estimator, pca):
+    """Padronização -> PCA (opcional) -> classificador.
+
+    O PCA vem depois do StandardScaler: sem padronizar, as características de maior escala dominariam
+    a variância. svd_solver="full" é exato e determinístico (71 colunas: custo desprezível). Dentro do
+    pipeline, scaler e PCA são ajustados só no treino de cada fold da validação cruzada.
+    """
+    steps = [("scaler", StandardScaler())]
+    if pca:
+        steps.append(("pca", PCA(n_components=N_PCA, svd_solver="full")))
+    return Pipeline(steps + [("clf", estimator)])
+
+
+def tune(estimator, grid, X, y, groups, cv, pca):
+    pipe = make_pipeline(estimator, pca)
     search = GridSearchCV(pipe, grid, scoring="f1_macro", cv=cv, n_jobs=-1, verbose=1)
     search.fit(X, y, groups=groups)
     return search
@@ -400,20 +421,98 @@ def plot_errors(test, pred, model_name, path, n=8):
     plt.close(fig)
 
 
-def evaluate(train, test, labels, folder, cols):
+def eta2(values, groups):
+    """Fração da variância de values explicada por groups (soma dos quadrados entre grupos / total)."""
+    values = pd.Series(values)
+    grand = values.mean()
+    g = values.groupby(np.asarray(groups))
+    return (g.size() * (g.mean() - grand) ** 2).sum() / ((values - grand) ** 2).sum()
+
+
+def analyze_pca(X, y, cols, folder):
+    """PCA de todas as componentes no treino padronizado: o mesmo PCA que o pipeline reajusta em todo o
+    treino antes do teste (os N_PCA primeiros componentes são os que o modelo recebe).
+
+    Salva em folder:
+    - pca_componentes.csv: variância explicada por componente e acumulada; eta2_classe = fração da
+      variância do componente explicada pela classe (o PCA não usa a classe: mostra se a variância que
+      ele escolheu separa as classes); as 3 características de maior peso (|v_kj|) no componente
+    - pca_caracteristicas.csv: variância preservada de cada característica pelos N_PCA componentes,
+      sum_k λ_k v_kj² / var_j (λ_k: variância do componente k; v_kj: peso da característica j nele).
+      Perto de 0 = a característica quase não entra no que o modelo recebe
+    - pca_<config>.png: barras das duas tabelas (nome com a configuração para as figuras de várias
+      configurações poderem ficar juntas na pasta do relatório)
+    """
+    Z = StandardScaler().fit_transform(X)
+    pca = PCA(svd_solver="full").fit(Z)
+    ratio = pca.explained_variance_ratio_
+    n = np.arange(1, len(ratio) + 1)
+    scores = pca.transform(Z)
+    top = [", ".join(np.asarray(cols)[np.argsort(-np.abs(v))[:3]]) for v in pca.components_]
+    pd.DataFrame({"componente": n, "variancia_explicada": ratio, "variancia_acumulada": ratio.cumsum(),
+                  "eta2_classe": [eta2(s, y) for s in scores.T], "maiores_pesos": top}
+                 ).to_csv(folder / "pca_componentes.csv", index=False)
+
+    var = Z.var(axis=0, ddof=1)  # mesma convenção (n-1) de explained_variance_
+    kept = (pca.explained_variance_[:N_PCA, None] * pca.components_[:N_PCA] ** 2).sum(axis=0)
+    preserved = np.divide(kept, var, out=np.zeros_like(kept), where=var > 1e-12)  # constante: nada a preservar
+    pd.DataFrame({"caracteristica": cols, "variancia_preservada": preserved}).sort_values(
+        "variancia_preservada", ascending=False).to_csv(folder / "pca_caracteristicas.csv", index=False)
+
+    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(15, 9.5), facecolor=SURFACE,
+                                     gridspec_kw={"height_ratios": [1, 1.25]})
+    ax_a.bar(n, 100 * ratio, width=0.8, color=[ACCENT if i <= N_PCA else MUTED for i in n])
+    ax_a.axvline(N_PCA + 0.5, color=INK_2, linestyle="--", linewidth=1)
+    ax_a.text(N_PCA + 1, 100 * ratio[0], f"os {N_PCA} primeiros (azul) vão para o modelo:\n"
+              f"{fmt_pct(ratio[:N_PCA].sum())} da variância total", va="top", color=INK, fontsize=11)
+    ax_a.set_xticks([1, *range(5, len(n) + 1, 5)])
+    ax_a.set_xlim(0.3, len(n) + 0.7)
+    ax_a.set_xlabel("componente principal", color=INK_2)
+    ax_a.set_ylabel("variância explicada (%)", color=INK_2)
+    ax_a.set_title("Variância explicada por componente", loc="left", color=INK)
+
+    x = np.arange(len(cols))
+    ax_b.bar(x, 100 * preserved, width=0.8, color=ACCENT)
+    ax_b.set_xticks(x, cols, rotation=90, fontsize=7)
+    ax_b.set_xlim(-0.7, len(cols) - 0.3)
+    ax_b.set_ylim(0, 100)
+    ax_b.set_ylabel("variância preservada (%)", color=INK_2)
+    ax_b.set_title(f"Quanto da variância de cada característica os {N_PCA} componentes preservam",
+                   loc="left", color=INK)
+
+    for ax in (ax_a, ax_b):
+        ax.grid(axis="y", color=GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        ax.set_facecolor(SURFACE)
+        ax.tick_params(colors=INK_2, length=0)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            ax.spines[side].set_color(MUTED)
+    fig.suptitle(f"PCA de {folder.name} (treino, características padronizadas)", color=INK)
+    fig.tight_layout()
+    fig.savefig(folder / f"pca_{folder.name}.png", dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+    print(f"PCA: {N_PCA} componentes explicam {fmt_pct(ratio[:N_PCA].sum())} da variância")
+
+
+def evaluate(train, test, labels, folder, cols, pca):
     """Busca de hiperparâmetros de cada modelo; salva métricas de validação cruzada e de teste em folder,
-    as predições de teste por imagem e exemplos de erros do melhor modelo (maior F1 macro na CV)."""
+    as predições de teste por imagem e exemplos de erros do melhor modelo (maior F1 macro na CV).
+    Com pca=True, também a análise do PCA do treino (analyze_pca)."""
     val_dir, test_dir = folder / "validacao_cruzada", folder / "testset"
     for d in (val_dir, test_dir):
         d.mkdir(parents=True, exist_ok=True)
     X_train, y_train, g_train = train[cols], train["classe"], train["paciente"]
     cv = StratifiedGroupKFold(n_splits=N_FOLDS, shuffle=True, random_state=SEED)
+    if pca:
+        analyze_pca(X_train, y_train, cols, folder)
 
     cv_preds, test_preds, best = {}, {}, []
     predictions = test[["id", "classe", "paciente"]].copy()
     for slug, (name, estimator, grid) in MODELS.items():
         print(f"\n== {name} ==")
-        search = tune(estimator, grid, X_train, y_train, g_train, cv)
+        search = tune(estimator, grid, X_train, y_train, g_train, cv, pca)
         grid_table(search).to_csv(val_dir / f"grid_{slug}.csv", index=False)
         params = {k.removeprefix("clf__"): v for k, v in search.best_params_.items()}
         best.append({"modelo": name, "f1_macro_cv": search.best_score_, **params})
@@ -510,7 +609,7 @@ def main(selected):
         if i == 0:
             describe_split(train, test)
         labels = sorted(df["classe"].unique())
-        evaluate(train, test, labels, OUT / config, FEATURE_SETS[opts["features"]])
+        evaluate(train, test, labels, OUT / config, FEATURE_SETS[opts["features"]], opts["pca"])
     compare()
     benchmark_extraction(CONFIGS[FINAL])
 

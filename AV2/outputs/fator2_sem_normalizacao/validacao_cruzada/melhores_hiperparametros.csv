@@ -1,3 +1,4 @@
 modelo,f1_macro_cv,C,gamma
-SVM (RBF),0.935112853643092,1000.0,0.001
-Regressão Logística,0.919202095535157,100.0,
+Baseline (classe mais frequente),0.33201867748013747,,
+SVM (RBF),0.9077727877930257,1000.0,0.01
+Regressão Logística,0.858196913478382,100.0,

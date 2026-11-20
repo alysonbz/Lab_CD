@@ -30,13 +30,16 @@
 Este relatório descreve um mini-projeto completo de Processamento Digital de Imagens para classificar
 imagens de hemácias em \emph{parasitadas} (\textit{Parasitized}) e \emph{não infectadas}
 (\textit{Uninfected}) pelo parasita da malária. O pipeline é composto por análise exploratória do
-dataset, pré-processamento, segmentação da célula, extração de características de cor e textura e
-classificação com algoritmos tradicionais (SVM com kernel RBF e regressão logística), sem redes
-neurais. A divisão entre treino e teste é feita por paciente, para evitar vazamento de dados. Cada
-decisão do pipeline foi avaliada por experimentos controlados. A configuração final, com normalização
-de cor por imagem, chega a F1 macro de 0,955 no conjunto de teste com o SVM, contra 0,331 de um
-classificador de referência que sempre prevê a classe mais frequente. A normalização de cor foi a
-decisão de maior impacto, reduzindo o erro do SVM de 6,6\% para 4,5\%.
+dataset, pré-processamento, segmentação da célula, extração de características de cor e textura,
+avaliação de uma redução de dimensionalidade por PCA e classificação com algoritmos tradicionais (SVM
+com kernel RBF e regressão logística), sem redes neurais. A divisão entre treino e teste é feita por
+paciente, para evitar vazamento de dados. Cada decisão do pipeline foi avaliada por experimentos
+controlados. A configuração final (imagens reduzidas à metade, segmentação, normalização de cor por
+imagem e as 71 características padronizadas) chega a F1 macro de 0,959 no conjunto de teste com o
+SVM, contra 0,331 de um classificador de referência que sempre prevê a classe mais frequente. A
+normalização de cor foi a decisão de maior impacto, reduzindo o erro do SVM no teste de 6,4\% para
+4,1\%. O PCA com 10 componentes foi descartado: ele piorou os dois modelos (o SVM cai para 0,950 no
+teste), porque parte dos componentes de maior variância não tem relação com a classe.
 \end{abstract}
 
 \tableofcontents
@@ -58,17 +61,19 @@ convolucionais e modelos pré-treinados não foram usados em nenhuma etapa.
 O trabalho está organizado em dois scripts, ambos na pasta \arq{AV2}:
 \begin{itemize}
   \item \arq{1_analise_dataset.py}: análise e preparação do dataset (contagens, arquivos inválidos,
-        duplicatas, dimensões, cores e exemplos). Gera os gráficos e o arquivo \arq{outputs/resumo.txt}.
+        duplicatas, dimensões, cores, variação de cor entre imagens e exemplos). Gera os gráficos e o
+        arquivo \arq{outputs/resumo.txt}.
   \item \arq{2_classificacao.py}: pré-processamento, segmentação, extração de características,
-        divisão treino/teste, busca de hiperparâmetros, avaliação e experimentos comparativos.
-        Cada configuração avaliada tem uma pasta própria em \arq{outputs/<config>/}.
+        divisão treino/teste, PCA, busca de hiperparâmetros, avaliação, experimentos comparativos e
+        medição do tempo de extração. Cada configuração avaliada tem uma pasta própria em
+        \arq{outputs/<config>/}.
 \end{itemize}
 Todos os caminhos de arquivo citados neste relatório (por exemplo, nas fontes das tabelas) são
 relativos à pasta \arq{AV2} do repositório.
 
 As seções seguem a ordem do pipeline: dataset (Seção~\ref{sec:dataset}), divisão dos dados
 (Seção~\ref{sec:divisao}), pré-processamento (Seção~\ref{sec:preproc}), segmentação
-(Seção~\ref{sec:segmentacao}), características (Seção~\ref{sec:features}), classificação
+(Seção~\ref{sec:segmentacao}), características (Seção~\ref{sec:features}), PCA e classificação
 (Seção~\ref{sec:classificacao}), resultados (Seção~\ref{sec:resultados}) e discussão
 (Seção~\ref{sec:discussao}).
 
@@ -169,10 +174,10 @@ Arquivo: \texttt{dimensoes\_imagens.png}.}\label{fig:dimensoes}
 A Figura~\ref{fig:exemplos} mostra imagens sorteadas de cada classe. Elas evidenciam as principais
 dificuldades do problema:
 \begin{itemize}
-  \item \textbf{Variação de coloração entre lâminas.} A cor de fundo da célula vai do rosa ao lilás e
-        ao azul-acinzentado nas duas classes. Essa variação vem do corante, da espessura do
-        esfregaço e da iluminação de cada lâmina, e não da infecção. Para um classificador baseado em
-        cor, ela é ruído --- e um ruído correlacionado com o paciente.
+  \item \textbf{Variação de coloração entre imagens.} A cor de fundo da célula vai do rosa ao lilás e
+        ao azul-acinzentado nas duas classes (medida na Seção~\ref{sec:cor}). Essa variação
+        provavelmente vem do corante, da espessura do esfregaço e da iluminação no momento da
+        fotografia, e não da infecção. Para um classificador baseado em cor, ela é ruído.
   \item \textbf{Parasitas pequenos ou pouco corados.} Em várias células parasitadas o parasita é
         um ponto roxo de poucos pixels, às vezes na borda da célula.
   \item \textbf{Artefatos nas não infectadas.} Algumas células não infectadas têm manchas, regiões
@@ -231,7 +236,7 @@ Conclusões da análise de cor:
 \begin{itemize}
   \item As cores \emph{mais frequentes} são as mesmas nas duas classes (rosa \texttt{\#cd9394},
         lilás \texttt{\#b0aab7} etc.). Ou seja, a cor média da célula diz pouco sobre a classe e
-        reflete principalmente a coloração da lâmina.
+        reflete principalmente a coloração geral de cada imagem (Figura~\ref{fig:variacao-cor}).
   \item As cores \emph{típicas} das parasitadas são roxos e magentas escuros (por exemplo
         \texttt{\#941487}, 207 vezes mais frequente que nas não infectadas). Cada uma ocupa menos
         de 0,5\% dos pixels, mas elas são quase exclusivas dessa classe: é o parasita.
@@ -239,9 +244,40 @@ Conclusões da análise de cor:
         acinzentados, ou seja, não existe uma cor exclusiva da célula sadia.
 \end{itemize}
 
+\paragraph{Variação de cor entre imagens.} Os gráficos anteriores juntam os pixels de todas as imagens
+de uma classe e não mostram quanto a cor geral muda de uma imagem para outra. Para isso, foi calculada
+a cor média dos pixels da célula em cada imagem (fundo excluído). A Figura~\ref{fig:variacao-cor}
+mostra, no topo, essas cores médias para 400 imagens sorteadas de cada classe, ordenadas pelo matiz,
+e, embaixo, a distribuição da média de cada canal entre as imagens, por classe. Para medir quanto
+dessa variação está ligada à classe, foi usado o $\eta^2$ (razão de correlação):
+\begin{equation}
+  \eta^2 = \frac{\sum_{k} n_k\,(\bar{x}_k - \bar{x})^2}{\sum_{i} (x_i - \bar{x})^2},
+\end{equation}
+em que $x_i$ é a média de um canal na imagem $i$, $\bar{x}_k$ e $n_k$ são a média e o número de
+imagens da classe $k$ e $\bar{x}$ é a média geral. $\eta^2$ é a fração da variância entre imagens
+explicada pela classe; o restante é variação de uma imagem para outra que não depende da classe.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{variacao_cor_imagens.png}
+\caption{Cor média da célula em cada imagem (fundo excluído). Topo: 400 imagens sorteadas de cada
+classe, cada uma representada por uma faixa com a sua cor média, ordenadas pelo matiz. Embaixo:
+distribuição da média de cada canal entre as imagens, por classe, com o $\eta^2$ da classe no título
+de cada painel. Arquivo: \texttt{variacao\_cor\_imagens.png}.}\label{fig:variacao-cor}
+\end{figure}
+
+As duas classes têm a mesma faixa de cores médias, do rosa ao lilás e ao azul-acinzentado, e as
+distribuições de cada canal se sobrepõem em grande parte. A classe explica apenas 0,1\% (R), 9,4\%
+(G) e 3,6\% (B) da variância da cor média entre imagens. Ou seja, a cor geral da célula muda muito
+de uma imagem para outra, e essa mudança quase não tem relação com a infecção. O canal G é o que tem
+mais relação com a classe (as parasitadas ficam um pouco mais escuras em G), coerente com a cauda
+escura do parasita nesse canal. O canal B é bimodal nas duas classes, com picos perto de 145 e de
+180: há dois grupos de imagens, mais rosadas e mais azuladas, que aparecem também nas faixas de cor
+do topo da figura e não correspondem às classes.
+
 Essas observações orientaram três decisões: usar características de \emph{distribuição} de cor
 (histogramas e desvios), e não só médias; considerar a cauda escura do canal G; e testar uma
-normalização que remova a coloração da lâmina (Seção~\ref{sec:normalizacao}).
+normalização que remova a coloração geral de cada imagem (Seção~\ref{sec:normalizacao}).
 
 %=====================================================================
 \section{Divisão em treino e teste}\label{sec:divisao}
@@ -297,33 +333,35 @@ intervalo $[0,1]$.
 \subsection{Redimensionamento}\label{sec:resize}
 
 Como as imagens têm tamanhos diferentes (Figura~\ref{fig:dimensoes}), foi preciso decidir como
-tratá-las. Três opções foram implementadas e comparadas experimentalmente
+tratá-las. Nenhuma das características extraídas exige tamanho fixo: todas são estatísticas ou
+histogramas normalizados pelo número de pixels da célula (Seção~\ref{sec:features}), então o vetor de
+características tem sempre 71 posições, qualquer que seja o tamanho da imagem. O redimensionamento,
+portanto, não serve para igualar dimensões; ele tem dois efeitos: reduz o custo de processamento e
+altera a escala em que a textura é medida pelo LBP. Duas opções foram implementadas e comparadas
 (Seção~\ref{sec:res-preproc}):
 \begin{itemize}
-  \item \textbf{64x64}: todas as imagens são redimensionadas para $64\times64$ com interpolação
-        bilinear. É a opção mais rápida, mas cada imagem é reduzida por um fator diferente (a de 394
-        px é reduzida cerca de 6 vezes; a de 46 px é ampliada) e a proporção da célula é distorcida.
   \item \textbf{fator2}: todas as imagens são reduzidas à metade do próprio tamanho
         (\texttt{Image.reduce(2)}, média de blocos $2\times2$). Como todas as células foram fotografadas
         com a mesma ampliação, um pixel continua representando o mesmo tamanho físico em todas, e a
-        proporção é preservada.
-  \item \textbf{original}: sem redimensionamento. Preserva todo o detalhe, ao custo de uma extração
-        cerca de duas vezes mais lenta.
+        proporção é preservada. Cada imagem passa a ter $\sim$1/4 dos pixels.
+  \item \textbf{original}: sem redimensionamento. Mesma escala física e proporção, com todo o detalhe.
 \end{itemize}
 
-Nenhuma das características extraídas exige tamanho fixo: todas são estatísticas ou histogramas
-normalizados pelo número de pixels da célula (Seção~\ref{sec:features}). Por isso as três opções
-são possíveis. O redimensionamento tem dois efeitos: reduz o custo de processamento e altera a escala
-em que a textura é medida pelo LBP.
+Uma versão anterior usava também um tamanho fixo de $64\times64$ pixels (interpolação bilinear). Essa
+opção foi removida: como as imagens têm de 46 a 394 px, cada uma era reduzida (ou ampliada) por um
+fator diferente, o que distorce a proporção da célula e faz a mesma textura ser medida em escalas
+diferentes. Na versão sem PCA, as três opções empataram na validação cruzada
+(Tabela~\ref{tab:preproc}), e o tamanho fixo não tinha nenhuma vantagem que compensasse a distorção.
 
-Nos experimentos, as três opções empataram na validação cruzada (diferença inferior a 0,002 no F1
-macro, contra um desvio de $\sim$0,01 entre as partições). Como a mudança não teve efeito mensurável,
-a configuração final manteve o \textbf{64x64}, a opção mais simples e rápida.
+Entre fator2 e original, a escolha final é o \textbf{fator2}: as duas opções preservam a escala física,
+e o fator2 processa um quarto dos pixels. O ganho de tempo foi medido diretamente
+(Tabela~\ref{tab:tempo}).
 
 \subsection{Normalização de cor}\label{sec:normalizacao}
 
-A análise de cor (Seção~\ref{sec:cor}) mostrou que a coloração geral da célula muda de lâmina para
-lâmina e não depende da classe. Para remover esse efeito foi usada a hipótese do \emph{mundo
+A análise de cor (Seção~\ref{sec:cor}, Figura~\ref{fig:variacao-cor}) mostrou que a coloração geral
+da célula muda muito de uma imagem para outra e quase não depende da classe. Para remover esse efeito
+foi usada a hipótese do \emph{mundo
 cinza}~\cite{buchsbaum1980}, aplicada só dentro da célula: cada canal $c\in\{R,G,B\}$ é multiplicado
 por um fator que leva a média dos pixels da célula a um cinza neutro fixo:
 \begin{equation}
@@ -379,8 +417,8 @@ morfológica:
         0,1, então a separação é exata.
   \item \textbf{Redimensionamento da máscara} para o tamanho da imagem processada, com interpolação
         pelo vizinho mais próximo (\texttt{NEAREST}), que não cria valores intermediários.
-  \item \textbf{Erosão} com elemento estruturante em disco de raio 1 (cruz $3\times3$). O
-        redimensionamento bilinear mistura fundo e célula na borda; a erosão descarta esse anel de
+  \item \textbf{Erosão} com elemento estruturante em disco de raio 1 (cruz $3\times3$). A redução
+        (média de blocos $2\times2$) mistura fundo e célula na borda; a erosão descarta esse anel de
         pixels misturados.
 \end{enumerate}
 
@@ -397,7 +435,7 @@ e 0,4) são justamente os do parasita.
 \centering
 \includegraphics[width=\textwidth]{exemplos_segmentacao.png}
 \caption{Etapas do pré-processamento em quatro células sorteadas: imagem original, imagem
-redimensionada para $64\times64$, máscara após a erosão, célula segmentada (fundo descartado
+reduzida à metade (fator2), máscara após a erosão, célula segmentada (fundo descartado
 em branco) e cor normalizada. Arquivo: \texttt{exemplos\_segmentacao.png}.}\label{fig:segmentacao}
 \end{figure}
 
@@ -496,8 +534,16 @@ analisadas no conjunto de treino quanto a redundância e poder de separação. O
         robusto a dimensões constantes), mas indica redundância;
   \item a característica isolada mais discriminante foi uma faixa intermediária do histograma do canal
         G (AUC de 0,95), coerente com a análise de cor;
+  \item com a normalização de cor, as médias de R, G e B da célula ficam constantes por construção
+        (0,6, a menos do corte em 1), com desvio entre imagens abaixo de $5\cdot10^{-4}$, e não carregam
+        informação;
   \item o problema do matiz descrito acima, que foi corrigido.
 \end{itemize}
+Nenhuma característica foi removida manualmente por causa desses achados. Para tratar essas
+redundâncias, foi avaliada uma análise de componentes principais (PCA, Seção~\ref{sec:pca}), que
+concentra a informação das características correlacionadas em poucos componentes. O PCA piorou os
+modelos (Seção~\ref{sec:res-pca}), e a configuração final passa as 71 características padronizadas
+diretamente aos classificadores, cuja regularização lida com as redundâncias.
 A comparação entre conjuntos de características (só cor vs. cor + textura) está na
 Seção~\ref{sec:res-features}.
 
@@ -507,8 +553,9 @@ As características de todas as imagens formam um dataframe com uma linha por im
 \texttt{id} (nome do arquivo, único em todo o dataset), \texttt{classe}, \texttt{paciente} e as 71
 características. O \texttt{id} e o \texttt{paciente} não entram no classificador: o paciente é usado
 apenas para formar os grupos na divisão treino/teste e na validação cruzada. O dataframe de cada
-configuração é salvo em \arq{outputs/<config>/features_<config>.csv}; o da configuração
-final é \arq{outputs/64x64_normalizacao_cor/features_64x64_normalizacao_cor.csv}.
+configuração é salvo em \arq{outputs/<config>/features_<config>.csv}. A configuração final usa
+\arq{outputs/fator2_normalizacao_cor/features_fator2_normalizacao_cor.csv}, o mesmo dataframe da
+versão com PCA, porque o PCA é aplicado depois da extração.
 
 %=====================================================================
 \section{Classificação e protocolo de avaliação}\label{sec:classificacao}
@@ -527,8 +574,57 @@ final é \arq{outputs/64x64_normalizacao_cor/features_64x64_normalizacao_cor.csv
 
 Cada modelo é um \texttt{Pipeline} com \texttt{StandardScaler} seguido do classificador. A
 padronização é necessária para os dois modelos (o kernel RBF depende de distâncias e a regularização
-da regressão logística depende da escala) e, por estar dentro do pipeline, é ajustada só com os dados
-de treino de cada partição, sem vazamento.
+da regressão logística depende da escala). Nas configurações com PCA (Seção~\ref{sec:pca}), o PCA
+entra entre a padronização e o classificador. Por estarem dentro do pipeline, a padronização e o PCA
+são ajustados só com os dados de treino de cada partição, sem vazamento.
+
+No código, as comparações de pré-processamento e as ablações de textura e de segmentação foram
+executadas com PCA; a configuração sem PCA, que é a final, foi executada como ablação do PCA
+(\arq{outputs/fator2_normalizacao_cor_sem_pca/}). A Seção~\ref{sec:resultados} indica, em cada
+tabela, se os números são com ou sem PCA.
+
+\subsection{Redução de dimensionalidade (PCA)}\label{sec:pca}
+
+As 71 características têm redundâncias (faixas de histograma que somam 1, faixas quase sempre vazias,
+pares fortemente correlacionados) e, com a normalização de cor, algumas constantes
+(Seção~\ref{sec:features}). Em vez de escolher manualmente quais remover, foi avaliada a análise de
+componentes principais. Com a matriz de características padronizada $Z$ (média 0 e variância 1 por
+coluna), o PCA calcula os autovetores $v_k$ da matriz de covariância de $Z$, ordenados pelos
+autovalores $\lambda_1\ge\lambda_2\ge\cdots$. Cada componente $z^\top v_k$ é uma combinação linear de
+\emph{todas} as características, e $\lambda_k$ é a variância que ele carrega. Nas configurações com
+PCA, o modelo recebe apenas os 10 primeiros componentes, os de maior variância explicada
+$\lambda_k / \sum_j \lambda_j$.
+
+Alguns cuidados de implementação:
+\begin{itemize}
+  \item \textbf{Padronização antes do PCA.} Sem ela, as características de maior escala dominariam a
+        variância, independentemente da sua utilidade.
+  \item \textbf{Ajuste só no treino.} O PCA fica dentro do \texttt{Pipeline}: em cada partição da
+        validação cruzada ele é ajustado só nos dados de treino daquela partição, e o modelo final o
+        reajusta em todo o treino antes do teste.
+  \item \textbf{Um PCA por configuração.} A normalização de cor, a segmentação e o conjunto de
+        características mudam a estrutura de correlação dos dados, então cada configuração com PCA
+        tem o seu próprio. Para cada uma, a pasta \arq{outputs/<config>/} guarda a figura
+        \arq{pca_<config>.png} e as tabelas \arq{pca_componentes.csv} e \arq{pca_caracteristicas.csv}.
+\end{itemize}
+
+Para ver quais características o PCA preserva, foi calculada a fração da variância de cada
+característica $j$ que os 10 componentes retêm:
+\begin{equation}
+  \text{preservada}_j = \frac{\sum_{k=1}^{10} \lambda_k\, v_{kj}^2}{\operatorname{var}(z_j)},
+\end{equation}
+em que $v_{kj}$ é o peso da característica $j$ no componente $k$. Um valor perto de 100\% indica que a
+característica está quase toda representada no que o modelo recebe; perto de 0, que ela foi
+praticamente descartada.
+
+\paragraph{Limitações do PCA.} O PCA é não supervisionado: ele ordena os componentes pela variância,
+não pela capacidade de separar as classes. Uma característica pouco variável mas discriminante pode
+ficar de fora, e uma direção de muita variância sem relação com a classe pode entrar. Além disso, a
+padronização dá variância 1 a toda coluna não constante, inclusive às quase constantes (como as
+médias de cor após a normalização), cujo ruído numérico passa a ter o mesmo peso das outras. O número
+de componentes foi fixado em 10, e não otimizado. Por isso o efeito do PCA foi medido diretamente,
+comparando com o mesmo pipeline sem PCA (Seção~\ref{sec:res-pca}). Essa comparação levou ao descarte
+do PCA na configuração final.
 
 \subsection{Seleção de hiperparâmetros}
 
@@ -544,9 +640,12 @@ A grade do SVM foi ajustada durante o trabalho. A grade inicial era $C\in\{0{,}1
 $\gamma\in\{10^{-3},10^{-2},10^{-1}\}$, e o melhor ponto ficou no canto $C=100$, $\gamma=10^{-3}$. Os
 resultados mostraram que os melhores pontos ficam numa diagonal ($C\cdot\gamma\approx0{,}1$) e que
 $C=0{,}1$ e $\gamma=0{,}1$ estavam sempre entre os piores. A grade foi então deslocada nessa direção.
-Na configuração final o ótimo ($C=100$, $\gamma=10^{-3}$) fica no interior da grade, e os cinco
-melhores pontos estão a menos de 0,001 de F1 um do outro (Tabela~\ref{tab:grid-svm}), ou seja, o
-desempenho é estável em relação aos hiperparâmetros.
+Na configuração final, o melhor ponto é $C=1000$, $\gamma=10^{-4}$, num canto da grade, mas a
+superfície é plana: os cinco melhores pontos estão a menos de 0,002 de F1 um do outro
+(Tabela~\ref{tab:grid-svm}), bem abaixo do desvio entre partições ($\sim$0,011), e o segundo colocado
+($C=10$, $\gamma=10^{-3}$) fica no interior da grade. Estender a grade dificilmente mudaria o
+resultado. O mesmo vale para o pipeline com PCA, em que o SVM recebe 10 dimensões em vez de 71: o
+melhor ponto é $C=1000$, $\gamma=10^{-3}$, e os cinco melhores estão a menos de 0,003 um do outro.
 
 \subsection{Métricas e procedimento}
 
@@ -569,8 +668,8 @@ das duas classes) e matriz de confusão. Os resultados de cada configuração fi
 \subsection{Evolução do pipeline}\label{sec:evolucao}
 
 A Tabela~\ref{tab:evolucao} resume como cada decisão alterou o desempenho do SVM, na ordem em que foram
-tomadas. As linhas 2 e 3 são de execuções intermediárias cujas saídas foram substituídas pelas
-seguintes; os números foram registrados durante o desenvolvimento.
+tomadas. As linhas 1 a 5 usam as 71 características sem PCA. A configuração final é a da linha 5 com
+fator2: o PCA, testado depois (linha 6), piorou o resultado e foi descartado.
 
 \begin{table}[H]
 \centering
@@ -583,21 +682,28 @@ seguintes; os números foram registrados durante o desenvolvimento.
 2 & Máscara na resolução original + erosão & 0,931 & 0,930 \\
 3 & + normalização de cor por imagem & 0,954 & 0,956 \\
 4 & + matiz circular e grade do SVM ajustada & 0,954 & 0,955 \\
-5 & Redimensionamento fator2 ou original (descartado) & 0,955 & 0,959 / 0,961 \\
+5 & Redimensionamento fator2 (adotado) ou original: \textbf{configuração final} & \textbf{0,955} & \textbf{0,959} / 0,961 \\
+6 & + PCA com 10 componentes (descartado) & 0,946 & 0,950 \\
 \bottomrule
 \end{tabular}
-\par\vspace{2pt}\footnotesize Fonte: linha 1, \arq{outputs/validacao_cruzada/} e \arq{outputs/testset/};
-linha 4, \arq{outputs/64x64_normalizacao_cor/}; linha 5, \arq{outputs/comparacao_preprocessamento.csv}.
+\par\vspace{2pt}\footnotesize Fonte: linhas 1 a 4 e linha 5 (original), registros do desenvolvimento;
+linha 5 (fator2), \arq{outputs/fator2_normalizacao_cor_sem_pca/}; linha 6,
+\arq{outputs/fator2_normalizacao_cor/}.
 \end{table}
 
 \subsection{Experimentos de pré-processamento}\label{sec:res-preproc}
 
-Foram comparadas as seis combinações de redimensionamento (64x64, fator2, original) com e sem
-normalização de cor, sempre com segmentação e com as 71 características (Tabela~\ref{tab:preproc}).
+\paragraph{Versão sem PCA (pipeline final).} Antes do teste com PCA, foram comparadas seis
+combinações de redimensionamento (64x64, fator2, original) com e sem normalização de cor, sempre com
+segmentação e com as 71 características (Tabela~\ref{tab:preproc}). Esses números foram registrados
+durante o desenvolvimento; a execução atual não inclui mais o 64x64. A linha fator2 com normalização
+é a configuração final e foi confirmada pela execução atual
+(\arq{outputs/fator2_normalizacao_cor_sem_pca/}).
 
 \begin{table}[H]
 \centering
-\caption{Comparação das configurações de pré-processamento (F1 macro).}\label{tab:preproc}
+\caption{Comparação das configurações de pré-processamento na versão sem PCA (F1 macro, 71
+características).}\label{tab:preproc}
 \begin{tabular}{llcccc}
 \toprule
 & & \multicolumn{2}{c}{SVM (RBF)} & \multicolumn{2}{c}{Regressão logística} \\
@@ -609,77 +715,241 @@ fator2   & não & 0,935 & 0,936 & 0,919 & 0,913 \\
 original & não & 0,931 & 0,937 & 0,914 & 0,906 \\
 \midrule
 64x64    & sim & 0,954 & 0,955 & 0,948 & 0,949 \\
-fator2   & sim & 0,955 & 0,959 & 0,948 & 0,951 \\
+\textbf{fator2} & \textbf{sim} & \textbf{0,955} & \textbf{0,959} & \textbf{0,948} & \textbf{0,951} \\
 original & sim & 0,955 & 0,961 & 0,948 & 0,953 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/comparacao_preprocessamento.csv}
+\par\vspace{2pt}\footnotesize Fonte: execução sem PCA, registrada durante o desenvolvimento (o arquivo
+\arq{outputs/comparacao_preprocessamento.csv} passou a guardar a execução com PCA).
 \end{table}
 
 \paragraph{Normalização de cor.} Foi a decisão de maior impacto: com qualquer redimensionamento, o F1
 macro de validação cruzada sobe cerca de 2 pontos no SVM e 3 pontos na regressão logística. No teste,
-o erro do SVM com 64x64 cai de 6,6\% para 4,5\%, e o da regressão logística de 8,8\% para 5,1\%. A
-diferença entre os dois modelos também diminui (de 1,8 para 0,6 ponto na validação cruzada): depois
-de remover a coloração da lâmina, o problema fica quase separável por um modelo linear. Isso confirma
-que a variação de cor entre lâminas era a principal fonte de erro.
+com fator2, o erro do SVM cai de 6,4\% para 4,1\%, e o da regressão logística de 8,7\% para 4,9\%. A
+diferença entre os dois modelos também diminui (de 1,6 para 0,7 ponto na validação cruzada): depois
+de remover a coloração geral de cada imagem, o problema fica quase separável por um modelo linear.
+Isso confirma que a variação de cor entre imagens (Figura~\ref{fig:variacao-cor}) era a principal
+fonte de erro.
 
 \paragraph{Redimensionamento.} Na validação cruzada as três opções ficaram a menos de 0,002 uma da
 outra com normalização, bem abaixo do desvio entre partições ($\sim$0,01); sem normalização, a
 resolução original ficou ligeiramente pior. No teste há uma tendência a favor da resolução original
 (0,961 contra 0,955), mas a escolha entre configurações não pode usar o conjunto de teste, sob pena
 de transformá-lo em validação e superestimar o desempenho final. Pelo critério correto (validação
-cruzada) a mudança não teve efeito, e foi mantido o 64x64.
+cruzada) o redimensionamento não teve efeito. O 64x64 foi então removido, por distorcer escala e
+proporção sem nenhum ganho, e o fator2 foi adotado (Seção~\ref{sec:resize}).
 
-\subsection{Configuração final}\label{sec:res-final}
-
-A configuração final é \textbf{64x64 + segmentação + normalização de cor + 71 características}
-(pasta \arq{outputs/64x64_normalizacao_cor/}).
+\paragraph{Versão com PCA.} A execução atual compara as quatro combinações de redimensionamento
+(fator2, original) e normalização de cor, todas com segmentação, 71 características e PCA com 10
+componentes (Tabela~\ref{tab:preproc-pca}). Essa versão não é a final, mas mostra como o
+pré-processamento interage com o PCA. A última coluna é a fração da variância total que os 10
+componentes retêm no treino de cada configuração.
 
 \begin{table}[H]
 \centering
-\caption{Busca de hiperparâmetros do SVM na configuração final (F1 macro na validação cruzada).}\label{tab:grid-svm}
+\caption{Comparação das configurações de pré-processamento com PCA de 10 componentes (F1
+macro).}\label{tab:preproc-pca}
+\begin{tabular}{llccccc}
+\toprule
+& & \multicolumn{2}{c}{SVM (RBF)} & \multicolumn{2}{c}{Regressão logística} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Redimensionamento & Normalização & CV & Teste & CV & Teste & Var. retida \\
+\midrule
+fator2   & não & 0,908 & 0,923 & 0,859 & 0,864 & 63,0\% \\
+original & não & 0,902 & 0,921 & 0,860 & 0,839 & 62,9\% \\
+\midrule
+fator2   & sim & \textbf{0,946} & 0,950 & \textbf{0,929} & 0,936 & 70,5\% \\
+original & sim & 0,945 & 0,953 & 0,925 & 0,935 & 72,7\% \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}\footnotesize Fonte: \arq{outputs/comparacao_preprocessamento.csv}; variância retida:
+\arq{outputs/<config>/pca_componentes.csv} (coluna \texttt{variancia\_acumulada}, componente 10).
+\end{table}
+
+Com PCA, a normalização de cor tem efeito ainda maior que na versão sem PCA: no fator2, o F1 macro de
+validação cruzada sobe 3,8 pontos no SVM (de 0,908 para 0,946) e 6,9 pontos na regressão logística
+(de 0,859 para 0,929), contra cerca de 2 e 3 pontos sem PCA (Tabela~\ref{tab:preproc}). A explicação
+está nos componentes escolhidos pelo PCA, descritos a seguir: sem normalização, parte dos 10
+componentes é gasta na variação de cor entre imagens, que não depende da classe.
+
+O redimensionamento continua sem efeito mensurável: fator2 e resolução original ficam a 0,001 (SVM) e
+0,004 (regressão logística) um do outro na validação cruzada, abaixo do desvio entre partições
+($\sim$0,012 no SVM e $\sim$0,020 na regressão logística). No teste, a resolução original fica 0,3
+ponto acima no SVM, diferença que não pode ser usada para escolher a configuração.
+
+\paragraph{PCA com e sem normalização de cor.} Como o PCA é ajustado nos dados de cada configuração,
+os componentes mudam com o pré-processamento. As Figuras~\ref{fig:pca-sem-norm}
+e~\ref{fig:pca-final} mostram o PCA da configuração fator2 sem e com normalização de cor. Em cada
+figura, o gráfico de cima é a variância explicada por cada componente (em azul, os 10 que vão para o
+modelo) e o de baixo, a fração da variância de cada característica preservada por esses 10
+componentes (Seção~\ref{sec:pca}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pca_fator2_sem_normalizacao.png}
+\caption{PCA da configuração fator2 \emph{sem} normalização de cor, ajustado no treino. Arquivo:
+\texttt{outputs/fator2\_sem\_normalizacao/pca\_fator2\_sem\_normalizacao.png}.}\label{fig:pca-sem-norm}
+\end{figure}
+
+Para saber se a variância escolhida pelo PCA tem relação com a classe, foi calculado, para cada
+componente, o $\eta^2$ da classe (a mesma razão de correlação da Seção~\ref{sec:cor}, aplicada aos
+valores do componente no treino): a fração da variância do componente explicada pela classe. O PCA
+não usa a classe; o $\eta^2$ só mostra, depois, se o que ele guardou separa parasitadas de não
+infectadas.
+
+\paragraph{Sem normalização} (Figura~\ref{fig:pca-sem-norm}), os 10 componentes retêm 63,0\% da
+variância. As características mais preservadas são justamente as médias de cor (R, G e B, de 93\% a
+95\%; saturação média, 94\%; matiz médio, $\sim$90\%), isto é, a cor geral de cada imagem, que quase não
+depende da classe (Figura~\ref{fig:variacao-cor}). O segundo componente, com 13,8\% da variância, é
+dominado pela média de R, pelo matiz e pelo brilho médios e tem $\eta^2$ de apenas 0,036. Cinco dos 10
+componentes (3, 4, 6, 7 e 8) têm $\eta^2\le0{,}003$: não carregam praticamente nenhuma informação sobre
+a classe. Fora dos 10, 32 componentes têm $\eta^2$ maior que a mediana dos 10 escolhidos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pca_fator2_normalizacao_cor.png}
+\caption{PCA da configuração fator2 \emph{com} normalização de cor, ajustado no treino. Em cima, a
+variância explicada por componente (em azul, os 10 passados aos modelos); embaixo, a fração da
+variância de cada característica preservada por esses 10 componentes. Arquivo:
+\texttt{outputs/fator2\_normalizacao\_cor/pca\_fator2\_normalizacao\_cor.png}.}\label{fig:pca-final}
+\end{figure}
+
+\paragraph{Com normalização} (Figura~\ref{fig:pca-final}), os 10 componentes retêm 70,5\% da
+variância, e o primeiro sozinho, 31,8\%. A Tabela~\ref{tab:pca-comp} resume os componentes.
+\begin{itemize}
+  \item O primeiro componente é também o mais ligado à classe ($\eta^2=0{,}227$). Ele combina o desvio
+        de G, a saturação e o brilho médios, o desvio do brilho e uma faixa intermediária do
+        histograma de G: o que diferencia uma célula uniforme de uma com um ponto escuro.
+  \item As médias de R e B, constantes por construção depois da normalização, ficam quase de fora
+        (21\% e 3\% preservados). A média de G é preservada em 63\%, porque varia um pouco por causa
+        do corte em 1 da normalização. Os desvios de R, G e B são preservados em 93\% a 96\%, e as
+        faixas do histograma de G, as mais discriminantes, em 43\% a 90\%.
+  \item As faixas sempre vazias (B\_0, B\_14 e B\_15) ficam com 0\%. Já as faixas \emph{quase} sempre
+        vazias, diferentes de zero em menos de 0,1\% das imagens, causam o problema previsto na
+        Seção~\ref{sec:pca}: depois da padronização, os raros valores não nulos ganham variância 1,
+        e o PCA gasta um componente com eles. Cerca de 80\% do peso do componente 9 vem das faixas
+        B\_1 e R\_0, e o seu $\eta^2$ é 0,000. O componente 8 também tem $\eta^2=0{,}000$.
+  \item Enquanto isso, componentes de pouca variância, mas ligados à classe, ficam de fora: o
+        componente 42, com 0,3\% da variância, tem $\eta^2=0{,}095$, mais que qualquer componente
+        escolhido exceto o primeiro. Seis componentes descartados têm $\eta^2$ maior que a mediana dos
+        10 escolhidos.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{PCA da configuração fator2 com normalização de cor: os 10 componentes passados aos modelos
+e o componente descartado mais ligado à classe, com a variância explicada, o $\eta^2$ da classe e as
+três características de maior peso ($|v_{kj}|$).}\label{tab:pca-comp}
+\small
+\begin{tabular}{rccl}
+\toprule
+Componente & Variância & $\eta^2$ da classe & Maiores pesos \\
+\midrule
+1  & 31,8\% & \textbf{0,227} & desvio de G, saturação média, brilho médio \\
+2  & 9,0\%  & 0,015 & hist\_B\_5, hist\_B\_4, hist\_G\_1 \\
+3  & 6,9\%  & 0,018 & lbp\_5, lbp\_0, hist\_R\_12 \\
+4  & 6,0\%  & 0,015 & hist\_R\_3, hist\_R\_2, hist\_R\_1 \\
+5  & 3,6\%  & 0,077 & matiz médio (cos), hist\_G\_10, hist\_G\_4 \\
+6  & 3,3\%  & 0,016 & hist\_R\_14, hist\_R\_15, lbp\_0 \\
+7  & 3,1\%  & 0,043 & hist\_R\_5, hist\_B\_5, hist\_R\_1 \\
+8  & 2,5\%  & 0,000 & hist\_R\_15, lbp\_0, hist\_B\_9 \\
+9  & 2,2\%  & 0,000 & hist\_B\_1, hist\_R\_0, hist\_B\_2 \\
+10 & 2,1\%  & 0,004 & lbp\_2, lbp\_6, média de G \\
+\midrule
+42 (descartado) & 0,3\% & 0,095 & \\
+\bottomrule
+\end{tabular}
+\fonte{outputs/fator2_normalizacao_cor/pca_componentes.csv}
+\end{table}
+
+Em resumo, o PCA ordena os componentes pela variância, e a variância destes dados vem em boa parte de
+fatores sem relação com a classe: a cor geral de cada imagem, quando não há normalização, e valores
+raros de faixas quase vazias, quando há. A normalização remove o primeiro fator, por isso tem efeito
+maior com PCA do que sem ele.
+
+\paragraph{Tempo de extração.} Para medir o custo de cada opção de redimensionamento, a função
+\texttt{benchmark\_extraction} extrai as características de 1.000 imagens sorteadas (semente 42) com
+fator2 e com a resolução original, com o mesmo pré-processamento da configuração final. Os arquivos
+são lidos uma vez antes da medição, para que a leitura do disco não favoreça o modo medido por
+último, e os dois modos são medidos imagem a imagem, alternando qual vai primeiro. O tempo inclui
+abrir e decodificar o PNG, que é igual nos dois modos.
+
+\begin{table}[H]
+\centering
+\caption{Tempo de extração de características por imagem (1.000 imagens sorteadas, um núcleo).
+``Total'': estimativa para as 27.558 imagens; ``Razão'': tempo médio dividido pelo do fator2.}\label{tab:tempo}
+\begin{tabular}{lcccc}
+\toprule
+Redimensionamento & Média (ms/img) & Mediana (ms/img) & Total (s) & Razão \\
+\midrule
+fator2   & 9,5  & 8,4  & 262 & 1,0 \\
+original & 21,8 & 20,0 & 600 & 2,3 \\
+\bottomrule
+\end{tabular}
+\fonte{outputs/tempo_extracao.csv}
+\end{table}
+
+A extração com fator2 é 2,3 vezes mais rápida que na resolução original: cerca de 4 minutos contra 10
+para o dataset inteiro, num núcleo. O ganho é menor que a redução de 4 vezes no número de pixels porque
+parte do tempo não depende do tamanho final: abrir e decodificar o PNG e calcular a máscara são feitos
+na resolução original nos dois modos. Como o desempenho é o mesmo, o fator2 é a melhor opção.
+
+\subsection{Configuração final}\label{sec:res-final}
+
+A configuração final é \textbf{fator2 + segmentação + normalização de cor + 71 características
+padronizadas, sem PCA} (pasta \arq{outputs/fator2_normalizacao_cor_sem_pca/}). Ela foi escolhida pelo
+F1 macro na validação cruzada, o mesmo critério das demais decisões: empata com a resolução original
+(Tabela~\ref{tab:preproc}), que é 2,3 vezes mais lenta, e supera todas as configurações com PCA
+(Seção~\ref{sec:res-pca}).
+
+\begin{table}[H]
+\centering
+\caption{Busca de hiperparâmetros do SVM na configuração final (F1 macro na validação cruzada), em
+ordem de desempenho.}\label{tab:grid-svm}
 \begin{tabular}{rrcc}
 \toprule
 $C$ & $\gamma$ & F1 macro (média) & Desvio entre partições \\
 \midrule
-100  & $10^{-3}$ & \textbf{0,9538} & 0,0103 \\
-100  & $10^{-4}$ & 0,9538 & 0,0110 \\
-1000 & $10^{-4}$ & 0,9536 & 0,0107 \\
-10   & $10^{-3}$ & 0,9534 & 0,0109 \\
-1    & $10^{-2}$ & 0,9530 & 0,0119 \\
-10   & $10^{-2}$ & 0,9515 & 0,0107 \\
-1000 & $10^{-3}$ & 0,9515 & 0,0094 \\
-10   & $10^{-4}$ & 0,9508 & 0,0119 \\
-1    & $10^{-3}$ & 0,9491 & 0,0119 \\
-100  & $10^{-2}$ & 0,9438 & 0,0105 \\
-1    & $10^{-4}$ & 0,9287 & 0,0197 \\
-1000 & $10^{-2}$ & 0,9261 & 0,0126 \\
+1000 & $10^{-4}$ & \textbf{0,9548} & 0,0106 \\
+10   & $10^{-3}$ & 0,9542 & 0,0111 \\
+100  & $10^{-4}$ & 0,9539 & 0,0115 \\
+100  & $10^{-3}$ & 0,9533 & 0,0103 \\
+10   & $10^{-2}$ & 0,9532 & 0,0111 \\
+1    & $10^{-2}$ & 0,9530 & 0,0122 \\
+10   & $10^{-4}$ & 0,9514 & 0,0120 \\
+1000 & $10^{-3}$ & 0,9510 & 0,0108 \\
+1    & $10^{-3}$ & 0,9500 & 0,0115 \\
+100  & $10^{-2}$ & 0,9417 & 0,0111 \\
+1    & $10^{-4}$ & 0,9287 & 0,0196 \\
+1000 & $10^{-2}$ & 0,9245 & 0,0112 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor/validacao_cruzada/grid_svm.csv}
+\fonte{outputs/fator2_normalizacao_cor_sem_pca/validacao_cruzada/grid_svm.csv}
 \end{table}
 
 \begin{table}[H]
 \centering
-\caption{Busca de hiperparâmetros da regressão logística na configuração final.}\label{tab:grid-lr}
+\caption{Busca de hiperparâmetros da regressão logística na configuração final, em ordem de
+desempenho.}\label{tab:grid-lr}
 \begin{tabular}{rcc}
 \toprule
 $C$ & F1 macro (média) & Desvio entre partições \\
 \midrule
-1         & \textbf{0,9481} & 0,0099 \\
-0,1       & 0,9480 & 0,0102 \\
-10        & 0,9472 & 0,0100 \\
-100       & 0,9469 & 0,0100 \\
-0,01      & 0,9463 & 0,0118 \\
-0,001     & 0,9251 & 0,0264 \\
-0,0001    & 0,8723 & 0,0628 \\
+0,1       & \textbf{0,9478} & 0,0106 \\
+1         & 0,9475 & 0,0097 \\
+100       & 0,9469 & 0,0092 \\
+10        & 0,9469 & 0,0092 \\
+0,01      & 0,9460 & 0,0118 \\
+0,001     & 0,9245 & 0,0261 \\
+0,0001    & 0,8720 & 0,0650 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor/validacao_cruzada/grid_regressao_logistica.csv}
+\fonte{outputs/fator2_normalizacao_cor_sem_pca/validacao_cruzada/grid_regressao_logistica.csv}
 \end{table}
 
-Os melhores hiperparâmetros são $C=100$, $\gamma=10^{-3}$ para o SVM e $C=1$ para a regressão
-logística (\arq{outputs/64x64_normalizacao_cor/validacao_cruzada/melhores_hiperparametros.csv}). A
+Os melhores hiperparâmetros são $C=1000$, $\gamma=10^{-4}$ para o SVM e $C=0{,}1$ para a regressão
+logística; de $C=0{,}01$ a $C=100$, a regressão logística varia menos de 0,002 de F1
+(\arq{outputs/fator2_normalizacao_cor_sem_pca/validacao_cruzada/melhores_hiperparametros.csv}). A
 Tabela~\ref{tab:final-geral} traz as métricas gerais e a Tabela~\ref{tab:final-classe}, as métricas
 por classe.
 
@@ -693,15 +963,15 @@ por classe.
 Conjunto & Modelo & Acurácia & Precisão macro & Recall macro & F1 macro \\
 \midrule
 CV    & Baseline            & 0,497 & 0,494 & 0,496 & 0,448 \\
-CV    & SVM (RBF)           & 0,954 & 0,955 & 0,954 & 0,954 \\
+CV    & SVM (RBF)           & 0,955 & 0,956 & 0,955 & 0,955 \\
 CV    & Regressão logística & 0,948 & 0,949 & 0,948 & 0,948 \\
 \midrule
 Teste & Baseline            & 0,495 & 0,248 & 0,500 & 0,331 \\
-Teste & SVM (RBF)           & \textbf{0,955} & \textbf{0,955} & \textbf{0,955} & \textbf{0,955} \\
-Teste & Regressão logística & 0,949 & 0,949 & 0,949 & 0,949 \\
+Teste & SVM (RBF)           & \textbf{0,959} & \textbf{0,959} & \textbf{0,959} & \textbf{0,959} \\
+Teste & Regressão logística & 0,951 & 0,951 & 0,951 & 0,951 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor/validacao_cruzada/metricas_gerais.csv e testset/metricas_gerais.csv}
+\fonte{outputs/fator2_normalizacao_cor_sem_pca/validacao_cruzada/metricas_gerais.csv e testset/metricas_gerais.csv}
 \end{table}
 
 \begin{table}[H]
@@ -712,20 +982,20 @@ Teste & Regressão logística & 0,949 & 0,949 & 0,949 & 0,949 \\
 \toprule
 Conjunto & Modelo & Classe & Precisão & Recall & F1 & Suporte \\
 \midrule
-CV    & SVM (RBF)           & Parasitized & 0,974 & 0,932 & 0,953 & 10.975 \\
-      &                     & Uninfected  & 0,936 & 0,975 & 0,955 & 11.028 \\
-CV    & Regressão logística & Parasitized & 0,967 & 0,927 & 0,947 & 10.975 \\
-      &                     & Uninfected  & 0,931 & 0,969 & 0,949 & 11.028 \\
+CV    & SVM (RBF)           & Parasitized & 0,974 & 0,935 & 0,954 & 10.975 \\
+      &                     & Uninfected  & 0,938 & 0,975 & 0,956 & 11.028 \\
+CV    & Regressão logística & Parasitized & 0,968 & 0,926 & 0,947 & 10.975 \\
+      &                     & Uninfected  & 0,929 & 0,970 & 0,949 & 11.028 \\
 \midrule
 Teste & Baseline            & Parasitized & 0,000 & 0,000 & 0,000 & 2.804 \\
       &                     & Uninfected  & 0,495 & 1,000 & 0,662 & 2.751 \\
-Teste & SVM (RBF)           & Parasitized & 0,966 & 0,944 & 0,955 & 2.804 \\
-      &                     & Uninfected  & 0,944 & 0,966 & 0,955 & 2.751 \\
-Teste & Regressão logística & Parasitized & 0,960 & 0,938 & 0,949 & 2.804 \\
-      &                     & Uninfected  & 0,938 & 0,960 & 0,949 & 2.751 \\
+Teste & SVM (RBF)           & Parasitized & 0,974 & 0,944 & 0,958 & 2.804 \\
+      &                     & Uninfected  & 0,944 & 0,974 & 0,959 & 2.751 \\
+Teste & Regressão logística & Parasitized & 0,964 & 0,938 & 0,951 & 2.804 \\
+      &                     & Uninfected  & 0,938 & 0,964 & 0,951 & 2.751 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor/validacao_cruzada/metricas_por_classe.csv e testset/metricas_por_classe.csv}
+\fonte{outputs/fator2_normalizacao_cor_sem_pca/validacao_cruzada/metricas_por_classe.csv e testset/metricas_por_classe.csv}
 \end{table}
 
 \begin{figure}[H]
@@ -747,122 +1017,190 @@ no treino) e acerta 49,5\% das imagens, com F1 macro de 0,331: F1 zero para as p
 para as não infectadas. Na validação cruzada o F1 macro calculado sobre as predições juntadas é maior
 (0,448) porque a classe majoritária muda de uma partição para outra (as partições são formadas por
 pacientes inteiros) e as predições juntadas acabam contendo as duas classes; a média do F1 de cada
-partição, usada na busca, é 0,332. Em qualquer caso, os dois modelos ficam mais de 60 pontos de F1
-acima da referência, o que mostra que as características carregam informação real sobre a classe.
+partição, usada na busca, é 0,332. O baseline não depende das características nem do PCA, por isso
+os seus números são os mesmos de todas as configurações. Os dois modelos ficam mais de 60 pontos de
+F1 acima da referência, o que mostra que as características carregam informação real sobre a classe.
 
-\paragraph{Comparação entre os modelos.} O SVM é melhor que a regressão logística em todas as métricas,
-mas por pouco (0,6 ponto de F1 macro no teste). As duas classes têm F1 praticamente igual. O tipo de
-erro, porém, não é simétrico: os dois modelos têm recall menor para \textit{Parasitized} (0,944 no SVM)
-que para \textit{Uninfected} (0,966). Ou seja, o erro mais comum é deixar passar uma célula
-parasitada (157 falsos negativos contra 93 falsos positivos no SVM), que é o erro mais grave do ponto
-de vista clínico. Os resultados de validação cruzada e de teste são muito próximos (0,954 e 0,955 no
-SVM), o que indica que não houve sobreajuste na seleção de hiperparâmetros.
+\paragraph{Comparação entre os modelos.} O SVM é melhor que a regressão logística em todas as
+métricas, mas por pouco: 0,8 ponto de F1 macro no teste e 0,7 na validação cruzada. Depois da
+normalização de cor, a fronteira entre as classes é quase linear. As duas classes têm F1
+praticamente igual, mas o tipo de erro não é simétrico: os dois modelos têm recall menor para
+\textit{Parasitized} (0,944 no SVM) que para \textit{Uninfected} (0,974). Ou seja, o erro mais comum
+é deixar passar uma célula parasitada (158 falsos negativos contra 72 falsos positivos no SVM), que é
+o erro mais grave do ponto de vista clínico. Os resultados de validação cruzada e de teste são
+próximos (0,955 e 0,959 no SVM), o que indica que não houve sobreajuste na seleção de
+hiperparâmetros.
 
 \subsection{Características: só cor vs. cor + textura}\label{sec:res-features}
 
-Para avaliar a contribuição da textura, a configuração final foi repetida usando só as 61
-características de cor (sem as 10 do LBP), com os mesmos dados, partições e grades.
+Para avaliar a contribuição da textura, o pipeline foi repetido usando só as 61 características de
+cor (sem as 10 do LBP), com os mesmos dados, partições e grades. Na execução atual, essa ablação foi
+feita sobre o pipeline com PCA (fator2, normalização de cor e 10 componentes, ajustados nas 61
+características), e não sobre a configuração final sem PCA. Para a versão sem PCA, há o resultado
+registrado com 64x64, discutido abaixo.
 
 \begin{table}[H]
 \centering
-\caption{Comparação entre conjuntos de características na configuração final (F1 macro).}\label{tab:features-res}
+\caption{Comparação entre conjuntos de características no pipeline fator2 com normalização de cor e
+PCA de 10 componentes (F1 macro).}\label{tab:features-res}
 \begin{tabular}{lrcccc}
 \toprule
 & & \multicolumn{2}{c}{SVM (RBF)} & \multicolumn{2}{c}{Regressão logística} \\
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}
 Conjunto & Qtd. & CV & Teste & CV & Teste \\
 \midrule
-Só cor           & 61 & 0,954 & 0,957 & 0,949 & 0,950 \\
-Cor + textura    & 71 & 0,954 & 0,955 & 0,948 & 0,949 \\
+Só cor           & 61 & 0,946 & 0,953 & 0,930 & 0,934 \\
+Cor + textura    & 71 & 0,946 & 0,950 & 0,929 & 0,936 \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor_so_cor/ e outputs/64x64_normalizacao_cor/ (validacao_cruzada e testset/metricas_gerais.csv)}
+\fonte{outputs/fator2_normalizacao_cor_so_cor/ e outputs/fator2_normalizacao_cor/ (validacao_cruzada e testset/metricas_gerais.csv)}
 \end{table}
 
-As duas configurações empatam: a diferença na validação cruzada é de 0,0002 no SVM e de 0,001 na
-regressão logística, muito abaixo do desvio entre partições. Depois da normalização de cor, a
-textura medida pelo LBP não acrescenta informação às características de cor. Uma explicação plausível
-é que o principal padrão local que o LBP detecta nestas imagens é o contraste do ponto escuro do
-parasita, que os histogramas e desvios de cor já capturam. Numa verificação anterior, sem
-normalização de cor, a combinação de momentos de cor com LBP tinha sido ligeiramente melhor que só os
-momentos na regressão logística (0,923 contra 0,918), ou seja, a textura ajudava um pouco quando a
-cor ainda carregava a variação entre lâminas.
+Com PCA, as duas configurações continuam empatadas: na validação cruzada, a diferença é de 0,0001 no
+SVM e de 0,001 na regressão logística, muito abaixo do desvio entre partições, e no teste cada
+configuração fica à frente num modelo. O LBP não acrescenta informação depois da normalização de cor,
+com ou sem PCA.
 
-A configuração final, definida antes desta comparação, mantém as 71 características. O resultado
-indica que o LBP poderia ser removido sem perda, simplificando o modelo e a extração.
+Na versão sem PCA (64x64), as duas configurações também empatavam: 0,954 contra 0,954 no SVM e 0,949 contra
+0,948 na regressão logística, na validação cruzada, diferenças muito abaixo do desvio entre partições.
+Como o empate aparece com e sem PCA e com os dois redimensionamentos, é razoável esperar o mesmo na
+configuração final, embora essa combinação exata não tenha sido executada.
+Depois da normalização de cor, a textura medida pelo LBP não acrescentava informação às características
+de cor. Uma explicação plausível é que o principal padrão local que o LBP detecta nestas imagens é o
+contraste do ponto escuro do parasita, que os histogramas e desvios de cor já capturam. Numa
+verificação anterior, sem normalização de cor, a combinação de momentos de cor com LBP tinha sido
+ligeiramente melhor que só os momentos na regressão logística (0,923 contra 0,918), ou seja, a
+textura ajudava um pouco quando a cor ainda carregava a variação entre imagens.
 
 \subsection{Contribuição da segmentação}\label{sec:res-seg}
 
-Para avaliar a segmentação, a configuração final foi repetida sem máscara: todas as estatísticas, a
-normalização de cor e os histogramas passam a usar a imagem inteira, incluindo o fundo preto.
+Para avaliar a segmentação, o pipeline foi repetido sem máscara: todas as estatísticas, a
+normalização de cor e os histogramas passam a usar a imagem inteira, incluindo o fundo preto. Como a
+ablação de textura, esta foi executada sobre o pipeline com PCA; para a versão sem PCA, há o resultado
+registrado com 64x64.
 
 \begin{table}[H]
 \centering
-\caption{Contribuição da segmentação na configuração final (F1 macro).}\label{tab:seg-res}
+\caption{Contribuição da segmentação no pipeline fator2 com normalização de cor e PCA de 10
+componentes (F1 macro).}\label{tab:seg-res}
 \begin{tabular}{lcccc}
 \toprule
 & \multicolumn{2}{c}{SVM (RBF)} & \multicolumn{2}{c}{Regressão logística} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 Segmentação & CV & Teste & CV & Teste \\
 \midrule
-Sem (imagem inteira) & 0,947 & 0,950 & 0,937 & 0,947 \\
-Com (máscara da célula) & 0,954 & 0,955 & 0,948 & 0,949 \\
+Sem (imagem inteira) & 0,919 & 0,928 & 0,881 & 0,877 \\
+Com (máscara da célula) & \textbf{0,946} & \textbf{0,950} & \textbf{0,929} & \textbf{0,936} \\
 \bottomrule
 \end{tabular}
-\fonte{outputs/64x64_normalizacao_cor_sem_segmentacao/ e outputs/64x64_normalizacao_cor/ (metricas_gerais.csv)}
+\fonte{outputs/fator2_normalizacao_cor_sem_segmentacao/ e outputs/fator2_normalizacao_cor/ (metricas_gerais.csv)}
 \end{table}
 
-A segmentação melhora o F1 macro de validação cruzada em 0,7 ponto no SVM e 1,1 ponto na regressão
-logística; no teste, em 0,5 e 0,2 ponto. O ganho é modesto, da ordem do desvio entre partições, mas
-aparece nos dois modelos e nas mesmas partições, então é consistente. Sem a máscara, cerca de 30\% dos
+Com PCA, a segmentação melhora o F1 macro de validação cruzada em 2,7 pontos no SVM e 4,7 pontos na
+regressão logística; no teste, em 2,2 e 6,0 pontos. Na versão sem PCA (64x64), o ganho era bem menor:
+0,7 e 1,1 ponto na validação cruzada, e 0,5 e 0,2 ponto no teste. O motivo é o mesmo da normalização
+de cor (Seção~\ref{sec:res-preproc}). Sem a máscara, o primeiro componente do PCA, com 32,9\% da
+variância, é dominado pela faixa 0 dos histogramas de R, G e B, ou seja, pela quantidade de fundo
+preto no recorte, e tem $\eta^2$ da classe de apenas 0,015; o segundo (12,1\%) tem $\eta^2$ de 0,008. O
+componente mais ligado à classe ($\eta^2=0{,}229$) cai para a terceira posição. O PCA gasta seus
+primeiros componentes com o formato do recorte, e não com o parasita
+(\arq{outputs/fator2_normalizacao_cor_sem_segmentacao/pca_componentes.csv}). Sem a máscara, cerca de 30\% dos
 pixels são fundo preto: a média e o desvio de cada canal passam a depender de quanto fundo o recorte
 tem (isto é, do formato da célula), os histogramas ganham um pico em zero e a normalização de cor
 divide pela média da imagem inteira, que também depende da quantidade de fundo. O classificador ainda
 funciona bem porque as faixas do histograma que contêm a célula continuam lá, mas misturadas a
 informação de forma que não tem relação com o parasita.
 
+\subsection{Contribuição do PCA}\label{sec:res-pca}
+
+Para medir o efeito do PCA, o pipeline fator2 com normalização de cor foi executado com e sem ele,
+com os mesmos dados, partições e grades. Sem PCA, os modelos recebem as 71 características
+padronizadas.
+
+\begin{table}[H]
+\centering
+\caption{Contribuição do PCA no pipeline fator2 com normalização de cor (F1 macro).}\label{tab:pca-res}
+\begin{tabular}{lrcccc}
+\toprule
+& & \multicolumn{2}{c}{SVM (RBF)} & \multicolumn{2}{c}{Regressão logística} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Entrada do modelo & Dimensões & CV & Teste & CV & Teste \\
+\midrule
+71 características (sem PCA) & 71 & \textbf{0,955} & \textbf{0,959} & \textbf{0,948} & \textbf{0,951} \\
+10 componentes principais    & 10 & 0,946 & 0,950 & 0,929 & 0,936 \\
+\bottomrule
+\end{tabular}
+\fonte{outputs/fator2_normalizacao_cor_sem_pca/ e outputs/fator2_normalizacao_cor/ (metricas_gerais.csv)}
+\end{table}
+
+O PCA reduz a entrada de 71 para 10 dimensões, retendo 70,5\% da variância, mas \emph{piora} os dois
+modelos. Na validação cruzada, o F1 macro cai 0,9 ponto no SVM e 1,9 ponto na regressão logística. A
+queda do SVM é da ordem do desvio entre partições ($\sim$0,011), e a da regressão logística fica
+entre uma e duas vezes esse desvio. As duas comparações usam as mesmas partições e apontam na mesma
+direção, que o teste confirma: o SVM passa de 230 para 279 erros (+21\%) e a regressão logística, de
+273 para 355 (+30\%). A perda é maior na regressão logística porque, sendo linear, ela não consegue
+recuperar com combinações não lineares a informação que ficou fora dos 10 componentes. O PCA também
+não trouxe ganho de tempo relevante: o ajuste do SVM leva tempo semelhante com 10 ou 71 dimensões
+(\arq{grid_svm.csv}, coluna \texttt{tempo\_fit\_s}).
+
+A causa está na Seção~\ref{sec:res-preproc} (Tabela~\ref{tab:pca-comp}): o PCA escolhe os
+componentes pela variância, sem olhar a classe. Dois dos 10 componentes escolhidos (8 e 9) têm
+$\eta^2$ da classe igual a zero, um deles formado quase só por faixas de histograma quase sempre
+vazias, enquanto componentes de pouca variância e mais ligados à classe, como o 42, ficam de fora. As
+características mais discriminantes, as faixas do histograma de G, são preservadas só em parte (43\%
+a 90\%). Sem PCA, os classificadores recebem todas as características e usam o rótulo para decidir o
+peso de cada uma: a regularização da regressão logística e o kernel do SVM dão pouco peso às colunas
+quase constantes, em vez de reservar para elas uma das poucas dimensões disponíveis.
+
+Pelo mesmo critério usado nas demais decisões (F1 macro na validação cruzada), a versão sem PCA é a
+escolhida, e o PCA foi descartado da configuração final. Com 22.003 imagens de treino e 71
+características, não há excesso de dimensões que justifique a perda de informação.
+
 \subsection{Análise dos erros}\label{sec:res-erros}
 
-A análise usa as predições por imagem do conjunto de teste
-(\arq{outputs/64x64_normalizacao_cor/testset/predicoes.csv}). A Figura~\ref{fig:erros} mostra
-exemplos sorteados de erros do SVM.
+A análise usa as predições por imagem da configuração final no conjunto de teste
+(\arq{outputs/fator2_normalizacao_cor_sem_pca/testset/predicoes.csv}). A Figura~\ref{fig:erros}
+mostra exemplos sorteados de erros do melhor modelo na validação cruzada.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{erros_exemplos.png}
-\caption{Exemplos sorteados (semente 42) de erros do SVM no teste. Acima, falsos negativos
-(parasitadas previstas como não infectadas); abaixo, falsos positivos. O título de cada imagem é o
-paciente. Arquivo: \texttt{erros\_exemplos.png}.}\label{fig:erros}
+\caption{Exemplos sorteados (semente 42) de erros do melhor modelo (SVM) no teste. Acima, falsos
+negativos (parasitadas previstas como não infectadas); abaixo, falsos positivos. O título de cada
+imagem é o paciente. Arquivo: \texttt{erros\_exemplos.png}.}\label{fig:erros}
 \end{figure}
 
-\paragraph{Quantidade e sobreposição.} O SVM erra 250 das 5.555 imagens de teste (157 falsos negativos
-e 93 falsos positivos) e a regressão logística erra 284 (174 e 110). Dos 250 erros do SVM, 201 também
-são erros da regressão logística: os erros vêm principalmente de imagens difíceis, e não de uma
-fraqueza específica de um modelo.
+\paragraph{Quantidade e sobreposição.} O SVM erra 230 das 5.555 imagens de teste (158 falsos negativos
+e 72 falsos positivos) e a regressão logística erra 273 (175 e 98). Dos 230 erros do SVM, 198 (86\%)
+também são erros da regressão logística: os erros vêm principalmente de imagens difíceis, e não de uma
+fraqueza específica de um modelo. Com PCA, o SVM errava 279 imagens (171 e 108).
 
 \paragraph{Concentração por paciente.} Os erros não se distribuem de maneira uniforme entre os 40
-pacientes de teste. A taxa de erro mediana por paciente é de 3,0\%, mas chega a 16,5\% (paciente
-C102). Um único paciente, C68, concentra 59 erros (23,6\% do total), dos quais 56 são falsos
-negativos entre suas 633 células parasitadas; os 5 pacientes com mais erros respondem por 47\% de
-todos os erros e os 10 primeiros, por 66\%. Isso reforça que as características de cada lâmina
+pacientes de teste. A taxa de erro mediana por paciente é de 3,4\%, e a maior é de 9,7\% (paciente
+C102). Um único paciente, C68, concentra 54 erros (23,5\% do total), dos quais 52 são falsos negativos
+entre suas 633 células parasitadas; os 5 pacientes com mais erros respondem por 46\% de todos os erros
+e os 10 primeiros, por 65\%. Isso indica que as características das imagens de cada paciente
 (coloração, estágio do parasita, qualidade da imagem) influenciam o resultado, mesmo após a
 normalização de cor, e justifica a divisão por paciente: uma divisão aleatória por imagem teria
-colocado células de C68 no treino e escondido essa dificuldade. A taxa de falsos positivos é de
-4,3\% (32 de 748) nas células de pacientes saudáveis e de 3,0\% (61 de 2.003) nas células não
-infectadas de pacientes infectados.
+colocado células de C68 no treino e escondido essa dificuldade. Com PCA, a concentração era maior: a
+taxa de erro de C102, cujas células são escuras e saturadas, chegava a 28,2\%. A taxa de falsos positivos é de 3,5\% (26 de 748) nas células de pacientes saudáveis e
+de 2,3\% (46 de 2.003) nas células não infectadas de pacientes infectados: o modelo não erra mais nas
+células sadias de quem tem malária.
 
 \paragraph{Inspeção visual.} Na Figura~\ref{fig:erros}:
 \begin{itemize}
-  \item \textbf{Falsos negativos}: o parasita é muito pequeno, pouco corado ou está na borda da célula
-        (onde a erosão da máscara remove pixels e o LBP é contaminado pelo fundo). Em algumas imagens
-        não se vê parasita algum na resolução da imagem, o que pode corresponder a formas muito jovens
-        do parasita ou a erros de rótulo.
-  \item \textbf{Falsos positivos}: várias células têm um ponto roxo nítido, semelhante a um parasita.
-        Pode tratar-se de plaquetas ou resíduos de corante sobrepostos à célula, ou de erros de rótulo
-        no próprio dataset; não é possível distinguir esses casos sem um especialista. Outros falsos
-        positivos têm coloração muito escura ou saturada (por exemplo, a célula azul-escura do paciente
-        C150) ou uma palidez central forte, casos que a normalização pela média não corrige
-        totalmente.
+  \item \textbf{Falsos negativos}: cinco dos oito exemplos são de C68, o paciente com mais erros. Na
+        maioria deles o parasita é um ponto pequeno, vários na borda da célula, onde a erosão da
+        máscara remove pixels e o LBP é contaminado pelo fundo. Na célula de C174, o parasita é um traço roxo visível, mas pequeno em
+        relação à célula. Nas células de C51 e de C118 não se vê parasita algum na resolução da
+        imagem, o que pode corresponder a formas muito jovens do parasita ou a erros de rótulo.
+  \item \textbf{Falsos positivos}: quase todos os exemplos têm uma marca roxa nítida, semelhante a um
+        parasita: os pontos de C176, C227 e C177, a estrutura magenta de C118, a mancha escura na
+        borda de C130 e o traço na borda de C152. Pode tratar-se de plaquetas, resíduos de corante ou
+        parte de uma célula vizinha sobrepostos ao recorte, ou de erros de rótulo no próprio dataset;
+        não é possível distinguir esses casos sem um especialista. Comparados aos erros com PCA, os
+        falsos positivos sem PCA são mais ``razoáveis'': o modelo erra em células que de fato parecem
+        conter um parasita, e não em células apenas escuras ou com palidez central.
 \end{itemize}
 
 %=====================================================================
@@ -872,39 +1210,62 @@ infectadas de pacientes infectados.
 \paragraph{Quais decisões mais influenciaram o desempenho.} Ordenadas pelo efeito medido na validação
 cruzada do SVM:
 \begin{enumerate}
-  \item \textbf{Normalização de cor por imagem}: cerca de +2 pontos de F1 macro no SVM e +3 na regressão
-        logística (Tabela~\ref{tab:preproc}). A variação de coloração entre lâminas era a maior fonte de
-        erro, como a análise de cor havia indicado (as cores mais frequentes são as mesmas nas duas
-        classes e mudam de lâmina para lâmina).
+  \item \textbf{Normalização de cor por imagem}: +3,8 pontos de F1 macro no SVM e +6,9 na regressão
+        logística com PCA (Tabela~\ref{tab:preproc-pca}); +2 e +3 sem PCA (Tabela~\ref{tab:preproc}).
+        A variação de coloração entre imagens era a maior fonte de erro, como a análise de cor havia
+        indicado (as cores mais frequentes são as mesmas nas duas classes, e a classe explica no
+        máximo 9,4\% da variação da cor média entre imagens, Figura~\ref{fig:variacao-cor}).
+  \item \textbf{Segmentação}: +2,7 pontos no SVM e +4,7 na regressão logística com PCA
+        (Tabela~\ref{tab:seg-res}); +0,7 e +1,1 sem PCA. Ela impede que o fundo, cuja quantidade
+        depende do formato do recorte, contamine as estatísticas e a normalização.
+  \item \textbf{PCA com 10 componentes (descartado)}: $-0{,}9$ ponto no SVM e $-1{,}9$ na regressão
+        logística (Tabela~\ref{tab:pca-res}). Os 10 componentes retêm 70,5\% da variância, mas parte
+        dela não tem relação com a classe, e componentes de pouca variância ligados à classe ficam de
+        fora.
   \item \textbf{Máscara correta}: calcular a máscara na resolução original e erodi-la, em vez de usar
         um limiar após o redimensionamento, rendeu +0,9 ponto (Tabela~\ref{tab:evolucao}).
-  \item \textbf{Segmentação}: +0,7 ponto no SVM e +1,1 na regressão logística
-        (Tabela~\ref{tab:seg-res}), por impedir que o fundo, cuja quantidade depende do formato do
-        recorte, contamine as estatísticas e a normalização.
-  \item \textbf{Textura (LBP)}: nenhum efeito mensurável depois da normalização de cor
-        (Tabela~\ref{tab:features-res}); a informação útil já está nas características de cor.
-  \item \textbf{Redimensionamento}: nenhum efeito mensurável entre 64x64, fator 2 e resolução original.
-        A distorção de escala e de proporção do 64x64, que era uma preocupação teórica para o LBP, não
-        se refletiu no resultado, e a resolução original não trouxe ganho apesar do detalhe extra.
+  \item \textbf{Textura (LBP)}: nenhum efeito mensurável depois da normalização de cor, com ou sem
+        PCA (Tabela~\ref{tab:features-res}); a informação útil já está nas características de cor.
+  \item \textbf{Redimensionamento}: nenhum efeito mensurável entre 64x64, fator 2 e resolução original,
+        com ou sem PCA. A distorção de escala e de proporção do 64x64, que era uma preocupação teórica
+        para o LBP, não se refletiu no resultado, e a resolução original não trouxe ganho apesar do
+        detalhe extra. O 64x64 foi removido e o fator2 adotado: preserva a escala física e extrai as
+        características 2,3 vezes mais rápido que a resolução original (Tabela~\ref{tab:tempo}).
 \end{enumerate}
+
+\paragraph{O PCA amplifica os problemas de pré-processamento.} Normalização e segmentação têm efeito
+muito maior com PCA do que sem ele. Sem PCA, os modelos recebem todas as características, e a
+regularização e o kernel conseguem dar pouco peso às que variam por motivos alheios à classe. Com PCA,
+essa variação ocupa os primeiros componentes: a cor geral de cada imagem, sem normalização, e a
+quantidade de fundo, sem segmentação. Esses componentes tomam o lugar de outros mais úteis entre os
+10 que o modelo recebe. Remover essas fontes de variância antes do PCA reduz o problema, mas não o
+elimina, e por isso a configuração final dispensa o PCA.
 
 \paragraph{Quais características funcionaram melhor.} As características de \emph{distribuição} de cor
 (histogramas, especialmente do canal G, e desvios padrão) são as mais informativas, porque capturam a
 pequena região escura e roxa do parasita, que a média da célula praticamente não registra. Isso é
-coerente com a análise de cor da Seção~\ref{sec:cor} e com a física do corante.
+coerente com a análise de cor da Seção~\ref{sec:cor} e com a física do corante. O PCA confirma essa
+leitura de forma independente: o seu primeiro componente, o único fortemente ligado à classe
+($\eta^2=0{,}227$), é formado pelos desvios de cor, pela saturação e pelo brilho médios e por uma faixa
+do histograma de G (Tabela~\ref{tab:pca-comp}). Os desvios são preservados em 93\% a 96\% pelos 10
+componentes, mas as faixas do histograma de G, só em 43\% a 90\%, o que ajuda a explicar a perda com
+o PCA.
 
 \paragraph{Quais classificadores funcionaram melhor.} O SVM com kernel RBF foi o melhor em todas as
-configurações. A vantagem sobre a regressão logística, que era de quase 2 pontos sem normalização,
-caiu para 0,6 ponto com normalização: depois de remover a coloração da lâmina, a fronteira entre as
-classes no espaço de características fica quase linear. O desempenho do SVM é estável numa faixa
-larga de hiperparâmetros (Tabela~\ref{tab:grid-svm}).
+configurações, com e sem PCA. Na configuração final, a vantagem sobre a regressão logística é de 0,7
+ponto na validação cruzada e 0,8 no teste; sem normalização, era de 1,6 ponto. Depois de remover a
+coloração geral de cada imagem, a fronteira entre as classes no espaço de características fica quase
+linear. Com PCA, a vantagem volta a crescer (1,7 ponto na validação cruzada e 1,4 no teste), porque o
+modelo linear não recupera a informação que ficou fora dos 10 componentes. O desempenho do SVM é
+estável numa faixa larga de hiperparâmetros: os cinco melhores pontos da grade estão a menos de 0,002
+de F1 um do outro (Tabela~\ref{tab:grid-svm}).
 
 \paragraph{Classes confundidas e fatores que explicam os erros.} Com apenas duas classes, a confusão é
 entre elas; o erro predominante é o falso negativo (parasitada classificada como não infectada). Os
 fatores identificados na análise de erros são: (i) parasitas pequenos, pouco corados ou na borda da
 célula; (ii) artefatos (plaquetas, resíduos de corante, palidez central) que imitam o parasita;
-(iii) características próprias de algumas lâminas, que concentram os erros em poucos pacientes; e
-(iv) possíveis erros de rótulo no dataset.
+(iii) características próprias das imagens de alguns pacientes, que concentram os erros em poucos
+deles; e (iv) possíveis erros de rótulo no dataset.
 
 \paragraph{Limitações.}
 \begin{itemize}
@@ -913,8 +1274,12 @@ célula; (ii) artefatos (plaquetas, resíduos de corante, palidez central) que i
         o desvio entre as partições da validação cruzada ($\sim$1 ponto de F1) dá uma ideia melhor
         dessa variabilidade. Diferenças menores que isso entre configurações não devem ser
         interpretadas como reais.
-  \item Os histogramas de cor têm faixas sempre vazias e dependências lineares. Isso não prejudicou
-        os modelos, mas um conjunto menor teria o mesmo desempenho.
+  \item As ablações de textura (LBP) e de segmentação foram executadas sobre o pipeline com PCA, e
+        não sobre a configuração final sem PCA. Para a versão sem PCA há apenas os resultados
+        registrados com 64x64. As conclusões coincidem nos dois casos (o LBP não ajuda e a
+        segmentação ajuda), mas o tamanho exato do efeito na configuração final não foi medido.
+  \item O PCA testado tinha o número de componentes fixado em 10, e não escolhido pela validação
+        cruzada; com mais componentes, a perda provavelmente seria menor.
   \item O LBP usa um único raio ($R=1$); Ojala et al.~\cite{ojala2002} recomendam combinar vários raios.
   \item Não foram usadas características de forma (área, perímetro, circularidade) nem de gradiente
         (HOG), sugeridas no enunciado como opções.
@@ -924,9 +1289,14 @@ célula; (ii) artefatos (plaquetas, resíduos de corante, palidez central) que i
 \paragraph{Possíveis melhorias.} Ajustar o limiar de decisão para aumentar o recall de
 \textit{Parasitized} (reduzindo falsos negativos à custa de mais falsos positivos), o que faz sentido
 num contexto de triagem; normalizar a cor por lâmina (média de todas as células do mesmo paciente) em
-vez de por imagem; usar LBP multiescala e características de coocorrência (GLCM); acrescentar a
-assimetria (terceiro momento de cor), que deve captar a cauda escura do canal G; e revisar, com um
-especialista, as imagens com suspeita de erro de rótulo.
+vez de por imagem; escolher o número de componentes do PCA pela validação cruzada (incluindo-o na
+grade de hiperparâmetros); remover, antes do PCA, as colunas quase constantes (por exemplo, com um
+limiar de variância ajustado no treino), para que não ocupem componentes; trocar o PCA por uma redução
+supervisionada, como a análise discriminante linear (LDA) ou uma regressão logística com penalidade
+L1, que escolhem as direções pela separação entre classes e não pela variância; usar LBP multiescala e
+características de coocorrência (GLCM); acrescentar a assimetria (terceiro momento de cor), que deve
+captar a cauda escura do canal G; e revisar, com um especialista, as imagens com suspeita de erro de
+rótulo.
 
 %=====================================================================
 \section{Conclusão}
@@ -935,20 +1305,27 @@ especialista, as imagens com suspeita de erro de rótulo.
 Foi construído um pipeline completo de classificação de células de malária com características
 extraídas manualmente e algoritmos tradicionais. A análise do dataset mostrou um problema
 balanceado, sem imagens corrompidas nem duplicadas, com imagens de tamanhos variados e, sobretudo,
-com grande variação de coloração entre lâminas. A divisão por paciente garantiu uma avaliação sem
-vazamento.
+com grande variação de coloração entre imagens, quase independente da classe. A divisão por paciente
+garantiu uma avaliação sem vazamento.
 
 Cada decisão do pipeline foi testada com experimentos controlados, escolhidos pela validação cruzada
 e confirmados uma única vez no conjunto de teste. A normalização de cor por imagem foi a decisão de
-maior impacto; a segmentação correta da célula também contribuiu, enquanto o redimensionamento não
-teve efeito e foi mantido na forma mais simples. Duas falhas encontradas ao longo do caminho foram
-corrigidas com base em verificação formal: a máscara contaminada pela borda e o tratamento linear de
-uma variável circular (o matiz).
+maior impacto; a segmentação correta da célula também contribuiu. O redimensionamento não teve efeito
+no desempenho, e foi adotada a redução à metade, que preserva a escala física e é mais rápida que a
+resolução original. Para tratar a redundância entre as características, foi avaliado um PCA ajustado
+no treino de cada configuração, que entrega aos modelos 10 componentes no lugar de 71 características.
+O PCA retém 70,5\% da variância, mas custou 0,9 ponto de F1 no SVM e 1,9 na regressão logística: ele
+escolhe componentes pela variância, e parte da variância destes dados não tem relação com a classe.
+Por isso foi descartado. O experimento também mostrou que a normalização de cor e a segmentação, que
+removem duas dessas fontes de variância, ficam ainda mais importantes quando há PCA. Duas falhas
+encontradas ao longo do caminho foram corrigidas com base em verificação formal: a máscara
+contaminada pela borda e o tratamento linear de uma variável circular (o matiz).
 
-A configuração final (64x64, segmentação, normalização de cor, 71 características de cor e textura e
-SVM com kernel RBF) obteve F1 macro de 0,955 e acurácia de 95,5\% no conjunto de teste, contra 0,331
-de F1 macro do classificador de referência. O principal erro restante é deixar passar células
-parasitadas com parasitas pequenos, pouco corados ou na borda, concentradas em poucos pacientes.
+A configuração final (fator2, segmentação, normalização de cor, 71 características de cor e textura
+padronizadas, sem PCA, e SVM com kernel RBF) obteve F1 macro de 0,959 e acurácia de 95,9\% no
+conjunto de teste, contra 0,331 de F1 macro do classificador de referência. O principal erro restante
+é deixar passar células parasitadas com parasitas pequenos, pouco corados ou na borda, concentradas
+em poucos pacientes.
 
 %=====================================================================
 \appendix
@@ -959,9 +1336,11 @@ Ambiente: Python 3.11, NumPy 2.4, pandas 3.0, scikit-learn 1.9, scikit-image 0.2
 Matplotlib 3.11. Comandos, a partir da pasta \arq{AV2}:
 \begin{itemize}
   \item \texttt{python 1\_analise\_dataset.py}: gera \arq{outputs/resumo.txt},
-        \arq{outputs/cores_quantizadas.csv} e as Figuras~\ref{fig:balanceamento} a~\ref{fig:paleta};
+        \arq{outputs/cores_quantizadas.csv} e as Figuras~\ref{fig:balanceamento}
+        a~\ref{fig:variacao-cor};
   \item \texttt{python 2\_classificacao.py}: roda todas as configurações (as características são
-        reaproveitadas dos CSV já existentes);
+        reaproveitadas dos CSV já existentes) e, no final, mede o tempo de extração
+        (\arq{outputs/tempo_extracao.csv});
   \item \texttt{python 2\_classificacao.py <config> [...]}: roda só as configurações indicadas; a tabela
         \arq{outputs/comparacao_preprocessamento.csv} junta as métricas salvas de todas.
 \end{itemize}
@@ -969,15 +1348,17 @@ Matplotlib 3.11. Comandos, a partir da pasta \arq{AV2}:
 Estrutura de cada pasta \arq{outputs/<config>/}:
 \begin{itemize}
   \item \arq{features_<config>.csv}: dataframe de características (as configurações
-        \texttt{*\_so\_cor} reaproveitam o da configuração de origem);
+        \texttt{*\_so\_cor} e \texttt{*\_sem\_pca} reaproveitam o da configuração de origem);
+  \item \arq{pca_<config>.png}, \arq{pca_componentes.csv} (variância, $\eta^2$ da classe e maiores
+        pesos de cada componente) e \arq{pca_caracteristicas.csv} (variância preservada de cada
+        característica): análise do PCA ajustado no treino (todas as configurações, menos
+        \texttt{*\_sem\_pca});
   \item \arq{validacao_cruzada/}: \arq{grid_<modelo>.csv}, \arq{melhores_hiperparametros.csv},
         \arq{metricas_gerais.csv}, \arq{metricas_por_classe.csv} e \arq{matrizes_confusao_cv.png};
   \item \arq{testset/}: \arq{metricas_gerais.csv}, \arq{metricas_por_classe.csv},
         \arq{matrizes_confusao_teste.png}, \arq{predicoes.csv} (predição de cada modelo por imagem) e
         \arq{erros_exemplos.png}.
 \end{itemize}
-As pastas \arq{outputs/validacao_cruzada/} e \arq{outputs/testset/} (na raiz de \arq{outputs})
-guardam a execução inicial (linha 1 da Tabela~\ref{tab:evolucao}).
 
 \begin{thebibliography}{9}
 \bibitem{rajaraman2018}
