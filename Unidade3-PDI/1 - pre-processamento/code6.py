@@ -1,19 +1,25 @@
+import sys
+from pathlib import Path
+root_path = Path(__file__).resolve().parents[2]
+if str(root_path) not in sys.path:
+    sys.path.append(str(root_path))
+    
 import matplotlib.pyplot as plt
 from src.pdi_utils import load_lena
 
 # Import the try all function
-from skimage.__  import ___
+from skimage.filters  import try_all_threshold
 
 # Import the rgb to gray convertor function
-from skimage.___ import ___
+from skimage.color import rgb2gray
 
 lena = load_lena()
 
 # Turn the Lena image to grayscale
-grayscale = ___
+grayscale = rgb2gray(lena)
 
 # Use the try all method on the resulting grayscale image
-fig, ax = ___(___, verbose=False)
+fig, ax = try_all_threshold(grayscale, verbose=False)
 
 # Show the resulting plots
 plt.show()
