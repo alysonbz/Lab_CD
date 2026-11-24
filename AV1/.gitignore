@@ -5,3 +5,4 @@ pre_process_and_analisis/data
 pre_process_and_analisis/cache_checkpoint
 .venv
 test.py
+node-modules/

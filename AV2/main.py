@@ -1,22 +1,46 @@
+
 from analise_dataset.config import prepare_directories
-from analise_dataset import dataset, exploracao, limpeza, divisao, preprocessamento, segmentacao
+
+from analise_dataset import (
+    dataset,
+    exploracao,
+    limpeza,
+    divisao,
+    preprocessamento,
+    segmentacao,
+    features,
+    treinamento,
+    analise_resultados
+)
+
 
 def main():
+
     prepare_directories()
+
     etapas = [
-        ("Download e inspeção do dataset", dataset.run),
+        ("Download do dataset", dataset.run),
         ("Análise exploratória", exploracao.run),
-        ("Verificação e limpeza", limpeza.run),
-        ("Divisão treino/teste", divisao.run),
+        ("Limpeza dos dados", limpeza.run),
+        ("Divisão treino e teste", divisao.run),
         ("Pré-processamento", preprocessamento.run),
         ("Segmentação", segmentacao.run),
+        ("Extração de características", features.run),
+        ("Treinamento e avaliação", treinamento.run),
+        ("Análise dos resultados", analise_resultados.run)
     ]
-    for title, action in etapas:
-        print("\\n" + "=" * 70)
-        print(title.upper())
+
+    for nome, funcao in etapas:
+
+        print("\n" + "=" * 70)
+        print(nome.upper())
         print("=" * 70)
-        action()
-    print("\\nFluxo concluído. Confira os resultados na pasta outputs/.")
+
+        funcao()
+
+    print("\nPROJETO CONCLUÍDO!")
+    print("Confira os resultados na pasta outputs/")
+
 
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ SPLIT_DIR = DATA_DIR / "dataset_dividido"
 DATASET_URL = "https://github.com/garythung/trashnet/raw/master/data/dataset-resized.zip"
 CLASSES = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+RANDOM_STATE = 42
 
 # Pares identificados na análise manual do notebook como duplicatas.
 DUPLICATES_TO_EXCLUDE = {

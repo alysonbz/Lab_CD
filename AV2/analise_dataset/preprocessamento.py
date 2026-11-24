@@ -4,6 +4,98 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from .config import CLEAN_DIR, OUTPUT_DIR, CLASSES, IMAGE_EXTENSIONS
 
+def preprocess_image(caminho, tamanho=(128, 128)):
+    """
+    Pré-processa uma imagem para extração de características.
+
+    Etapas:
+    1. Leitura da imagem.
+    2. Conversão BGR para RGB.
+    3. Redimensionamento preservando a proporção.
+    4. Preenchimento com margens.
+    5. Redução de ruído com filtro bilateral.
+    6. Ajuste de contraste utilizando CLAHE no canal L do LAB.
+
+    Retorna:
+        Imagem RGB no formato uint8.
+    """
+
+    # 1. Leitura
+    imagem = cv2.imread(str(caminho))
+
+    if imagem is None:
+        raise ValueError(f"Não foi possível carregar: {caminho}")
+
+    # 2. Conversão para RGB
+    imagem = cv2.cvtColor(imagem, cv2.COLOR_BGR2RGB)
+
+    altura, largura = imagem.shape[:2]
+    largura_alvo, altura_alvo = tamanho
+
+    # 3. Redimensionamento preservando proporção
+    escala = min(
+        largura_alvo / largura,
+        altura_alvo / altura
+    )
+
+    nova_largura = max(1, int(largura * escala))
+    nova_altura = max(1, int(altura * escala))
+
+    imagem = cv2.resize(
+        imagem,
+        (nova_largura, nova_altura),
+        interpolation=cv2.INTER_AREA
+    )
+
+    # 4. Preenchimento com margens
+    canvas = np.full(
+        (altura_alvo, largura_alvo, 3),
+        255,
+        dtype=np.uint8
+    )
+
+    x = (largura_alvo - nova_largura) // 2
+    y = (altura_alvo - nova_altura) // 2
+
+    canvas[
+        y:y + nova_altura,
+        x:x + nova_largura
+    ] = imagem
+
+    imagem = canvas
+
+    # 5. Redução moderada de ruído
+    imagem = cv2.bilateralFilter(
+        imagem,
+        d=5,
+        sigmaColor=35,
+        sigmaSpace=35
+    )
+
+    # 6. CLAHE no canal de luminosidade
+    lab = cv2.cvtColor(
+        imagem,
+        cv2.COLOR_RGB2LAB
+    )
+
+    l, a, b = cv2.split(lab)
+
+    clahe = cv2.createCLAHE(
+        clipLimit=2.0,
+        tileGridSize=(8, 8)
+    )
+
+    l = clahe.apply(l)
+
+    lab = cv2.merge((l, a, b))
+
+    imagem = cv2.cvtColor(
+        lab,
+        cv2.COLOR_LAB2RGB
+    )
+
+    return imagem
+
 def _first_image(class_name):
     folder = CLEAN_DIR / class_name
     files = sorted(p for p in folder.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS)

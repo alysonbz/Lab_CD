@@ -17,7 +17,7 @@ A equipe deverá conhecer e organizar os dados antes de iniciar a modelagem. Ess
 - Análise do balanceamento entre as classes.
 - Apresentação de exemplos das imagens e das principais dificuldades do problema.
 - Divisão dos dados em conjuntos de treinamento e teste, com justificativa da estratégia utilizada.
--Imagens do mesmo objeto, indivíduo ou sequência, quando existentes, deverão permanecer no mesmo conjunto para evitar vazamento de dados.
+- Imagens do mesmo objeto, indivíduo ou sequência, quando existentes, deverão permanecer no mesmo conjunto para evitar vazamento de dados.
 
 ### 2. Pré-processamento das imagens
 A equipe deverá selecionar e avaliar operações de pré-processamento adequadas ao problema, justificando suas escolhas.

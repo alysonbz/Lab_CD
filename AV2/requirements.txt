@@ -4,3 +4,5 @@ matplotlib
 Pillow
 opencv-python
 scikit-learn
+scikit-image
+tabulate
