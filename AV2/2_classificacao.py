@@ -1,4 +1,4 @@
-"""Classificação do dataset cell_images: baseline, SVM e Regressão Logística.
+"""Classificação do dataset cell_images: SVM e Regressão Logística.
 
 Roda o pipeline abaixo para cada configuração em CONFIGS (redimensionamento, normalização de cor,
 segmentação e conjunto de features) e compara os resultados em outputs/comparacao_preprocessamento.csv.
@@ -34,7 +34,6 @@ from PIL import Image
 from skimage.color import rgb2gray, rgb2hsv
 from skimage.feature import local_binary_pattern
 from skimage.morphology import disk, erosion
-from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold, cross_val_predict
@@ -102,11 +101,6 @@ FEATURE_SETS = {
 # gamma=1e-3; a grade foi estendida nessa direção (C=1000, gamma=1e-4) e perdeu C=0,1 e gamma=0,1,
 # sempre entre os piores nas duas configurações
 MODELS = {
-    "baseline": (  # referência: sempre prevê a classe mais frequente do treino
-        "Baseline (classe mais frequente)",
-        DummyClassifier(strategy="most_frequent"),
-        {},
-    ),
     "svm": (
         "SVM (RBF)",
         SVC(kernel="rbf", cache_size=1000),
@@ -441,7 +435,8 @@ def analyze_pca(X, y, cols, folder):
       sum_k λ_k v_kj² / var_j (λ_k: variância do componente k; v_kj: peso da característica j nele).
       Perto de 0 = a característica quase não entra no que o modelo recebe
     - pca_<config>.png: barras das duas tabelas (nome com a configuração para as figuras de várias
-      configurações poderem ficar juntas na pasta do relatório)
+      configurações poderem ficar juntas na pasta do relatório); cada componente é rotulado com a
+      característica de maior peso (|v_kj|) nele
     """
     Z = StandardScaler().fit_transform(X)
     pca = PCA(svd_solver="full").fit(Z)
@@ -459,15 +454,17 @@ def analyze_pca(X, y, cols, folder):
     pd.DataFrame({"caracteristica": cols, "variancia_preservada": preserved}).sort_values(
         "variancia_preservada", ascending=False).to_csv(folder / "pca_caracteristicas.csv", index=False)
 
-    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(15, 9.5), facecolor=SURFACE,
-                                     gridspec_kw={"height_ratios": [1, 1.25]})
+    dominant = np.asarray(cols)[np.abs(pca.components_).argmax(axis=1)]  # maior |v_kj| de cada componente
+    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(15, 11), facecolor=SURFACE,
+                                     gridspec_kw={"height_ratios": [1, 1.15]})
     ax_a.bar(n, 100 * ratio, width=0.8, color=[ACCENT if i <= N_PCA else MUTED for i in n])
     ax_a.axvline(N_PCA + 0.5, color=INK_2, linestyle="--", linewidth=1)
     ax_a.text(N_PCA + 1, 100 * ratio[0], f"os {N_PCA} primeiros (azul) vão para o modelo:\n"
               f"{fmt_pct(ratio[:N_PCA].sum())} da variância total", va="top", color=INK, fontsize=11)
-    ax_a.set_xticks([1, *range(5, len(n) + 1, 5)])
+    ax_a.set_xticks(n, dominant, rotation=90, fontsize=7)
     ax_a.set_xlim(0.3, len(n) + 0.7)
-    ax_a.set_xlabel("componente principal", color=INK_2)
+    ax_a.set_xlabel("componente principal, em ordem (rótulo: característica de maior peso no componente)",
+                    color=INK_2)
     ax_a.set_ylabel("variância explicada (%)", color=INK_2)
     ax_a.set_title("Variância explicada por componente", loc="left", color=INK)
 
@@ -530,7 +527,7 @@ def evaluate(train, test, labels, folder, cols, pca):
                  "matrizes_confusao_cv.png")
     save_results(test_dir, test_preds, test["classe"], labels, "Conjunto de teste", "matrizes_confusao_teste.png")
     predictions.to_csv(test_dir / "predicoes.csv", index=False)
-    top = max((b for b in best if b["modelo"] != MODELS["baseline"][0]), key=lambda b: b["f1_macro_cv"])
+    top = max(best, key=lambda b: b["f1_macro_cv"])
     plot_errors(test, test_preds[top["modelo"]], top["modelo"], test_dir / "erros_exemplos.png")
 
 

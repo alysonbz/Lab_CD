@@ -1,22 +1,15 @@
 configuracao,redimensionamento,normalizar,segmentar,features,pca,modelo,f1_macro_cv,acuracia_teste,f1_macro_teste
-fator2_sem_normalizacao,fator2,False,True,cor_textura,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 fator2_sem_normalizacao,fator2,False,True,cor_textura,True,SVM (RBF),0.9079181621917016,0.9225922592259226,0.9225913536423236
 fator2_sem_normalizacao,fator2,False,True,cor_textura,True,Regressão Logística,0.859492185912874,0.8644464446444644,0.8643448770308184
-fator2_normalizacao_cor,fator2,True,True,cor_textura,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 fator2_normalizacao_cor,fator2,True,True,cor_textura,True,SVM (RBF),0.9457028109162896,0.9497749774977498,0.9497748147355988
 fator2_normalizacao_cor,fator2,True,True,cor_textura,True,Regressão Logística,0.928539197281646,0.936093609360936,0.936093311138247
-original_sem_normalizacao,original,False,True,cor_textura,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 original_sem_normalizacao,original,False,True,cor_textura,True,SVM (RBF),0.9022304500742108,0.9211521152115212,0.9211345086287908
 original_sem_normalizacao,original,False,True,cor_textura,True,Regressão Logística,0.8604733787157715,0.8390639063906391,0.8389571865181622
-original_normalizacao_cor,original,True,True,cor_textura,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 original_normalizacao_cor,original,True,True,cor_textura,True,SVM (RBF),0.9449303391539864,0.9528352835283528,0.952835208634552
 original_normalizacao_cor,original,True,True,cor_textura,True,Regressão Logística,0.9248162393987154,0.9348334833483348,0.9348332278174176
-fator2_normalizacao_cor_so_cor,fator2,True,True,cor,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 fator2_normalizacao_cor_so_cor,fator2,True,True,cor,True,SVM (RBF),0.9456111378361172,0.9533753375337534,0.9533752408333136
 fator2_normalizacao_cor_so_cor,fator2,True,True,cor,True,Regressão Logística,0.929574099431376,0.934113411341134,0.934112281826108
-fator2_normalizacao_cor_sem_segmentacao,fator2,True,False,cor_textura,True,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 fator2_normalizacao_cor_sem_segmentacao,fator2,True,False,cor_textura,True,SVM (RBF),0.9188442220821292,0.9276327632763276,0.9276141824351712
 fator2_normalizacao_cor_sem_segmentacao,fator2,True,False,cor_textura,True,Regressão Logística,0.8814894112515947,0.8765076507650765,0.876506206043335
-fator2_normalizacao_cor_sem_pca,fator2,True,True,cor_textura,False,Baseline (classe mais frequente),0.447524566126022,0.4952295229522952,0.3312063568504695
 fator2_normalizacao_cor_sem_pca,fator2,True,True,cor_textura,False,SVM (RBF),0.9548473975414208,0.9585958595859586,0.9585943983550408
 fator2_normalizacao_cor_sem_pca,fator2,True,True,cor_textura,False,Regressão Logística,0.9478395601676756,0.9508550855085508,0.9508541681459152

@@ -36,8 +36,7 @@ com kernel RBF e regressão logística), sem redes neurais. A divisão entre tre
 paciente, para evitar vazamento de dados. Cada decisão do pipeline foi avaliada por experimentos
 controlados. A configuração final (imagens reduzidas à metade, segmentação, normalização de cor por
 imagem e as 71 características padronizadas) chega a F1 macro de 0,959 no conjunto de teste com o
-SVM, contra 0,331 de um classificador de referência que sempre prevê a classe mais frequente. A
-normalização de cor foi a decisão de maior impacto, reduzindo o erro do SVM no teste de 6,4\% para
+SVM. A normalização de cor foi a decisão de maior impacto, reduzindo o erro do SVM no teste de 6,4\% para
 4,1\%. O PCA com 10 componentes foi descartado: ele piorou os dois modelos (o SVM cai para 0,950 no
 teste), porque parte dos componentes de maior variância não tem relação com a classe.
 \end{abstract}
@@ -564,8 +563,6 @@ versão com PCA, porque o PCA é aplicado depois da extração.
 \subsection{Modelos}
 
 \begin{itemize}
-  \item \textbf{Baseline}: \texttt{DummyClassifier} que sempre prevê a classe mais frequente do treino
-        (Uninfected, com 11.028 contra 10.975). Serve de referência mínima.
   \item \textbf{SVM com kernel RBF} (\texttt{SVC}): modelo não linear de margem máxima. Hiperparâmetros:
         $C$ (penalidade de erro) e $\gamma$ (alcance do kernel).
   \item \textbf{Regressão logística} (\texttt{LogisticRegression}, regularização L2): modelo linear,
@@ -962,11 +959,9 @@ por classe.
 \toprule
 Conjunto & Modelo & Acurácia & Precisão macro & Recall macro & F1 macro \\
 \midrule
-CV    & Baseline            & 0,497 & 0,494 & 0,496 & 0,448 \\
 CV    & SVM (RBF)           & 0,955 & 0,956 & 0,955 & 0,955 \\
 CV    & Regressão logística & 0,948 & 0,949 & 0,948 & 0,948 \\
 \midrule
-Teste & Baseline            & 0,495 & 0,248 & 0,500 & 0,331 \\
 Teste & SVM (RBF)           & \textbf{0,959} & \textbf{0,959} & \textbf{0,959} & \textbf{0,959} \\
 Teste & Regressão logística & 0,951 & 0,951 & 0,951 & 0,951 \\
 \bottomrule
@@ -987,8 +982,6 @@ CV    & SVM (RBF)           & Parasitized & 0,974 & 0,935 & 0,954 & 10.975 \\
 CV    & Regressão logística & Parasitized & 0,968 & 0,926 & 0,947 & 10.975 \\
       &                     & Uninfected  & 0,929 & 0,970 & 0,949 & 11.028 \\
 \midrule
-Teste & Baseline            & Parasitized & 0,000 & 0,000 & 0,000 & 2.804 \\
-      &                     & Uninfected  & 0,495 & 1,000 & 0,662 & 2.751 \\
 Teste & SVM (RBF)           & Parasitized & 0,974 & 0,944 & 0,958 & 2.804 \\
       &                     & Uninfected  & 0,944 & 0,974 & 0,959 & 2.751 \\
 Teste & Regressão logística & Parasitized & 0,964 & 0,938 & 0,951 & 2.804 \\
@@ -1011,15 +1004,6 @@ porcentagem de cada linha (classe real). Arquivo: \texttt{matrizes\_confusao\_cv
 \caption{Matrizes de confusão no conjunto de teste. Arquivo:
 \texttt{matrizes\_confusao\_teste.png}.}\label{fig:conf-teste}
 \end{figure}
-
-\paragraph{Baseline.} No teste o baseline prevê sempre \textit{Uninfected} (a classe mais frequente
-no treino) e acerta 49,5\% das imagens, com F1 macro de 0,331: F1 zero para as parasitadas e 0,662
-para as não infectadas. Na validação cruzada o F1 macro calculado sobre as predições juntadas é maior
-(0,448) porque a classe majoritária muda de uma partição para outra (as partições são formadas por
-pacientes inteiros) e as predições juntadas acabam contendo as duas classes; a média do F1 de cada
-partição, usada na busca, é 0,332. O baseline não depende das características nem do PCA, por isso
-os seus números são os mesmos de todas as configurações. Os dois modelos ficam mais de 60 pontos de
-F1 acima da referência, o que mostra que as características carregam informação real sobre a classe.
 
 \paragraph{Comparação entre os modelos.} O SVM é melhor que a regressão logística em todas as
 métricas, mas por pouco: 0,8 ponto de F1 macro no teste e 0,7 na validação cruzada. Depois da
@@ -1323,7 +1307,7 @@ contaminada pela borda e o tratamento linear de uma variável circular (o matiz)
 
 A configuração final (fator2, segmentação, normalização de cor, 71 características de cor e textura
 padronizadas, sem PCA, e SVM com kernel RBF) obteve F1 macro de 0,959 e acurácia de 95,9\% no
-conjunto de teste, contra 0,331 de F1 macro do classificador de referência. O principal erro restante
+conjunto de teste. O principal erro restante
 é deixar passar células parasitadas com parasitas pequenos, pouco corados ou na borda, concentradas
 em poucos pacientes.
 
