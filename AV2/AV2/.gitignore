@@ -1,0 +1,6 @@
+data/PlantVillage-Dataset/
+outputs/cache/
+outputs/modelos/
+__pycache__/
+.idea/
+*.pyc

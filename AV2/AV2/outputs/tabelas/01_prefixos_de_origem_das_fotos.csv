@@ -1,0 +1,479 @@
+﻿source,n,n_classes,classes
+RS_HL,9560,6,Apple___healthy | Blueberry___healthy | Potato___healthy | Soybean___healthy
+CREC_HLB,3371,1,Orange___Haunglongbing_(Citrus_greening)
+UF.GRC_YLCV_Lab,2619,1,Tomato___Tomato_Yellow_Leaf_Curl_Virus
+JR_HL,2330,2,"Cherry_(including_sour)___healthy | Pepper,_bell___healthy"
+UF.Citrus_HLB_Lab,2136,1,Orange___Haunglongbing_(Citrus_greening)
+GCREC_Bact.Sp,1756,1,Tomato___Bacterial_spot
+Com.G_SpM_FL,1676,1,Tomato___Spider_mites Two-spotted_spider_mite
+YLCV_GCREC,1470,1,Tomato___Tomato_Yellow_Leaf_Curl_Virus
+Com.G_TgS_FL,1404,1,Tomato___Target_Spot
+FAM_B.Msls,1383,1,Grape___Esca_(Black_Measles)
+Rutg._Bact.S,1311,1,Peach___Bacterial_spot
+YLCV_NREC,1268,1,Tomato___Tomato_Yellow_Leaf_Curl_Virus
+RS_Rust,1192,1,Corn_(maize)___Common_rust_
+FAM_B.Rot,1180,1,Grape___Black_rot
+R.S_HL,1162,1,Corn_(maize)___healthy
+RS_L.Scorch,1109,1,Strawberry___Leaf_scorch
+FAM_L.Blight,1076,1,Grape___Leaf_blight_(Isariopsis_Leaf_Spot)
+FREC_Pwd.M,1052,1,Cherry_(including_sour)___Powdery_mildew
+Matt.S_CG,1000,1,Tomato___Septoria_leaf_spot
+RS_LB,1000,1,Potato___Late_blight
+RS_Early.B,1000,1,Potato___Early_blight
+RS_Erly.B,1000,1,Tomato___Early_blight
+Rut._Bact.S,986,1,Peach___Bacterial_spot
+RS_NLB,985,1,Corn_(maize)___Northern_Leaf_Blight
+MD_Powd.M,975,1,Squash___Powdery_mildew
+Crnl_L.Mold,952,1,Tomato___Leaf_Mold
+RS_Late.B,920,1,Tomato___Late_blight
+UMD_Powd.M,860,1,Squash___Powdery_mildew
+GHLB2 Leaf,744,1,Tomato___Late_blight
+FREC_Scab,630,1,Apple___Apple_scab
+JR_FrgE.S,621,1,Apple___Black_rot
+GH_HL Leaf,591,2,Tomato___Late_blight | Tomato___healthy
+JR_B.Spot,589,1,"Pepper,_bell___Bacterial_spot"
+RS_GLSp,513,1,Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot
+JR_Sept.L.S,497,1,Tomato___Septoria_leaf_spot
+Mt.N.V_HL,423,1,Grape___healthy
+NREC_B.Spot,408,1,"Pepper,_bell___Bacterial_spot"
+PSU_CG,373,1,Tomato___Tomato_mosaic_virus
+UF.GRC_BS_Lab Leaf,371,1,Tomato___Bacterial_spot
+Mary_HL,371,1,Raspberry___healthy
+Rutg._HL,360,1,Peach___healthy
+FREC_C.Rust,275,1,Apple___Cedar_apple_rust
+Keller.St_CG,274,1,Tomato___Septoria_leaf_spot
+GHLB2ES Leaf,27,1,Tomato___Late_blight
+GHLB_PS Leaf 1 Day,6,1,Tomato___Late_blight
+GHLB Leaf 2 Day,6,1,Tomato___Late_blight
+GHLB_PS Leaf 24 Day,5,1,Tomato___Late_blight
+GHLB_PS Leaf 8.1 Day,5,1,Tomato___Late_blight
+GHLB_PS Leaf 8 Day,5,1,Tomato___Late_blight
+GHLB_PS Leaf 1.2 Day,4,1,Tomato___Late_blight
+(sem número),3,2,"Pepper,_bell___healthy | Tomato___healthy"
+GHLB Leaf 23.1 Day,3,1,Tomato___Late_blight
+GHLB Leaf 23 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 1.5 Day,3,1,Tomato___Late_blight
+GHLB Leaf 2.1 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 2.2 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 26 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 2.3 Day,3,1,Tomato___Late_blight
+GHLB Leaf 1 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 2 Day,3,1,Tomato___Late_blight
+GHLB_PS Leaf 2.1 Day,3,1,Tomato___Late_blight
+GHLB Leaf 1.2 Day,2,1,Tomato___Late_blight
+GHLB Leaf 1.1 Day,2,1,Tomato___Late_blight
+GHLB Leaf 23.3 Day,2,1,Tomato___Late_blight
+GHLB Leaf 23.2 Day,2,1,Tomato___Late_blight
+GHLB Leaf 23.4 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 24.1 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 23.5 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 23.7 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 25.1 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 25 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 15 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 13 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 17 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 17.1 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 37 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 30 Day,2,1,Tomato___Late_blight
+GHLB Leaf 8 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 1.3 Day,2,1,Tomato___Late_blight
+GHLB Leaf 8.2 Day,2,1,Tomato___Late_blight
+GHLB Leaf 8.1 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 26.1 Day,2,1,Tomato___Late_blight
+GHLB_PS Leaf 26.2 Day,2,1,Tomato___Late_blight
+GHLB Leaf 2.4 Day,2,1,Tomato___Late_blight
+GHLB Leaf 2.2 Day,2,1,Tomato___Late_blight
+GHLB Leaf 23.6 Day,1,1,Tomato___Late_blight
+GHLB Leaf 10 Day,1,1,Tomato___Late_blight
+GHLB Leaf 12 Day,1,1,Tomato___Late_blight
+GHLB Leaf 14 Day,1,1,Tomato___Late_blight
+GHLB Leaf 18.1 Day,1,1,Tomato___Late_blight
+GHLB Leaf 2.3 Day,1,1,Tomato___Late_blight
+GHLB Leaf 2.5 Day,1,1,Tomato___Late_blight
+RS_HL 5780,1,1,Soybean___healthy
+RS_HL 5781,1,1,Soybean___healthy
+GHLB_PS Leaf 2.5 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 20 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 21 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 22 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 22.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 23 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 23.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 23.2 Day,1,1,Tomato___Late_blight
+RS_HL 5760,1,1,Soybean___healthy
+RS_HL 5761,1,1,Soybean___healthy
+RS_HL 5762,1,1,Soybean___healthy
+RS_HL 5763,1,1,Soybean___healthy
+GHLB_PS Leaf 23.3 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 23.4 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 24.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 24.4 Day,1,1,Tomato___Late_blight
+RS_HL 5735,1,1,Soybean___healthy
+RS_HL 5736,1,1,Soybean___healthy
+RS_HL 5770,1,1,Soybean___healthy
+RS_HL 5771,1,1,Soybean___healthy
+RS_HL 5755,1,1,Soybean___healthy
+RS_HL 5756,1,1,Soybean___healthy
+RS_HL 5757,1,1,Soybean___healthy
+RS_HL 5758,1,1,Soybean___healthy
+RS_HL 5743,1,1,Soybean___healthy
+RS_HL 5744,1,1,Soybean___healthy
+RS_HL 5745,1,1,Soybean___healthy
+RS_HL 5746,1,1,Soybean___healthy
+RS_HL 5731,1,1,Soybean___healthy
+RS_HL 5732,1,1,Soybean___healthy
+RS_HL 5733,1,1,Soybean___healthy
+RS_HL 5734,1,1,Soybean___healthy
+GHLB_PS Leaf 46.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 46.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 47 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 47.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 48 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 48.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 49 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 42 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 50 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 51 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 51.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 52 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 52.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 53 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 53.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 46 Day,1,1,Tomato___Late_blight
+GHLB Leaf 25.2 Day,1,1,Tomato___Late_blight
+GHLB Leaf 27 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 28.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 28.3 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 25.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 26.3 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 26.4 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 49.1 Day,1,1,Tomato___Late_blight
+GHLB Leaf 4.1 Day,1,1,Tomato___Late_blight
+GHLB Leaf 5 Day,1,1,Tomato___Late_blight
+GHLB Leaf 6 Day,1,1,Tomato___Late_blight
+GHLB Leaf 7 Day,1,1,Tomato___Late_blight
+GHLB Leaf 24 Day,1,1,Tomato___Late_blight
+GHLB Leaf 24.1 Day,1,1,Tomato___Late_blight
+GHLB Leaf 25 Day,1,1,Tomato___Late_blight
+GHLB Leaf 25.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 27 day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 27.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 27.4 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 28 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 28.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 44.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 45 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 37.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 29 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 29.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 30.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 31 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 32 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 32.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 33 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 27 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 16 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 34 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 34.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 35 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 35.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 36 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 36.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 37.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 42.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 43 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 43.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 43.3 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 44.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 12 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 13.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 15.1 Day,1,1,Tomato___Late_blight
+RS_HL 5558,1,1,Soybean___healthy
+RS_HL 5559,1,1,Soybean___healthy
+RS_HL 5560,1,1,Soybean___healthy
+RS_HL 5561,1,1,Soybean___healthy
+RS_HL 5546,1,1,Soybean___healthy
+RS_HL 5547,1,1,Soybean___healthy
+RS_HL 5548,1,1,Soybean___healthy
+RS_HL 5549,1,1,Soybean___healthy
+RS_HL 5519,1,1,Soybean___healthy
+RS_HL 5520,1,1,Soybean___healthy
+GHLB_PS leaf 28 Day,1,1,Tomato___Late_blight
+GHLB_PS leaf 28.1 Day,1,1,Tomato___Late_blight
+RS_HL 5554,1,1,Soybean___healthy
+RS_HL 5555,1,1,Soybean___healthy
+RS_HL 5556,1,1,Soybean___healthy
+RS_HL 5557,1,1,Soybean___healthy
+RS_HL 5522,1,1,Soybean___healthy
+RS_HL 5523,1,1,Soybean___healthy
+RS_HL 5524,1,1,Soybean___healthy
+RS_HL 5525,1,1,Soybean___healthy
+RS_HL 5526,1,1,Soybean___healthy
+RS_HL 5527,1,1,Soybean___healthy
+RS_HL 5528,1,1,Soybean___healthy
+RS_HL 5518,1,1,Soybean___healthy
+GHLB_PS Leaf 38 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 39 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 39.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 40 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 40.1 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 41 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 41.1 Day,1,1,Tomato___Late_blight
+RS_HL 5521,1,1,Soybean___healthy
+RS_HL 5590,1,1,Soybean___healthy
+RS_HL 5591,1,1,Soybean___healthy
+RS_HL 5592,1,1,Soybean___healthy
+RS_HL 5593,1,1,Soybean___healthy
+RS_HL 5578,1,1,Soybean___healthy
+RS_HL 5579,1,1,Soybean___healthy
+RS_HL 5580,1,1,Soybean___healthy
+RS_HL 5581,1,1,Soybean___healthy
+RS_HL 5533,1,1,Soybean___healthy
+RS_HL 5534,1,1,Soybean___healthy
+RS_HL 5535,1,1,Soybean___healthy
+RS_HL 5536,1,1,Soybean___healthy
+RS_HL 5586,1,1,Soybean___healthy
+RS_HL 5587,1,1,Soybean___healthy
+RS_HL 5588,1,1,Soybean___healthy
+RS_HL 5589,1,1,Soybean___healthy
+RS_HL 5541,1,1,Soybean___healthy
+RS_HL 5542,1,1,Soybean___healthy
+RS_HL 5543,1,1,Soybean___healthy
+RS_HL 5544,1,1,Soybean___healthy
+RS_HL 5529,1,1,Soybean___healthy
+RS_HL 5530,1,1,Soybean___healthy
+RS_HL 5531,1,1,Soybean___healthy
+RS_HL 5532,1,1,Soybean___healthy
+RS_HL 5550,1,1,Soybean___healthy
+RS_HL 5551,1,1,Soybean___healthy
+RS_HL 5552,1,1,Soybean___healthy
+RS_HL 5553,1,1,Soybean___healthy
+RS_HL 5537,1,1,Soybean___healthy
+RS_HL 5538,1,1,Soybean___healthy
+RS_HL 5539,1,1,Soybean___healthy
+RS_HL 5540,1,1,Soybean___healthy
+RS_HL 5622,1,1,Soybean___healthy
+RS_HL 5623,1,1,Soybean___healthy
+RS_HL 5624,1,1,Soybean___healthy
+RS_HL 5625,1,1,Soybean___healthy
+RS_HL 5610,1,1,Soybean___healthy
+RS_HL 5611,1,1,Soybean___healthy
+RS_HL 5612,1,1,Soybean___healthy
+RS_HL 5613,1,1,Soybean___healthy
+RS_HL 5566,1,1,Soybean___healthy
+RS_HL 5567,1,1,Soybean___healthy
+RS_HL 5568,1,1,Soybean___healthy
+RS_HL 5569,1,1,Soybean___healthy
+RS_HL 5618,1,1,Soybean___healthy
+RS_HL 5619,1,1,Soybean___healthy
+RS_HL 5620,1,1,Soybean___healthy
+RS_HL 5621,1,1,Soybean___healthy
+RS_HL 5574,1,1,Soybean___healthy
+RS_HL 5575,1,1,Soybean___healthy
+RS_HL 5576,1,1,Soybean___healthy
+RS_HL 5577,1,1,Soybean___healthy
+RS_HL 5562,1,1,Soybean___healthy
+RS_HL 5563,1,1,Soybean___healthy
+RS_HL 5564,1,1,Soybean___healthy
+RS_HL 5565,1,1,Soybean___healthy
+RS_HL 5582,1,1,Soybean___healthy
+RS_HL 5583,1,1,Soybean___healthy
+RS_HL 5584,1,1,Soybean___healthy
+RS_HL 5585,1,1,Soybean___healthy
+RS_HL 5570,1,1,Soybean___healthy
+RS_HL 5571,1,1,Soybean___healthy
+RS_HL 5572,1,1,Soybean___healthy
+RS_HL 5573,1,1,Soybean___healthy
+RS_HL 5655,1,1,Soybean___healthy
+RS_HL 5656,1,1,Soybean___healthy
+RS_HL 5657,1,1,Soybean___healthy
+RS_HL 5658,1,1,Soybean___healthy
+RS_HL 5643,1,1,Soybean___healthy
+RS_HL 5644,1,1,Soybean___healthy
+RS_HL 5645,1,1,Soybean___healthy
+RS_HL 5646,1,1,Soybean___healthy
+RS_HL 5598,1,1,Soybean___healthy
+RS_HL 5599,1,1,Soybean___healthy
+RS_HL 5600,1,1,Soybean___healthy
+RS_HL 5601,1,1,Soybean___healthy
+RS_HL 5651,1,1,Soybean___healthy
+RS_HL 5652,1,1,Soybean___healthy
+RS_HL 5653,1,1,Soybean___healthy
+RS_HL 5654,1,1,Soybean___healthy
+RS_HL 5606,1,1,Soybean___healthy
+RS_HL 5607,1,1,Soybean___healthy
+RS_HL 5608,1,1,Soybean___healthy
+RS_HL 5609,1,1,Soybean___healthy
+RS_HL 5594,1,1,Soybean___healthy
+RS_HL 5595,1,1,Soybean___healthy
+RS_HL 5596,1,1,Soybean___healthy
+RS_HL 5597,1,1,Soybean___healthy
+RS_HL 5614,1,1,Soybean___healthy
+RS_HL 5615,1,1,Soybean___healthy
+RS_HL 5616,1,1,Soybean___healthy
+RS_HL 5617,1,1,Soybean___healthy
+RS_HL 5602,1,1,Soybean___healthy
+RS_HL 5603,1,1,Soybean___healthy
+RS_HL 5604,1,1,Soybean___healthy
+RS_HL 5605,1,1,Soybean___healthy
+RS_HL 5687,1,1,Soybean___healthy
+RS_HL 5688,1,1,Soybean___healthy
+RS_HL 5689,1,1,Soybean___healthy
+RS_HL 5690,1,1,Soybean___healthy
+RS_HL 5675,1,1,Soybean___healthy
+RS_HL 5676,1,1,Soybean___healthy
+RS_HL 5677,1,1,Soybean___healthy
+RS_HL 5678,1,1,Soybean___healthy
+RS_HL 5631,1,1,Soybean___healthy
+RS_HL 5632,1,1,Soybean___healthy
+RS_HL 5633,1,1,Soybean___healthy
+RS_HL 5634,1,1,Soybean___healthy
+RS_HL 5683,1,1,Soybean___healthy
+RS_HL 5684,1,1,Soybean___healthy
+RS_HL 5685,1,1,Soybean___healthy
+RS_HL 5686,1,1,Soybean___healthy
+RS_HL 5639,1,1,Soybean___healthy
+RS_HL 5640,1,1,Soybean___healthy
+RS_HL 5641,1,1,Soybean___healthy
+RS_HL 5642,1,1,Soybean___healthy
+RS_HL 5626,1,1,Soybean___healthy
+RS_HL 5627,1,1,Soybean___healthy
+RS_HL 5629,1,1,Soybean___healthy
+RS_HL 5630,1,1,Soybean___healthy
+RS_HL 5647,1,1,Soybean___healthy
+RS_HL 5648,1,1,Soybean___healthy
+RS_HL 5649,1,1,Soybean___healthy
+RS_HL 5650,1,1,Soybean___healthy
+RS_HL 5635,1,1,Soybean___healthy
+RS_HL 5636,1,1,Soybean___healthy
+RS_HL 5637,1,1,Soybean___healthy
+RS_HL 5638,1,1,Soybean___healthy
+RS_HL 5719,1,1,Soybean___healthy
+RS_HL 5720,1,1,Soybean___healthy
+RS_HL 5721,1,1,Soybean___healthy
+RS_HL 5722,1,1,Soybean___healthy
+RS_HL 5707,1,1,Soybean___healthy
+RS_HL 5708,1,1,Soybean___healthy
+RS_HL 5709,1,1,Soybean___healthy
+RS_HL 5710,1,1,Soybean___healthy
+RS_HL 5663,1,1,Soybean___healthy
+RS_HL 5664,1,1,Soybean___healthy
+RS_HL 5665,1,1,Soybean___healthy
+RS_HL 5666,1,1,Soybean___healthy
+RS_HL 5715,1,1,Soybean___healthy
+RS_HL 5716,1,1,Soybean___healthy
+RS_HL 5717,1,1,Soybean___healthy
+RS_HL 5718,1,1,Soybean___healthy
+RS_HL 5671,1,1,Soybean___healthy
+RS_HL 5672,1,1,Soybean___healthy
+RS_HL 5673,1,1,Soybean___healthy
+RS_HL 5674,1,1,Soybean___healthy
+RS_HL 5659,1,1,Soybean___healthy
+RS_HL 5660,1,1,Soybean___healthy
+RS_HL 5661,1,1,Soybean___healthy
+RS_HL 5662,1,1,Soybean___healthy
+RS_HL 5679,1,1,Soybean___healthy
+RS_HL 5680,1,1,Soybean___healthy
+RS_HL 5681,1,1,Soybean___healthy
+RS_HL 5682,1,1,Soybean___healthy
+RS_HL 5667,1,1,Soybean___healthy
+RS_HL 5668,1,1,Soybean___healthy
+RS_HL 5669,1,1,Soybean___healthy
+RS_HL 5670,1,1,Soybean___healthy
+RS_HL 5751,1,1,Soybean___healthy
+RS_HL 5752,1,1,Soybean___healthy
+RS_HL 5753,1,1,Soybean___healthy
+RS_HL 5754,1,1,Soybean___healthy
+RS_HL 5739,1,1,Soybean___healthy
+RS_HL 5740,1,1,Soybean___healthy
+RS_HL 5741,1,1,Soybean___healthy
+RS_HL 5742,1,1,Soybean___healthy
+RS_HL 5695,1,1,Soybean___healthy
+RS_HL 5696,1,1,Soybean___healthy
+RS_HL 5697,1,1,Soybean___healthy
+RS_HL 5698,1,1,Soybean___healthy
+RS_HL 5747,1,1,Soybean___healthy
+RS_HL 5748,1,1,Soybean___healthy
+RS_HL 5749,1,1,Soybean___healthy
+RS_HL 5750,1,1,Soybean___healthy
+RS_HL 5703,1,1,Soybean___healthy
+RS_HL 5704,1,1,Soybean___healthy
+RS_HL 5705,1,1,Soybean___healthy
+RS_HL 5706,1,1,Soybean___healthy
+RS_HL 5691,1,1,Soybean___healthy
+RS_HL 5692,1,1,Soybean___healthy
+RS_HL 5693,1,1,Soybean___healthy
+RS_HL 5694,1,1,Soybean___healthy
+RS_HL 5711,1,1,Soybean___healthy
+RS_HL 5712,1,1,Soybean___healthy
+RS_HL 5713,1,1,Soybean___healthy
+RS_HL 5714,1,1,Soybean___healthy
+RS_HL 5699,1,1,Soybean___healthy
+RS_HL 5700,1,1,Soybean___healthy
+RS_HL 5701,1,1,Soybean___healthy
+RS_HL 5702,1,1,Soybean___healthy
+GHLB Leaf 2.7 Day,1,1,Tomato___Late_blight
+GHLB Leaf 1.6 Day,1,1,Tomato___Late_blight
+GHLB Leaf 1.5 Day,1,1,Tomato___Late_blight
+GHLB Leaf 1.4 Day,1,1,Tomato___Late_blight
+CG,1,1,Tomato___healthy
+bell-pepper-plant-,1,1,"Pepper,_bell___healthy"
+GHLB Leaf 23.5 Day,1,1,Tomato___Late_blight
+RS_HL 5782,1,1,Soybean___healthy
+RS_HL 5796,1,1,Soybean___healthy
+RS_HL 5797,1,1,Soybean___healthy
+RS_HL 5798,1,1,Soybean___healthy
+RS_HL 5799,1,1,Soybean___healthy
+RS_HL 5800,1,1,Soybean___healthy
+RS_HL 5801,1,1,Soybean___healthy
+GHLB Leaf 27.1 Day,1,1,Tomato___Late_blight
+GHLB Leaf 3 Day,1,1,Tomato___Late_blight
+RS_HL 5725,1,1,Soybean___healthy
+RS_HL 5726,1,1,Soybean___healthy
+RS_HL 5727,1,1,Soybean___healthy
+RS_HL 5728,1,1,Soybean___healthy
+RS_HL 5729,1,1,Soybean___healthy
+RS_HL 5730,1,1,Soybean___healthy
+GHLB Leaf 2.6 Day,1,1,Tomato___Late_blight
+RS_HL 5806,1,1,Soybean___healthy
+GHLB_PS Leaf 18 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 18.2 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 19 Day,1,1,Tomato___Late_blight
+GHLB_PS Leaf 19.1 Day,1,1,Tomato___Late_blight
+RS_HL 5737,1,1,Soybean___healthy
+RS_HL 5738,1,1,Soybean___healthy
+RS_HL 5723,1,1,Soybean___healthy
+RS_HL 5724,1,1,Soybean___healthy
+RS_HL 5791,1,1,Soybean___healthy
+RS_HL 5792,1,1,Soybean___healthy
+RS_HL 5793,1,1,Soybean___healthy
+RS_HL 5794,1,1,Soybean___healthy
+RS_HL 5795,1,1,Soybean___healthy
+GHLB Leaf 8.3 Day,1,1,Tomato___Late_blight
+GHLB Leaf 9 Day,1,1,Tomato___Late_blight
+GHLB Leaf 3.1 Day,1,1,Tomato___Late_blight
+RS_HL 5767,1,1,Soybean___healthy
+RS_HL 5768,1,1,Soybean___healthy
+RS_HL 5769,1,1,Soybean___healthy
+RS_HL 5804,1,1,Soybean___healthy
+RS_HL 5805,1,1,Soybean___healthy
+RS_HL 5788,1,1,Soybean___healthy
+RS_HL 5789,1,1,Soybean___healthy
+RS_HL 5790,1,1,Soybean___healthy
+RS_HL 5775,1,1,Soybean___healthy
+RS_HL 5776,1,1,Soybean___healthy
+RS_HL 5777,1,1,Soybean___healthy
+RS_HL 5778,1,1,Soybean___healthy
+RS_HL 5779,1,1,Soybean___healthy
+RS_HL 5764,1,1,Soybean___healthy
+RS_HL 5765,1,1,Soybean___healthy
+RS_HL 5766,1,1,Soybean___healthy
+RS_HL 5783,1,1,Soybean___healthy
+RS_HL 5784,1,1,Soybean___healthy
+RS_HL 5785,1,1,Soybean___healthy
+RS_HL 5786,1,1,Soybean___healthy
+RS_HL 5787,1,1,Soybean___healthy
+RS_HL 5772,1,1,Soybean___healthy
+RS_HL 5773,1,1,Soybean___healthy
+RS_HL 5774,1,1,Soybean___healthy

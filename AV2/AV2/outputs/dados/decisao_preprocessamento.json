@@ -1,0 +1,12 @@
+{
+  "escolhida": "P3_128_mediana3",
+  "params": {
+    "size": 128,
+    "denoise": "median3",
+    "clahe": false
+  },
+  "melhor_variante_cv": "P3_128_mediana3",
+  "ganho_melhor_vs_base_f1macro": 0.0264146314164741,
+  "regra": "abandona a base somente se ganho >= 0.01",
+  "n_imagens_subamostra": 3482
+}

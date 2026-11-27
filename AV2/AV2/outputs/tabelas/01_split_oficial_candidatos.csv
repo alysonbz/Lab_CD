@@ -1,0 +1,2 @@
+﻿candidato,n_treino,n_teste,cobertura_do_dataset,treino_teste_disjuntos,grupos_compartilhados_treino_teste,frac_teste
+data_distribution_for_SVM (GitHub),8747,10544,0.3554,True,132,0.5466

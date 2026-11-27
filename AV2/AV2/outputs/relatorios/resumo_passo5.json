@@ -1,0 +1,47 @@
+{
+  "modelo_escolhido_por_cv": "inteira__C3_COR+TEXTURA+GRADIENTES__SVM",
+  "cv_f1": 0.6267093950915933,
+  "teste_acuracia": 0.9490889112718616,
+  "teste_f1_macro": 0.9321451076777132,
+  "melhor_por_teste": "inteira__C3_COR+TEXTURA+GRADIENTES__SVM",
+  "melhor_por_teste_f1": 0.9321451076777132,
+  "fracao_erros_mesma_cultura": 0.5467625899280576,
+  "arquivo_modelo": "modelo_final_inteira__C3_COR+TEXTURA+GRADIENTES__SVM.joblib",
+  "modo": "completo",
+  "cv_subamostra": 6000,
+  "grades": {
+    "KNN": {
+      "n_neighbors": [
+        3,
+        7,
+        15
+      ],
+      "weights": [
+        "uniform",
+        "distance"
+      ]
+    },
+    "RandomForest": {
+      "max_features": [
+        "sqrt",
+        0.3
+      ],
+      "class_weight": [
+        null,
+        "balanced_subsample"
+      ]
+    },
+    "SVM": {
+      "C": [
+        1,
+        10,
+        100
+      ],
+      "class_weight": [
+        null,
+        "balanced"
+      ]
+    }
+  },
+  "rf_n_estimators": 200
+}

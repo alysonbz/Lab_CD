@@ -1,0 +1,3 @@
+﻿referencia,acuracia_teste,f1_macro_teste,f1_ponderado_teste
+DummyClassifier(most_frequent),0.1008149436864756,0.0048201104991725694,0.01846568840439355
+DummyClassifier(stratified),0.044867686109330646,0.02487458123718547,0.04454939662247519

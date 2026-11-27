@@ -1,0 +1,21 @@
+﻿verdadeira,prevista,n_erros,pct_da_classe_verdadeira,mesma_cultura
+Tomato___Target_Spot,Tomato___Spider_mites Two-spotted_spider_mite,35,13.108614232209737,True
+Corn_(maize)___Northern_Leaf_Blight,Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,27,10.975609756097562,True
+Tomato___Late_blight,Tomato___Early_blight,13,3.4210526315789473,True
+Tomato___Early_blight,Tomato___Late_blight,11,5.5,True
+Tomato___Spider_mites Two-spotted_spider_mite,Tomato___Target_Spot,11,3.2738095238095237,True
+Grape___Black_rot,Grape___Esca_(Black_Measles),9,3.8135593220338984,True
+Tomato___Early_blight,Tomato___Target_Spot,8,4.0,True
+Tomato___Early_blight,Tomato___Bacterial_spot,8,4.0,True
+Tomato___Tomato_Yellow_Leaf_Curl_Virus,Tomato___Bacterial_spot,8,0.746268656716418,True
+Tomato___Tomato_Yellow_Leaf_Curl_Virus,Orange___Haunglongbing_(Citrus_greening),8,0.746268656716418,False
+Apple___Apple_scab,Apple___Black_rot,7,5.6,True
+Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,Corn_(maize)___Northern_Leaf_Blight,7,7.216494845360825,True
+"Pepper,_bell___Bacterial_spot","Pepper,_bell___healthy",7,3.5,True
+"Pepper,_bell___healthy","Pepper,_bell___Bacterial_spot",7,2.3728813559322033,True
+Raspberry___healthy,Tomato___Tomato_Yellow_Leaf_Curl_Virus,7,9.45945945945946,False
+Soybean___healthy,"Pepper,_bell___healthy",7,0.68762278978389,False
+Tomato___Tomato_Yellow_Leaf_Curl_Virus,Tomato___Late_blight,7,0.6529850746268657,True
+Apple___Apple_scab,Apple___healthy,6,4.8,True
+"Pepper,_bell___healthy",Soybean___healthy,6,2.0338983050847457,False
+Potato___Late_blight,Tomato___Late_blight,6,3.0,False

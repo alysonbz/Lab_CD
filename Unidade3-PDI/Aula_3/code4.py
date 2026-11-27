@@ -4,13 +4,13 @@ from tensorflow import keras
 model = keras.Sequential()
 
 # Define the first dense layer
-model.add(keras.layers.____(____, activation='____', input_shape=(784,)))
+model.add(keras.layers.Dense(16, activation='relu', input_shape=(784,)))
 
 # Define the second dense layer
-____
+model.add(keras.layers.Dense(8, activation='relu'))
 
 # Define the output layer
-model.add(keras.layers.Dense(____))
+model.add(keras.layers.Dense(4))
 
 # Print the model architecture
 print(model.summary())

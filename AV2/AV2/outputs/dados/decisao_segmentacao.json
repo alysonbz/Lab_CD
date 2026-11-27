@@ -1,0 +1,25 @@
+{
+  "fator_limiar": 0.7,
+  "usou_referencia": true,
+  "metricas_metodo_adotado": {
+    "metodo": "Otsu no croma Lab (f=0.7) [adotado]",
+    "n_imagens": 150,
+    "iou_medio": 0.9047000851100407,
+    "iou_mediana": 0.9581936168114646,
+    "iou_p10": 0.7831391787212023,
+    "dice_medio": 0.9411079928103281,
+    "frac_iou_abaixo_0.7": 0.08
+  },
+  "limitacoes": {
+    "n": 1500,
+    "frac_fallback_mascara_invalida": 0.0,
+    "frac_folha_ocupa_mais_de_90pct": 0.04466666666666667,
+    "frac_folha_menos_de_15pct": 0.004666666666666667,
+    "area_mediana": 0.484619140625
+  },
+  "params_preprocessamento": {
+    "size": 128,
+    "denoise": "median3",
+    "clahe": false
+  }
+}

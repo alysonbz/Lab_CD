@@ -1,0 +1,148 @@
+{
+  "n_pastas_classe": 38,
+  "manifesto_contagem": {
+    "color": 54305,
+    "segmented": 54306,
+    "grayscale": 54305
+  },
+  "n_arquivos": 54305,
+  "n_culturas": 14,
+  "n_doencas_distintas": 20,
+  "n_pares_cultura_doenca": 26,
+  "documentacao_readme": {
+    "imagens": 54306,
+    "culturas": 14,
+    "doencas": 26,
+    "classes": 38
+  },
+  "auditoria": {
+    "n_arquivos": 54305,
+    "n_nao_imagem": 0,
+    "n_corrompidas": 0,
+    "extensoes": {
+      ".jpg": 54303,
+      ".png": 1,
+      ".jpeg": 1
+    },
+    "dimensoes": {
+      "256x256": 54305
+    },
+    "n_grupos_duplicados": 21,
+    "n_imagens_em_duplicatas": 42,
+    "n_duplicatas_entre_classes": 0,
+    "n_fotos_em_mais_de_uma_classe": 2171,
+    "n_leafmap_mismatch": 0,
+    "n_fotos_unicas_por_nome": 51314,
+    "n_arquivos_em_fotos_repetidas": 5783,
+    "n_excluidas": 21,
+    "excluidas_por_motivo": {
+      "duplicata exata (copia removida)": 21
+    },
+    "n_usadas": 54284
+  },
+  "largura_bloco": 128,
+  "aliases_leaf_map": {
+    "Apple_Frogeye Spot": "Apple___Black_rot"
+  },
+  "validacao_bloco": [
+    {
+      "largura_bloco": 16,
+      "folhas_avaliadas": 7593,
+      "folhas_fragmentadas": 2414,
+      "taxa_fragmentacao": 0.3179244040563677
+    },
+    {
+      "largura_bloco": 32,
+      "folhas_avaliadas": 7593,
+      "folhas_fragmentadas": 1225,
+      "taxa_fragmentacao": 0.16133280653233242
+    },
+    {
+      "largura_bloco": 64,
+      "folhas_avaliadas": 7593,
+      "folhas_fragmentadas": 647,
+      "taxa_fragmentacao": 0.0852100618991176
+    },
+    {
+      "largura_bloco": 128,
+      "folhas_avaliadas": 7593,
+      "folhas_fragmentadas": 345,
+      "taxa_fragmentacao": 0.04543658632951403
+    },
+    {
+      "largura_bloco": 256,
+      "folhas_avaliadas": 7593,
+      "folhas_fragmentadas": 190,
+      "taxa_fragmentacao": 0.025023047543790332
+    }
+  ],
+  "imagens_por_tipo_de_grupo": {
+    "leaf-map (oficial)": 41111,
+    "bloco de fotos consecutivas": 13191,
+    "imagem isolada": 3
+  },
+  "investigacao_split_oficial": {
+    "pastas_raiz_do_repositorio": [
+      ".gitignore",
+      "CITATION.cff",
+      "README.md",
+      "README_HF.md",
+      "data_distribution_for_SVM",
+      "generate_data_for_SVM.py",
+      "generate_lmdb.sh",
+      "generate_mapstring.py",
+      "generated_for_paper",
+      "leaf-map.json",
+      "leaf_grouping",
+      "logs",
+      "plant_village.py",
+      "raw",
+      "scripts",
+      "utils"
+    ],
+    "caminhos_candidatos_a_split": [
+      "data_distribution_for_SVM/test",
+      "data_distribution_for_SVM/test_mapping.txt",
+      "data_distribution_for_SVM/train",
+      "data_distribution_for_SVM/train_mapping.txt"
+    ],
+    "existe_pasta_splits_no_github": false,
+    "splits_hf_acessiveis": false
+  },
+  "split": {
+    "semente": 45,
+    "n_treino": 43363,
+    "n_teste": 10921,
+    "frac_teste": 0.20118266892638714,
+    "desvio_total_proporcoes": 0.2786381610636872,
+    "grupos_total": 7884,
+    "grupos_compartilhados": 0,
+    "simulacao_vazamento_fallback": {
+      "n_teste_simulado": 8219,
+      "n_teste_com_folha_no_treino": 391,
+      "fracao": 0.04757269740844385,
+      "n_teste_em_grupos_de_bloco": 2554,
+      "vazamento_global_estimado_fracao_do_teste": 0.011125416095702372
+    },
+    "metodo": "StratifiedGroupKFold(5), fold escolhido entre 10 sementes"
+  },
+  "balanceamento": {
+    "n_classes": 38,
+    "min": 152,
+    "max": 5507,
+    "mediana": 1092.5,
+    "razao_max_min": 36.23026315789474,
+    "classe_majoritaria": "Orange___Haunglongbing_(Citrus_greening)",
+    "pct_majoritaria": 10.144794046127773,
+    "entropia_normalizada": 0.9193809676353625,
+    "acuracia_baseline_classe_majoritaria_pct": 10.144794046127773
+  },
+  "fundo_atalho": {
+    "acc_fundo": 0.5833333333333334,
+    "f1macro_fundo": 0.5780557906323882,
+    "acc_chance_uniforme": 0.02631578947368421,
+    "acc_classe_majoritaria": 0.026455026455026454,
+    "n_treino_amostra": 3800,
+    "n_teste_amostra": 1512
+  }
+}

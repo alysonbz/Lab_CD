@@ -1,0 +1,458 @@
+﻿coluna,grupo,descricao,na_imagem_inteira,na_segmentada
+rgb_mean_r,rgb,média do canal RGB (0-1),True,True
+rgb_mean_g,rgb,média do canal RGB (0-1),True,True
+rgb_mean_b,rgb,média do canal RGB (0-1),True,True
+rgb_std_r,rgb,desvio-padrão do canal RGB,True,True
+rgb_std_g,rgb,desvio-padrão do canal RGB,True,True
+rgb_std_b,rgb,desvio-padrão do canal RGB,True,True
+rgb_hist_r0,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r1,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r2,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r3,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r4,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r5,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r6,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_r7,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g0,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g1,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g2,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g3,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g4,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g5,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g6,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_g7,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b0,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b1,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b2,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b3,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b4,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b5,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b6,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+rgb_hist_b7,rgb,"histograma RGB (8 bins/canal, normalizado)",True,True
+hsv_hue_cos,hsv,matiz médio (média vetorial cos/sin),True,True
+hsv_hue_sin,hsv,matiz médio (média vetorial cos/sin),True,True
+hsv_s_mean,hsv,saturação (média/desvio),True,True
+hsv_s_std,hsv,saturação (média/desvio),True,True
+hsv_v_mean,hsv,valor/brilho (média/desvio),True,True
+hsv_v_std,hsv,valor/brilho (média/desvio),True,True
+hsv_hist_h0,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h1,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h2,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h3,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h4,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h5,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h6,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h7,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h8,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h9,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h10,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h11,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h12,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h13,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h14,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_h15,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s0,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s1,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s2,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s3,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s4,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s5,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s6,hsv,histograma de matiz (16) e saturação (8),True,True
+hsv_hist_s7,hsv,histograma de matiz (16) e saturação (8),True,True
+lab_mean_L,lab,média em Lab,True,True
+lab_mean_a,lab,média em Lab,True,True
+lab_mean_b,lab,média em Lab,True,True
+lab_std_L,lab,desvio em Lab,True,True
+lab_std_a,lab,desvio em Lab,True,True
+lab_std_b,lab,desvio em Lab,True,True
+lbp_P8R1_0,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_1,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_2,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_3,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_4,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_5,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_6,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_7,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_8,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P8R1_9,lbp,"histograma LBP uniforme P=8,R=1",True,True
+lbp_P16R2_0,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_1,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_2,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_3,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_4,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_5,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_6,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_7,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_8,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_9,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_10,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_11,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_12,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_13,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_14,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_15,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_16,lbp,"histograma LBP uniforme P=16,R=2",True,True
+lbp_P16R2_17,lbp,"histograma LBP uniforme P=16,R=2",True,True
+glcm_d1_contrast,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d1_homogeneity,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d1_energy,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d1_correlation,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d1_entropy,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d3_contrast,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d3_homogeneity,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d3_energy,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d3_correlation,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+glcm_d3_entropy,glcm,"GLCM (32 níveis, 4 ângulos médios): contraste/homogeneidade/energia/correlação/entropia",True,True
+hog_0,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_1,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_2,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_3,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_4,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_5,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_6,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_7,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_8,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_9,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_10,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_11,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_12,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_13,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_14,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_15,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_16,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_17,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_18,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_19,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_20,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_21,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_22,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_23,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_24,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_25,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_26,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_27,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_28,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_29,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_30,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_31,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_32,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_33,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_34,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_35,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_36,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_37,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_38,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_39,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_40,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_41,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_42,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_43,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_44,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_45,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_46,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_47,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_48,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_49,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_50,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_51,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_52,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_53,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_54,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_55,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_56,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_57,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_58,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_59,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_60,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_61,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_62,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_63,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_64,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_65,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_66,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_67,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_68,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_69,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_70,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_71,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_72,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_73,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_74,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_75,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_76,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_77,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_78,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_79,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_80,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_81,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_82,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_83,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_84,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_85,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_86,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_87,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_88,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_89,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_90,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_91,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_92,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_93,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_94,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_95,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_96,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_97,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_98,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_99,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_100,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_101,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_102,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_103,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_104,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_105,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_106,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_107,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_108,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_109,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_110,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_111,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_112,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_113,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_114,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_115,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_116,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_117,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_118,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_119,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_120,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_121,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_122,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_123,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_124,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_125,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_126,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_127,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_128,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_129,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_130,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_131,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_132,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_133,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_134,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_135,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_136,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_137,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_138,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_139,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_140,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_141,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_142,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_143,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_144,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_145,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_146,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_147,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_148,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_149,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_150,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_151,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_152,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_153,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_154,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_155,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_156,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_157,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_158,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_159,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_160,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_161,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_162,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_163,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_164,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_165,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_166,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_167,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_168,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_169,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_170,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_171,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_172,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_173,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_174,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_175,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_176,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_177,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_178,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_179,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_180,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_181,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_182,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_183,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_184,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_185,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_186,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_187,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_188,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_189,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_190,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_191,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_192,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_193,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_194,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_195,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_196,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_197,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_198,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_199,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_200,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_201,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_202,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_203,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_204,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_205,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_206,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_207,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_208,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_209,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_210,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_211,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_212,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_213,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_214,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_215,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_216,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_217,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_218,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_219,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_220,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_221,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_222,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_223,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_224,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_225,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_226,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_227,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_228,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_229,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_230,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_231,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_232,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_233,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_234,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_235,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_236,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_237,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_238,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_239,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_240,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_241,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_242,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_243,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_244,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_245,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_246,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_247,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_248,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_249,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_250,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_251,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_252,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_253,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_254,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_255,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_256,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_257,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_258,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_259,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_260,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_261,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_262,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_263,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_264,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_265,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_266,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_267,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_268,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_269,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_270,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_271,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_272,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_273,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_274,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_275,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_276,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_277,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_278,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_279,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_280,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_281,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_282,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_283,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_284,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_285,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_286,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_287,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_288,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_289,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_290,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_291,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_292,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_293,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_294,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_295,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_296,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_297,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_298,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_299,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_300,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_301,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_302,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_303,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_304,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_305,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_306,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_307,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_308,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_309,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_310,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_311,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_312,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_313,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_314,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_315,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_316,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_317,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_318,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_319,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_320,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_321,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_322,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+hog_323,hog,"HOG (9 bins, células 1/4 da imagem, blocos 2x2)",True,True
+edge_density,edge,densidade de bordas (Canny),True,True
+edge_gradmag_mean,edge,magnitude do gradiente (Sobel): média/desvio,True,True
+edge_gradmag_std,edge,magnitude do gradiente (Sobel): média/desvio,True,True
+edge_ori0,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori1,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori2,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori3,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori4,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori5,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori6,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori7,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori8,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori9,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori10,edge,histograma de orientação do gradiente (12 bins),True,True
+edge_ori11,edge,histograma de orientação do gradiente (12 bins),True,True
+shp_area_ratio,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_perimeter_ratio,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_circularity,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_aspect_minrect,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_aspect_moments,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_solidity,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_border_contact,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu1,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu2,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu3,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu4,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu5,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu6,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True
+shp_hu7,shp,"forma da máscara: área, perímetro, circularidade, razões de aspecto, solidez, contato com borda, Hu",False,True

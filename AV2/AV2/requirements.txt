@@ -1,0 +1,10 @@
+numpy>=1.23
+pandas>=1.5
+matplotlib>=3.6
+seaborn>=0.12
+opencv-python>=4.7,<5   # 4.x recomendado (o HOG tem fallback em NumPy p/ OpenCV 5.x)
+Pillow>=9.4
+scikit-image>=0.20
+scikit-learn>=1.1      # StratifiedGroupKFold exige >= 1.0
+joblib>=1.2
+psutil>=5.9            # opcional (monitoramento de memória)
