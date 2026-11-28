@@ -1,6 +1,11 @@
 ####################################################################################################
 #------------------------------ETAPA 01 - Análise e Preparação do dataset -------------------------#
 ####################################################################################################
+# Equipe: Dayane Magalhães, Suiany Gomes, Hellen Lavyne
+# Classificação de Imagens de Alimentos - Fruits-360
+# Repositório: https://github.com/HellenLavyne/Computer-vision-applied-to-food-classification
+####################################################################################################
+
 # Importações 
 from pathlib import Path
 from collections import Counter
@@ -3013,3 +3018,34 @@ for nome, dados in modelos_finais.items():
 
     print(f"\nPrincipais confusões — {nome}")
     print(df_confusoes.head(10))
+
+
+##################################################################################
+# ETAPA 6 - ANÁLISE DOS RESULTADOS
+##################################################################################
+
+""" Discussão geral dos resultados
+Os experimentos realizados demonstraram que a classificação de imagens de frutas utilizando características extraídas manualmente e 
+algoritmos tradicionais de aprendizado de máquina apresentou resultados bastante satisfatórios. Entre os classificadores avaliados,
+o Random Forest obteve o melhor desempenho na avaliação final, alcançando 98,67% de acurácia e 98,61% de F1-score macro. 
+O KNN apresentou resultados próximos, com 98,44% de acurácia e 98,41% de F1-score macro, enquanto o SVM obteve 97,25% de acurácia e 
+97,08% de F1-score macro.
+
+A comparação entre os conjuntos de características evidenciou que a combinação de atributos influencia o desempenho de maneira diferente 
+para cada classificador. O KNN apresentou melhores resultados com a combinação de cor e textura, enquanto o SVM obteve seu melhor desempenho com 
+a inclusão dos atributos HOG. Para o Random Forest, a configuração composta por cor, textura e forma apresentou desempenho praticamente equivalente 
+à configuração que também incluía HOG, indicando que o acréscimo desses atributos não proporcionou ganho relevante nos resultados observados.
+
+A análise dos erros também revelou que determinadas variedades de frutas apresentaram maior dificuldade de distinção, especialmente aquelas com 
+características visuais semelhantes. Foram identificadas confusões recorrentes entre variedades de pimentões, cerejas, maçãs e batatas. Esses 
+resultados mostram que, mesmo com métricas gerais elevadas, ainda existem situações em que os atributos extraídos não são suficientes para distinguir
+completamente determinadas classes.
+
+Em relação ao pré-processamento e à segmentação, essas etapas foram incorporadas ao pipeline para preparar as 
+imagens e orientar a extração de características. Entretanto, como não foi realizada uma comparação experimental
+isolando a contribuição dessas técnicas, não é possível quantificar seu impacto individual sobre o desempenho dos classificadores.
+
+Também é importante considerar o custo computacional dos experimentos. Devido ao elevado tempo necessário para a otimização dos hiperparâmetros,
+foi utilizada uma amostra estratificada de 30% dos dados de treinamento nessa etapa, mantendo o conjunto de teste integralmente separado. 
+Essa decisão permitiu realizar os experimentos em condições equivalentes entre os classificadores, embora represente uma limitação na etapa de 
+busca dos melhores"""
